@@ -24,6 +24,7 @@ public class DeadeyeMod implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("People don't forget. Nothing gets forgiven.");
 
+		SoundHandler.initialize();
 		CommandHandler.initialize();
 
 		ServerTickEvents.END_SERVER_TICK.register(DeadeyeServer::onTick);

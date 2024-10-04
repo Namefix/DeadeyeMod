@@ -24,4 +24,6 @@ public class SoundHandler {
         Identifier identifier = Identifier.of(DeadeyeMod.MOD_ID, id);
         return Registry.register(Registries.SOUND_EVENT, identifier, SoundEvent.of(identifier));
     }
+
+    public static void initialize() {}
 }
