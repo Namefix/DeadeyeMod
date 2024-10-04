@@ -1,0 +1,29 @@
+{
+  "category.deadeye-mod": "Deadeye Mod",
+  "key.deadeye-mod.toggle": "Toggle Deadeye",
+  "key.deadeye-mod.mark": "Mark Targets",
+  "key.deadeye-mod.shoot_targets": "Shoot Targets",
+
+  "text.config.deadeye-mod.title": "Deadeye Mod",
+
+  "text.config.deadeye-mod.category.server": "Server",
+  "text.config.deadeye-mod.option.server.deadeyeSlowdown": "Deadeye Slowdown",
+  "text.config.deadeye-mod.option.server.markableEntities": "Markable Entities",
+  "text.config.deadeye-mod.option.server.markingItems": "Marking Items",
+  "text.config.deadeye-mod.option.server.markFocusSpeed": "Mark Focus Speed",
+  "text.config.deadeye-mod.option.server.maxMarks": "Maximum Marks",
+  "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier": "Mark Projectile Speed Multiplier",
+  "text.config.deadeye-mod.option.server.deadeyeIdleConsumeAmount": "Deadeye Idle Consume Amount (Per Tick)",
+  "text.config.deadeye-mod.option.server.deadeyeKillRefillAmount": "Deadeye Refill Per Kill",
+
+  "text.config.deadeye-mod.category.client": "Client",
+  "text.config.deadeye-mod.option.client.disableDeadeyeEffects": "Disable Deadeye Effects",
+  "text.config.deadeye-mod.option.client.deadeyeVignetteStrength": "Deadeye Vignette Strength",
+  "text.config.deadeye-mod.option.client.deadeyeVolume": "Deadeye Sound Effect Volume",
+  "text.config.deadeye-mod.option.client.deadeyeMarkSize": "Deadeye Mark Size",
+
+  "sound.deadeye-mod.enter": "Entered deadeye",
+  "sound.deadeye-mod.exit": "Exited deadeye",
+  "sound.deadeye-mod.background": "Concentrating",
+  "sound.deadeye-mod.paint": "Painted target"
+}
