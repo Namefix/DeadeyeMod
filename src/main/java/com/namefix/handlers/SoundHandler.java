@@ -16,6 +16,7 @@ public class SoundHandler {
     public static final SoundEvent DEADEYE_JOHN_ENTER = registerSound("deadeye_john_enter");
     public static final SoundEvent DEADEYE_JOHN_BACKGROUND = registerSound("deadeye_john_background");
     public static final SoundEvent DEADEYE_JOHN_BACKGROUND2 = registerSound("deadeye_john_background2");
+    public static final SoundEvent DEADEYE_JOHN_BACKGROUND2_END = registerSound("deadeye_john_background2_end");
     public static final SoundEvent DEADEYE_JOHN_HEARTBEAT_IN = registerSound("deadeye_john_heartbeat_in");
     public static final SoundEvent DEADEYE_JOHN_HEARTBEAT_OUT = registerSound("deadeye_john_heartbeat_out");
     public static final SoundEvent DEADEYE_JOHN_EXIT  = registerSound("deadeye_john_exit");

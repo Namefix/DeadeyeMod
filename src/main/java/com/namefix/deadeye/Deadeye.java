@@ -241,6 +241,7 @@ public class Deadeye {
             ClientPlayNetworking.send(new DeadeyeMarkingPayload(false));
             soundBackground.setDone();
             soundBackground2.setDone();
+            if(playerData.deadeyeMeter == 0.0f) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, soundVolume/20, 1.0f);
             marks.clear();
             shootingMarks = false;
             shootTicks = 0;

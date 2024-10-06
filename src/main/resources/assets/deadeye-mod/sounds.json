@@ -35,6 +35,12 @@
     "stream": true
   },
 
+  "deadeye_john_background2_end": {
+    "sounds": [
+      "deadeye-mod:deadeye_john_background2_end"
+    ]
+  },
+
   "deadeye_john_heartbeat_in": {
     "sounds": [
       "deadeye-mod:deadeye_john_heartbeat_in"
