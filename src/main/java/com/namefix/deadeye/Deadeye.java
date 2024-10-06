@@ -45,7 +45,7 @@ public class Deadeye {
     public static float markFocusSpeed = DeadeyeMod.CONFIG.server.markFocusSpeed();
 
     public static boolean shootingMarks = false;
-    static int shootCooldown = 0;
+    static long shootCooldown = System.currentTimeMillis();
     static int shootTicks = 0;
     static Item shootStartItem = null;
 
@@ -107,10 +107,7 @@ public class Deadeye {
         if(MinecraftClient.getInstance().isPaused() || !isEnabled) return;
         if(marks.isEmpty() || !shootingMarks) return;
         shootTicks++;
-        if (shootCooldown > 0) {
-            shootCooldown--;
-            return;
-        }
+        if (System.currentTimeMillis() - shootCooldown < 15) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
