@@ -1,5 +1,6 @@
 package com.namefix.sound;
 
+import com.namefix.deadeye.Deadeye;
 import net.minecraft.client.sound.AbstractSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
@@ -10,9 +11,10 @@ import net.minecraft.sound.SoundEvent;
 public class SoundBackgroundLoop extends AbstractSoundInstance implements TickableSoundInstance {
 
     private final PlayerEntity player;
+    private boolean pitchShift;
     private boolean done;
 
-    public SoundBackgroundLoop(SoundEvent soundEvent, SoundCategory soundCategory, PlayerEntity player, float volume) {
+    public SoundBackgroundLoop(SoundEvent soundEvent, SoundCategory soundCategory, PlayerEntity player, float volume, boolean pitchShift) {
         super(soundEvent, soundCategory, SoundInstance.createRandom());
         this.repeat = true;
         this.repeatDelay = 0;
@@ -21,6 +23,7 @@ public class SoundBackgroundLoop extends AbstractSoundInstance implements Tickab
         this.x = player.getX();
         this.y = player.getY();
         this.z = player.getZ();
+        this.pitchShift = pitchShift;
     }
 
     @Override
@@ -35,6 +38,7 @@ public class SoundBackgroundLoop extends AbstractSoundInstance implements Tickab
             this.x = this.player.getX();
             this.y = this.player.getY();
             this.z = this.player.getZ();
+            if(this.pitchShift) this.pitch = 1f + Deadeye.deadeyeEnding;
         }
     }
 

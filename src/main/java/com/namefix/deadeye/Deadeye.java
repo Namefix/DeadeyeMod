@@ -228,9 +228,9 @@ public class Deadeye {
         if(!isEnabled) {
             client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, soundVolume, 1.0f);
 
-            soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, soundVolume/2);
+            soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, soundVolume/2, true);
             client.getSoundManager().play(soundBackground);
-            soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, soundVolume/20);
+            soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, soundVolume/20, false);
             client.getSoundManager().play(soundBackground2);
 
             isEnabled = true;
