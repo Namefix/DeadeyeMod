@@ -5,9 +5,11 @@ import com.namefix.data.PlayerSaveData;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.KeybindHandler;
 import com.namefix.handlers.SoundHandler;
+import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.payload.*;
 import com.namefix.sound.SoundBackgroundLoop;
 import com.namefix.utils.Utils;
+import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
@@ -61,7 +63,8 @@ public class Deadeye {
     private enum TargetingInteractionType {
         DEFAULT,
         BOW,
-        THROWABLE
+        THROWABLE,
+        POINT_BLANK_GUN
     }
 
     public static void deadeyeListener(MinecraftClient client) {
@@ -119,14 +122,6 @@ public class Deadeye {
             toggle();
             return;
         }
-        if(item.getItem() instanceof RangedWeaponItem) {
-            targetingType = TargetingInteractionType.BOW;
-            if(!client.player.isInCreativeMode() && !client.player.getInventory().contains(((RangedWeaponItem) item.getItem()).getProjectiles())) {
-                toggle();
-                return;
-            }
-        }
-        if(item.getItem() instanceof ProjectileItem) targetingType = TargetingInteractionType.THROWABLE;
         if(!item.getItem().equals(shootStartItem)) {
             toggle();
             return;
@@ -163,13 +158,23 @@ public class Deadeye {
         float wrappedNewYaw = MathHelper.wrapDegrees(newYaw);
         float wrappedTargetYaw = MathHelper.wrapDegrees(targetYaw);
 
-        if (Math.abs(wrappedTargetPitch - wrappedNewPitch) < 2f && Math.abs(wrappedTargetYaw - wrappedNewYaw) < 2f) {
+        if (Math.abs(wrappedTargetPitch - wrappedNewPitch) < 1f && Math.abs(wrappedTargetYaw - wrappedNewYaw) < 1f) {
+            targetingType = getTargetingInteractionType(item);
+            if(targetingType == TargetingInteractionType.BOW) {
+                if(!client.player.isInCreativeMode() && !client.player.getInventory().contains(((RangedWeaponItem) item.getItem()).getProjectiles())) {
+                    toggle();
+                    return;
+                }
+            }
+
             assert client.interactionManager != null;
             switch(targetingType) {
                 // BOW: Simulate shooting
                 case BOW -> ClientPlayNetworking.send(new DeadeyeShootPayload(mark.getCurrentOffset().toVector3f(), marks.size()-1<=0));
                 // THROWABLE/ProjectileItem: Execute right click
                 case THROWABLE -> client.interactionManager.interactItem(client.player, client.player.getActiveHand());
+                // POINT_BLANK_GUN: Shoot. (Vic's Point Blank integration)
+                case POINT_BLANK_GUN -> PointBlankIntegration.shootGun((GunItem) item.getItem(), client.player, mark.target);
                 // DEFAULT: Execute left click
                 case DEFAULT -> KeyBinding.onKeyPressed(client.options.attackKey.getDefaultKey());
             }
@@ -182,6 +187,13 @@ public class Deadeye {
                 toggle();
             }
         }
+    }
+
+    private static TargetingInteractionType getTargetingInteractionType(ItemStack item) {
+        if(item.getItem() instanceof RangedWeaponItem) return TargetingInteractionType.BOW;
+        if(item.getItem() instanceof ProjectileItem) return TargetingInteractionType.THROWABLE;
+        if(PointBlankIntegration.isLoaded && item.getItem() instanceof GunItem) return TargetingInteractionType.POINT_BLANK_GUN;
+        return TargetingInteractionType.DEFAULT;
     }
 
     private static void startShootingTargets(Item startItem) {

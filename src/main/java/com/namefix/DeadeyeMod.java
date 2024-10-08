@@ -3,6 +3,7 @@ package com.namefix;
 import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.handlers.CommandHandler;
 import com.namefix.handlers.SoundHandler;
+import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import net.fabricmc.api.ModInitializer;
 
@@ -10,6 +11,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,5 +40,7 @@ public class DeadeyeMod implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_MARKING, DeadeyeServer::updateMarkingStatus);
 
 		DeadeyeServer.initializeBowProperties();
+
+		if(FabricLoader.getInstance().isModLoaded("pointblank")) PointBlankIntegration.initialize();
 	}
 }
