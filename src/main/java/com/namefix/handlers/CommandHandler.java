@@ -4,8 +4,12 @@ import com.mojang.brigadier.context.CommandContext;
 import com.namefix.data.PlayerSaveData;
 import com.namefix.data.StateSaverAndLoader;
 import com.namefix.network.payload.DeadeyeMeterPayload;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -20,11 +24,6 @@ public class CommandHandler {
                         context.getSource().sendMessage(Text.literal("Reloaded server config."));
                         return 1;
                     }))
-                    .then(CommandManager.literal("clientreload").executes((CommandContext<ServerCommandSource> context) -> {
-                        ConfigHandler.ReloadConfigClient();
-                        context.getSource().sendMessage(Text.literal("Reloaded client config."));
-                        return 1;
-                    }))
                     .then(CommandManager.literal("refill").requires(source -> source.hasPermissionLevel(2)).executes((CommandContext<ServerCommandSource> context) -> {
                         if(context.getSource().getPlayer() == null) return 0;
                         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(context.getSource().getPlayer());
@@ -35,6 +34,18 @@ public class CommandHandler {
                     }))
             );
 
+        });
+    }
+
+    public static void initializeClient() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            dispatcher.register(ClientCommandManager.literal("deadeye-client")
+                .then(ClientCommandManager.literal("reload").executes((CommandContext<FabricClientCommandSource> context) -> {
+                    ConfigHandler.ReloadConfigClient();
+                    context.getSource().sendFeedback(Text.literal("Reloaded client config."));
+                    return 1;
+                }))
+            );
         });
     }
 }

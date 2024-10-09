@@ -3,15 +3,13 @@
   "package": "com.namefix.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LivingEntitySwingHandMixin",
-    "PlayerAttackMixin"
+    "BowItemMixin",
+    "CrossbowItemMixin"
   ],
   "client": [
     "LivingEntitySwingHandMixin",
     "MouseMixin",
-    "PlayerAttackMixin",
-    "BowItemMixin",
-    "CrossbowItemMixin"
+    "PlayerAttackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

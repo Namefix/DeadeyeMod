@@ -35,33 +35,6 @@ public class DeadeyeServer {
     public static List<EntityType<?>> deadeyeMarkableEntities = ConfigHandler.LoadDeadeyeMarkableEntities();
     public static List<Item> deadeyeItems = ConfigHandler.LoadDeadeyeMarkingItems();
 
-    // Adding fast pull functionality to bows when in deadeye
-    public static void initializeBowProperties() {
-        ModelPredicateProviderRegistry.register(Items.BOW, Identifier.of("pull"), (itemStack, world, entity, seed) -> {
-            if (entity == null) {
-                return 0.0F;
-            }
-            if (entity.isUsingItem() && entity.getActiveItem() == itemStack) {
-                int useTicks = entity.getItemUseTime();
-                float adjustedUseTicks = useTicks * (Deadeye.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
-                return Math.min(adjustedUseTicks / 20.0f, 1.0f);
-            }
-            return 0.0F;
-        });
-
-        ModelPredicateProviderRegistry.register(Items.CROSSBOW, Identifier.of("pull"), (itemStack, world, entity, seed) -> {
-            if (entity == null) {
-                return 0.0F;
-            }
-            if (entity.isUsingItem() && entity.getActiveItem() == itemStack) {
-                int useTicks = entity.getItemUseTime();
-                float adjustedUseTicks = useTicks * (Deadeye.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
-                return Math.min(adjustedUseTicks / 20.0f, 1.0f);
-            }
-            return 0.0F;
-        });
-    }
-
     // Receiving deadeye toggle packet from a player
     public static void deadeyeToggle(DeadeyeTogglePayload payload, ServerPlayNetworking.Context context) {
         if (payload.status()) {

@@ -13,15 +13,14 @@ import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ProjectileItem;
-import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.item.*;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
@@ -65,6 +64,33 @@ public class Deadeye {
         BOW,
         THROWABLE,
         POINT_BLANK_GUN
+    }
+
+    // Adding fast pull functionality to bows when in deadeye
+    public static void initializeBowProperties() {
+        ModelPredicateProviderRegistry.register(Items.BOW, Identifier.of("pull"), (itemStack, world, entity, seed) -> {
+            if (entity == null) {
+                return 0.0F;
+            }
+            if (entity.isUsingItem() && entity.getActiveItem() == itemStack) {
+                int useTicks = entity.getItemUseTime();
+                float adjustedUseTicks = useTicks * (Deadeye.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
+                return Math.min(adjustedUseTicks / 20.0f, 1.0f);
+            }
+            return 0.0F;
+        });
+
+        ModelPredicateProviderRegistry.register(Items.CROSSBOW, Identifier.of("pull"), (itemStack, world, entity, seed) -> {
+            if (entity == null) {
+                return 0.0F;
+            }
+            if (entity.isUsingItem() && entity.getActiveItem() == itemStack) {
+                int useTicks = entity.getItemUseTime();
+                float adjustedUseTicks = useTicks * (Deadeye.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
+                return Math.min(adjustedUseTicks / 20.0f, 1.0f);
+            }
+            return 0.0F;
+        });
     }
 
     public static void deadeyeListener(MinecraftClient client) {

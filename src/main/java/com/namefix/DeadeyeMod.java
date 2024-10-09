@@ -10,7 +10,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +33,9 @@ public class DeadeyeMod implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register(DeadeyeServer::onPlayerConnect);
 		ServerPlayConnectionEvents.DISCONNECT.register(DeadeyeServer::onPlayerDisconnect);
 
-		DeadeyeNetworking.registerC2SPackets();
-		ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_TOGGLE, DeadeyeServer::deadeyeToggle);
-		ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOOT, DeadeyeServer::spawnDeadeyeProjectile);
-		ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_MARKING, DeadeyeServer::updateMarkingStatus);
-
-		DeadeyeServer.initializeBowProperties();
+		DeadeyeNetworking.initializeServerPayloads();
+		DeadeyeNetworking.initializeClientPayloads();
+		DeadeyeNetworking.initializeServerReceivers();
 
 		if(FabricLoader.getInstance().isModLoaded("pointblank")) PointBlankIntegration.initialize();
 	}
