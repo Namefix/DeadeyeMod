@@ -31,7 +31,7 @@ public class DeadeyeModClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.RELOAD_CONFIG, (ReloadConfigPayload payload, ClientPlayNetworking.Context context) -> {ConfigHandler.ReloadConfigClient();});
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_METER, Deadeye::deadeyeMeterUpdate);
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.INITIAL_SYNC, Deadeye::receiveInitialSync);
-        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE, Deadeye::deadeyeForceUpdate);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_TOGGLE, Deadeye::deadeyeForceUpdate);
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_SHOOT, Deadeye::deadeyeForceShoot);
 
         if(FabricLoader.getInstance().isModLoaded("pointblank")) PointBlankIntegration.initialize();

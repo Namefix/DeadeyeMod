@@ -12,7 +12,7 @@ public class DeadeyeNetworking {
     public static final CustomPayload.Id<ReloadConfigPayload> RELOAD_CONFIG = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "reload_config"));
     public static final CustomPayload.Id<DeadeyeMeterPayload> DEADEYE_METER = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_meter"));
     public static final CustomPayload.Id<InitialSyncPayload> INITIAL_SYNC = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "initial_sync"));
-    public static final CustomPayload.Id<DeadeyeForcePayload> DEADEYE_FORCE = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_force"));
+    public static final CustomPayload.Id<DeadeyeForceTogglePayload> DEADEYE_FORCE_TOGGLE = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_force"));
     public static final CustomPayload.Id<DeadeyeMarkingPayload> DEADEYE_MARKING = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_shooting_status"));
     public static final CustomPayload.Id<DeadeyeForceShootPayload> DEADEYE_FORCE_SHOOT = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_force_shoot"));
 
@@ -20,7 +20,7 @@ public class DeadeyeNetworking {
         PayloadTypeRegistry.playS2C().register(RELOAD_CONFIG, ReloadConfigPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DEADEYE_METER, DeadeyeMeterPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(INITIAL_SYNC, InitialSyncPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(DEADEYE_FORCE, DeadeyeForcePayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(DEADEYE_FORCE_TOGGLE, DeadeyeForceTogglePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DEADEYE_FORCE_SHOOT, DeadeyeForceShootPayload.CODEC);
     }
 

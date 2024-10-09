@@ -127,7 +127,7 @@ public class DeadeyeServer {
             if(!data.isShootingTargets) {
                 playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, 100f);
                 if (playerState.deadeyeMeter == 0f) {
-                    if(!data.hasMarkedTargets) ServerPlayNetworking.send(player, new DeadeyeForcePayload(false));
+                    if(!data.hasMarkedTargets) ServerPlayNetworking.send(player, new DeadeyeForceTogglePayload(false, playerState.deadeyeMeter));
                     else ServerPlayNetworking.send(player, new DeadeyeForceShootPayload());
                 }
             }

@@ -286,8 +286,9 @@ public class Deadeye {
         playerData.deadeyeMeter = payload.deadeyeMeter();
     }
 
-    public static void deadeyeForceUpdate(DeadeyeForcePayload payload, ClientPlayNetworking.Context context) {
+    public static void deadeyeForceUpdate(DeadeyeForceTogglePayload payload, ClientPlayNetworking.Context context) {
         if(payload.status() != isEnabled) toggle();
+        playerData.deadeyeMeter = payload.meter();
     }
 
     public static void deadeyeForceShoot(DeadeyeForceShootPayload payload, ClientPlayNetworking.Context context) {
