@@ -1,4 +1,9 @@
 {
+  "blend": {
+    "func": "add",
+    "srcrgb": "one",
+    "dstrgb": "one"
+  },
   "vertex": "blit",
   "fragment": "deadeye-mod:deadeye",
   "samplers": [
