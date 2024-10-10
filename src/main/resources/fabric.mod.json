@@ -12,7 +12,7 @@
 		"sources": "https://github.com/Namefix/DeadeyeMod",
 		"issues": "https://github.com/Namefix/DeadeyeMod/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "GPL-3.0",
 	"icon": "assets/deadeye-mod/icon.png",
 	"environment": "*",
 	"entrypoints": {
