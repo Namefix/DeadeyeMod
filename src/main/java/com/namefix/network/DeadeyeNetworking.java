@@ -1,7 +1,7 @@
 package com.namefix.network;
 
 import com.namefix.DeadeyeMod;
-import com.namefix.deadeye.Deadeye;
+import com.namefix.deadeye.DeadeyeClient;
 import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.network.payload.*;
@@ -43,9 +43,9 @@ public class DeadeyeNetworking {
 
     public static void initializeClientReceivers() {
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.RELOAD_CONFIG, (ReloadConfigPayload payload, ClientPlayNetworking.Context context) -> {ConfigHandler.ReloadConfigClient();});
-        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_METER, Deadeye::deadeyeMeterUpdate);
-        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.INITIAL_SYNC, Deadeye::receiveInitialSync);
-        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_TOGGLE, Deadeye::deadeyeForceUpdate);
-        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_SHOOT, Deadeye::deadeyeForceShoot);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_METER, DeadeyeClient::deadeyeMeterUpdate);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.INITIAL_SYNC, DeadeyeClient::receiveInitialSync);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_TOGGLE, DeadeyeClient::deadeyeForceUpdate);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_SHOOT, DeadeyeClient::deadeyeForceShoot);
     }
 }

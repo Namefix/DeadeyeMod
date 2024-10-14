@@ -1,6 +1,6 @@
 package com.namefix.sound;
 
-import com.namefix.deadeye.Deadeye;
+import com.namefix.deadeye.DeadeyeClient;
 import net.minecraft.client.sound.AbstractSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
@@ -38,7 +38,7 @@ public class SoundBackgroundLoop extends AbstractSoundInstance implements Tickab
             this.x = this.player.getX();
             this.y = this.player.getY();
             this.z = this.player.getZ();
-            if(this.pitchShift) this.pitch = 1f + Deadeye.deadeyeEnding;
+            if(this.pitchShift) this.pitch = 1f + DeadeyeClient.deadeyeEnding;
         }
     }
 

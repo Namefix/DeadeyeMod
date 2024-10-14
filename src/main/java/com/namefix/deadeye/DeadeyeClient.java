@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Deadeye {
-    private Deadeye() {}
+public class DeadeyeClient {
+    private DeadeyeClient() {}
     public static PlayerSaveData playerData = new PlayerSaveData();
 
     public static boolean isEnabled = false;
@@ -74,7 +74,7 @@ public class Deadeye {
             }
             if (entity.isUsingItem() && entity.getActiveItem() == itemStack) {
                 int useTicks = entity.getItemUseTime();
-                float adjustedUseTicks = useTicks * (Deadeye.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
+                float adjustedUseTicks = useTicks * (DeadeyeClient.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
                 return Math.min(adjustedUseTicks / 20.0f, 1.0f);
             }
             return 0.0F;
@@ -86,7 +86,7 @@ public class Deadeye {
             }
             if (entity.isUsingItem() && entity.getActiveItem() == itemStack) {
                 int useTicks = entity.getItemUseTime();
-                float adjustedUseTicks = useTicks * (Deadeye.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
+                float adjustedUseTicks = useTicks * (DeadeyeClient.isEnabled ? 4.0f : 1.0f); // Compensate for slowed time
                 return Math.min(adjustedUseTicks / 20.0f, 1.0f);
             }
             return 0.0F;
@@ -229,7 +229,7 @@ public class Deadeye {
 
     // Marking targets
     public static void mark(MinecraftClient client) {
-        if(Deadeye.isEnabled && !shootingMarks) {
+        if(DeadeyeClient.isEnabled && !shootingMarks) {
             if(marks.size() >= markLimit) return;
             assert client.player != null;
             ItemStack item = client.player.getMainHandStack();
