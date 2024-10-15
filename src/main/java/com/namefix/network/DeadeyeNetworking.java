@@ -37,7 +37,7 @@ public class DeadeyeNetworking {
 
     public static void initializeServerReceivers() {
         ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_TOGGLE, DeadeyeServer::deadeyeToggle);
-        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOOT, DeadeyeServer::spawnDeadeyeProjectile);
+        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOOT, DeadeyeServer::receiveDeadeyeTargetShoot);
         ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_MARKING, DeadeyeServer::updateMarkingStatus);
     }
 

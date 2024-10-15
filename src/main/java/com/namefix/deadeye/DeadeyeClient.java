@@ -1,6 +1,7 @@
 package com.namefix.deadeye;
 
 import com.namefix.DeadeyeMod;
+import com.namefix.DeadeyeMod.TargetingInteractionType;
 import com.namefix.data.PlayerSaveData;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.KeybindHandler;
@@ -58,13 +59,6 @@ public class DeadeyeClient {
     static long lastHeartbeat = System.currentTimeMillis();
     static int heartbeatInDuration = 1150;
     static int heartbeatOutDuration = 350;
-
-    private enum TargetingInteractionType {
-        DEFAULT,
-        BOW,
-        THROWABLE,
-        POINT_BLANK_GUN
-    }
 
     // Adding fast pull functionality to bows when in deadeye
     public static void initializeBowProperties() {
@@ -142,7 +136,7 @@ public class DeadeyeClient {
         assert client.player != null;
 
          ItemStack item = client.player.getMainHandStack();
-        TargetingInteractionType targetingType = TargetingInteractionType.DEFAULT;
+        TargetingInteractionType targetingType;
 
         if(item == null) {
             toggle();
@@ -192,11 +186,20 @@ public class DeadeyeClient {
                     return;
                 }
             }
+            if(targetingType == TargetingInteractionType.POINT_BLANK_GUN) {
+                GunItem gun = (GunItem) item.getItem();
+                if(PointBlankIntegration.getGunAmmo(gun) == 0) {
+                    toggle();
+                    return;
+                }
+
+                if(!PointBlankIntegration.canGunShoot(gun)) return;
+            }
 
             assert client.interactionManager != null;
             switch(targetingType) {
                 // BOW: Simulate shooting
-                case BOW -> ClientPlayNetworking.send(new DeadeyeShootPayload(mark.getCurrentOffset().toVector3f(), marks.size()-1<=0));
+                case BOW -> {}
                 // THROWABLE/ProjectileItem: Execute right click
                 case THROWABLE -> client.interactionManager.interactItem(client.player, client.player.getActiveHand());
                 // POINT_BLANK_GUN: Shoot. (Vic's Point Blank integration)
@@ -204,6 +207,7 @@ public class DeadeyeClient {
                 // DEFAULT: Execute left click
                 case DEFAULT -> KeyBinding.onKeyPressed(client.options.attackKey.getDefaultKey());
             }
+            ClientPlayNetworking.send(new DeadeyeShootPayload(targetingType.toString(), mark.getCurrentOffset().toVector3f(), marks.size()-1<=0));
 
             marks.removeFirst();
             shootCooldown = 15;
@@ -235,8 +239,15 @@ public class DeadeyeClient {
             ItemStack item = client.player.getMainHandStack();
             if(item == null) return;
             if(!deadeyeMarkingItems.contains(item.getItem())) return;
+            TargetingInteractionType interactionType = TargetingInteractionType.DEFAULT;
+
             if(item.getItem() instanceof RangedWeaponItem ranged) {
                 if(!client.player.isInCreativeMode() && !client.player.getInventory().contains(ranged.getProjectiles())) return;
+                interactionType = TargetingInteractionType.BOW;
+            }
+            if(item.getItem() instanceof GunItem) {
+                if(!PointBlankIntegration.canMarkTargets((GunItem) item.getItem(), marks.size()) && marks.isEmpty()) return;
+                interactionType = TargetingInteractionType.POINT_BLANK_GUN;
             }
 
             double maxDistance = 1000;
@@ -255,7 +266,8 @@ public class DeadeyeClient {
 
                 ClientPlayNetworking.send(new DeadeyeMarkingPayload(true));
             }
-            if(marks.size() >= markLimit) startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
+            if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo((GunItem) item.getItem())) startShootingTargets(client.player.getMainHandStack().getItem());
+            if(marks.size() >= markLimit) startShootingTargets(client.player.getMainHandStack().getItem());
         }
     }
 
