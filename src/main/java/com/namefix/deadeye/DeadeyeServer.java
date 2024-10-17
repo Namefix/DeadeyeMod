@@ -58,6 +58,10 @@ public class DeadeyeServer {
         deadeyeUsers.get(context.player().getUuid()).hasMarkedTargets = payload.status();
     }
 
+    public static void updateShootingStatus(DeadeyeShootingPayload payload, ServerPlayNetworking.Context context) {
+        deadeyeUsers.get(context.player().getUuid()).isShootingTargets = payload.status();
+    }
+
     // Receive deadeye target shooting packet
     public static void receiveDeadeyeTargetShoot(DeadeyeShootPayload payload, ServerPlayNetworking.Context context) {
         TargetingInteractionType interactionType = TargetingInteractionType.valueOf(payload.interactionType());

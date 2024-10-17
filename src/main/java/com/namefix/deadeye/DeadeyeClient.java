@@ -10,6 +10,7 @@ import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.payload.*;
 import com.namefix.sound.SoundBackgroundLoop;
 import com.namefix.utils.Utils;
+import com.vicmatskiv.pointblank.item.FireMode;
 import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -47,8 +48,9 @@ public class DeadeyeClient {
     public static float markFocusSpeed = DeadeyeMod.CONFIG.server.markFocusSpeed();
 
     public static boolean shootingMarks = false;
-    static long shootCooldown = System.currentTimeMillis();
-    static int shootTicks = 0;
+    static long lerpWait = 0;
+    static long shootWait = 0;
+    static long startLerpingTime = 0;
     static Item shootStartItem = null;
 
     static SoundBackgroundLoop soundBackground;
@@ -129,8 +131,7 @@ public class DeadeyeClient {
     private static void shootingTick(WorldRenderContext worldRenderContext) {
         if(MinecraftClient.getInstance().isPaused() || !isEnabled) return;
         if(marks.isEmpty() || !shootingMarks) return;
-        shootTicks++;
-        if (System.currentTimeMillis() - shootCooldown < 15) return;
+        if (System.currentTimeMillis() < lerpWait) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
@@ -153,7 +154,8 @@ public class DeadeyeClient {
         float pYaw = client.player.getYaw();
 
         float interpolationFactor = markFocusSpeed * worldRenderContext.tickCounter().getLastFrameDuration();
-        if(shootTicks > 200) interpolationFactor *= 4;
+        if(System.currentTimeMillis() - startLerpingTime > 3_000) interpolationFactor *= 4;
+        if(PointBlankIntegration.getGunFiremode(item) == FireMode.AUTOMATIC) interpolationFactor *= 8;
 
         Vec2f targetHeading = mark.getCurrentHeading();
         float targetPitch = targetHeading.x;
@@ -165,7 +167,7 @@ public class DeadeyeClient {
         float shortestPitch = pPitch + MathHelper.wrapDegrees(targetPitch - pPitch);
         float newPitch = MathHelper.lerp(interpolationFactor, pPitch, shortestPitch);
 
-        if(shootTicks > 1000) {
+        if(System.currentTimeMillis() - startLerpingTime > 10_000) {
             newPitch = targetPitch;
             newYaw = targetYaw;
         }
@@ -179,6 +181,9 @@ public class DeadeyeClient {
         float wrappedTargetYaw = MathHelper.wrapDegrees(targetYaw);
 
         if (Math.abs(wrappedTargetPitch - wrappedNewPitch) < 1f && Math.abs(wrappedTargetYaw - wrappedNewYaw) < 1f) {
+            if(shootWait == 0) shootWait = System.currentTimeMillis() + 250;
+            if(System.currentTimeMillis() < shootWait) return;
+
             targetingType = getTargetingInteractionType(item);
             if(targetingType == TargetingInteractionType.BOW) {
                 if(!client.player.isInCreativeMode() && !client.player.getInventory().contains(((RangedWeaponItem) item.getItem()).getProjectiles())) {
@@ -187,13 +192,12 @@ public class DeadeyeClient {
                 }
             }
             if(targetingType == TargetingInteractionType.POINT_BLANK_GUN) {
-                GunItem gun = (GunItem) item.getItem();
-                if(PointBlankIntegration.getGunAmmo(gun) == 0) {
+                if(PointBlankIntegration.getGunAmmo(item) == 0) {
                     toggle();
                     return;
                 }
 
-                if(!PointBlankIntegration.canGunShoot(gun)) return;
+                if(!PointBlankIntegration.canGunShoot(item)) return;
             }
 
             assert client.interactionManager != null;
@@ -210,8 +214,9 @@ public class DeadeyeClient {
             ClientPlayNetworking.send(new DeadeyeShootPayload(targetingType.toString(), mark.getCurrentOffset().toVector3f(), marks.size()-1<=0));
 
             marks.removeFirst();
-            shootCooldown = 15;
-            shootTicks = 0;
+            lerpWait = System.currentTimeMillis() + 100;
+            shootWait = 0;
+            startLerpingTime = System.currentTimeMillis();
 
             if (marks.isEmpty()) {
                 toggle();
@@ -229,6 +234,10 @@ public class DeadeyeClient {
     private static void startShootingTargets(Item startItem) {
         shootStartItem = startItem;
         shootingMarks = true;
+        startLerpingTime = System.currentTimeMillis();
+        lerpWait = System.currentTimeMillis() + 250;
+
+        ClientPlayNetworking.send(new DeadeyeShootingPayload(true));
     }
 
     // Marking targets
@@ -246,7 +255,7 @@ public class DeadeyeClient {
                 interactionType = TargetingInteractionType.BOW;
             }
             if(item.getItem() instanceof GunItem) {
-                if(!PointBlankIntegration.canMarkTargets((GunItem) item.getItem(), marks.size()) && marks.isEmpty()) return;
+                if(!PointBlankIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
                 interactionType = TargetingInteractionType.POINT_BLANK_GUN;
             }
 
@@ -266,7 +275,7 @@ public class DeadeyeClient {
 
                 ClientPlayNetworking.send(new DeadeyeMarkingPayload(true));
             }
-            if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo((GunItem) item.getItem())) startShootingTargets(client.player.getMainHandStack().getItem());
+            if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(item)) startShootingTargets(client.player.getMainHandStack().getItem());
             if(marks.size() >= markLimit) startShootingTargets(client.player.getMainHandStack().getItem());
         }
     }
@@ -294,7 +303,7 @@ public class DeadeyeClient {
             if(playerData.deadeyeMeter == 0.0f) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, soundVolume/20, 1.0f);
             marks.clear();
             shootingMarks = false;
-            shootTicks = 0;
+            startLerpingTime = 0;
             isEnabled = false;
         }
         ClientPlayNetworking.send(new DeadeyeTogglePayload(isEnabled));
