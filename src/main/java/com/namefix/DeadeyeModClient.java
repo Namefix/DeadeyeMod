@@ -1,6 +1,6 @@
 package com.namefix;
 
-import com.namefix.deadeye.Deadeye;
+import com.namefix.deadeye.DeadeyeClient;
 import com.namefix.deadeye.DeadeyeEffects;
 import com.namefix.handlers.CommandHandler;
 import com.namefix.handlers.KeybindHandler;
@@ -18,16 +18,16 @@ public class DeadeyeModClient implements ClientModInitializer {
     public void onInitializeClient() {
         KeybindHandler.initialize();
 
-        ClientTickEvents.END_CLIENT_TICK.register(Deadeye::deadeyeListener);
-        ClientTickEvents.END_CLIENT_TICK.register(Deadeye::tick);
-        WorldRenderEvents.START.register(Deadeye::render);
+        ClientTickEvents.END_CLIENT_TICK.register(DeadeyeClient::deadeyeListener);
+        ClientTickEvents.END_CLIENT_TICK.register(DeadeyeClient::tick);
+        WorldRenderEvents.START.register(DeadeyeClient::render);
 
         HudRenderCallback.EVENT.register(DeadeyeEffects::renderGraphics);
         ShaderEffectRenderCallback.EVENT.register(DeadeyeEffects::renderShader);
 
         DeadeyeNetworking.initializeClientReceivers();
 
-        Deadeye.initializeBowProperties();
+        DeadeyeClient.initializeBowProperties();
         if(FabricLoader.getInstance().isModLoaded("pointblank")) PointBlankIntegration.initialize();
 
         CommandHandler.initializeClient();

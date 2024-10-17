@@ -1,6 +1,6 @@
 package com.namefix.mixin;
 
-import com.namefix.deadeye.Deadeye;
+import com.namefix.deadeye.DeadeyeClient;
 import com.namefix.deadeye.DeadeyeServer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,7 +24,7 @@ public class BowItemMixin {
     @Inject(method = "getPullProgress", at = @At("HEAD"), cancellable = true)
     @Environment(EnvType.CLIENT)
     private static void modifyBowPullProgressClient(int useTicks, CallbackInfoReturnable<Float> info) {
-        if(Deadeye.isEnabled) {
+        if(DeadeyeClient.isEnabled) {
             float drawSpeedMultiplier = 4.0f;
             info.setReturnValue(Math.min((float) useTicks / (20.0f / drawSpeedMultiplier), 1.0f));
         }

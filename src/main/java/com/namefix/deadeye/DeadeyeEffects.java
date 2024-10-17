@@ -30,18 +30,18 @@ public class DeadeyeEffects {
     public static boolean renderDisabled = DeadeyeMod.CONFIG.client.disableDeadeyeEffects();
 
     public static void renderShader(float tickDelta) {
-        if(Deadeye.isEnabled && !renderDisabled) {
+        if(DeadeyeClient.isEnabled && !renderDisabled) {
             DEADEYE_SHADER.setUniformValue("TickDelta", tickDelta);
             DEADEYE_SHADER.setUniformValue("VignetteStrength", vignetteStrength);
-            DEADEYE_SHADER.setUniformValue("DeadeyeEndValue", Deadeye.deadeyeEnding);
+            DEADEYE_SHADER.setUniformValue("DeadeyeEndValue", DeadeyeClient.deadeyeEnding);
             DEADEYE_SHADER.render(tickDelta);
         }
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        if(Deadeye.isEnabled) {
+        if(DeadeyeClient.isEnabled) {
             // Render dead eye marks
-            Deadeye.marks.forEach((mark) -> {
+            DeadeyeClient.marks.forEach((mark) -> {
                 mark.renderTick++;
                 Vec3d markPos = RendererUtils.worldSpaceToScreenSpace(mark.getCurrentOffset());
                 if (!RendererUtils.screenSpaceCoordinateIsVisible(markPos)) return;

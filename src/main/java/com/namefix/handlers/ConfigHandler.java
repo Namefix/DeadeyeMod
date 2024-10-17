@@ -1,7 +1,7 @@
 package com.namefix.handlers;
 
 import com.namefix.DeadeyeMod;
-import com.namefix.deadeye.Deadeye;
+import com.namefix.deadeye.DeadeyeClient;
 import com.namefix.deadeye.DeadeyeEffects;
 import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.network.payload.ReloadConfigPayload;
@@ -32,15 +32,15 @@ public class ConfigHandler {
     public static void ReloadConfigClient() {
         DeadeyeMod.LOGGER.info("Reloading client config...");
         DeadeyeMod.CONFIG.load();
-        Deadeye.deadeyeMarkableEntities = LoadDeadeyeMarkableEntities();
-        Deadeye.deadeyeMarkingItems = LoadDeadeyeMarkingItems();
-        Deadeye.markLimit = DeadeyeMod.CONFIG.server.maxMarks();
-        Deadeye.markFocusSpeed = DeadeyeMod.CONFIG.server.markFocusSpeed();
-        Deadeye.deadeyeConsumeRate = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount();
+        DeadeyeClient.deadeyeMarkableEntities = LoadDeadeyeMarkableEntities();
+        DeadeyeClient.deadeyeMarkingItems = LoadDeadeyeMarkingItems();
+        DeadeyeClient.markLimit = DeadeyeMod.CONFIG.server.maxMarks();
+        DeadeyeClient.markFocusSpeed = DeadeyeMod.CONFIG.server.markFocusSpeed();
+        DeadeyeClient.deadeyeConsumeRate = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount();
 
         DeadeyeEffects.renderDisabled = DeadeyeMod.CONFIG.client.disableDeadeyeEffects();
         DeadeyeEffects.vignetteStrength = DeadeyeMod.CONFIG.client.deadeyeVignetteStrength();
-        Deadeye.soundVolume = DeadeyeMod.CONFIG.client.deadeyeVolume()/100;
+        DeadeyeClient.soundVolume = DeadeyeMod.CONFIG.client.deadeyeVolume()/100;
         DeadeyeEffects.setMarkSize(DeadeyeMod.CONFIG.client.deadeyeMarkSize());
     }
 

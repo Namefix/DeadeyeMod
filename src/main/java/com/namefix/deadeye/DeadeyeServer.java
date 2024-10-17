@@ -1,6 +1,7 @@
 package com.namefix.deadeye;
 
 import com.namefix.DeadeyeMod;
+import com.namefix.DeadeyeMod.TargetingInteractionType;
 import com.namefix.data.PlayerSaveData;
 import com.namefix.data.PlayerServerData;
 import com.namefix.data.StateSaverAndLoader;
@@ -8,7 +9,6 @@ import com.namefix.handlers.ConfigHandler;
 import com.namefix.network.payload.*;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -16,14 +16,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
@@ -60,25 +58,36 @@ public class DeadeyeServer {
         deadeyeUsers.get(context.player().getUuid()).hasMarkedTargets = payload.status();
     }
 
-    // Spawn deadeye ranged item projectile
-    public static void spawnDeadeyeProjectile(DeadeyeShootPayload payload, ServerPlayNetworking.Context context) {
+    public static void updateShootingStatus(DeadeyeShootingPayload payload, ServerPlayNetworking.Context context) {
+        deadeyeUsers.get(context.player().getUuid()).isShootingTargets = payload.status();
+    }
+
+    // Receive deadeye target shooting packet
+    public static void receiveDeadeyeTargetShoot(DeadeyeShootPayload payload, ServerPlayNetworking.Context context) {
+        TargetingInteractionType interactionType = TargetingInteractionType.valueOf(payload.interactionType());
         Vec3d pos = context.player().getEyePos();
         ItemStack item = context.player().getMainHandStack();
+
         if (!context.player().isInCreativeMode() && item.getItem() instanceof RangedWeaponItem ranged) {
             if (!context.player().getInventory().contains(ranged.getProjectiles())) return;
             context.player().getProjectileType(item).setCount(context.player().getProjectileType(item).getCount() - 1);
         }
 
+        switch(interactionType) {
+            case BOW -> {
+                ItemStack projectileItem = context.player().getProjectileType(item).copyWithCount(1);
+                ArrowEntity arrow = new ArrowEntity(context.player().getWorld(), pos.x, pos.y, pos.z, projectileItem, item);
+                arrow.setOwner(context.player());
+                Vector3f motion = payload.shootTarget().sub(context.player().getEyePos().toVector3f());
+                arrow.addVelocity(new Vec3d(motion.mul(DeadeyeMod.CONFIG.server.markProjectileSpeedMultiplier())));
+                context.player().getWorld().spawnEntity(arrow);
+
+                context.player().getWorld().playSound(context.player(), pos.x, pos.y, pos.z, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            }
+        }
+
         deadeyeUsers.get(context.player().getUuid()).isShootingTargets = !payload.isLast();
-
-        ItemStack projectileItem = context.player().getProjectileType(item).copyWithCount(1);
-        ArrowEntity arrow = new ArrowEntity(context.player().getWorld(), pos.x, pos.y, pos.z, projectileItem, item);
-        arrow.setOwner(context.player());
-        Vector3f motion = payload.shootTarget().sub(context.player().getEyePos().toVector3f());
-        arrow.addVelocity(new Vec3d(motion.mul(DeadeyeMod.CONFIG.server.markProjectileSpeedMultiplier())));
-        context.player().getWorld().spawnEntity(arrow);
-
-        context.player().getWorld().playSound(context.player(), pos.x, pos.y, pos.z, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        DeadeyeMod.LOGGER.info(Boolean.toString(!payload.isLast()));
     }
 
     // Give deadeye meter to a player after kill

@@ -21,6 +21,13 @@ public class DeadeyeMod implements ModInitializer {
 
 	public static final com.namefix.DeadeyeModConfig CONFIG = com.namefix.DeadeyeModConfig.createAndLoad();
 
+	public enum TargetingInteractionType {
+		DEFAULT,
+		BOW,
+		THROWABLE,
+		POINT_BLANK_GUN
+	}
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("People don't forget. Nothing gets forgiven.");
