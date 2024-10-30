@@ -287,6 +287,10 @@ public class DeadeyeClient {
         if(!isEnabled) {
             client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, soundVolume, 1.0f);
 
+            DeadeyeEffects.lightleakDirection = client.player.getRandom().nextBoolean();
+            DeadeyeEffects.lightleakTimer = System.currentTimeMillis();
+            DeadeyeEffects.lightleakStatus = 0;
+
             soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, soundVolume/2, true);
             client.getSoundManager().play(soundBackground);
             soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, soundVolume/20, false);

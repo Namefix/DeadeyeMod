@@ -1,16 +1,30 @@
 package com.namefix.deadeye;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.namefix.DeadeyeMod;
 import me.x150.renderer.util.RendererUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.ladysnake.satin.api.managed.ManagedShaderEffect;
 import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 public class DeadeyeEffects {
     DeadeyeEffects() {}
+
+    // load every lightleak texture
+    private static final List<Identifier> DEADEYE_LIGHTLEAK = IntStream.rangeClosed(1, 15)
+            .mapToObj(i -> Identifier.of(DeadeyeMod.MOD_ID, String.format("textures/lightleak/lightleak%02d.png", i)))
+            .toList();
+
+    public static long lightleakTimer = 0;
+    public static int lightleakStatus = 0;
+    public static boolean lightleakDirection = false;
 
     private static final Identifier DEADEYE_MARK = Identifier.of(DeadeyeMod.MOD_ID, "textures/cross.png");
     static int markWidth = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
@@ -39,6 +53,8 @@ public class DeadeyeEffects {
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) renderLightleak(drawContext, renderTickCounter);
+
         if(DeadeyeClient.isEnabled) {
             // Render dead eye marks
             DeadeyeClient.marks.forEach((mark) -> {
@@ -62,6 +78,36 @@ public class DeadeyeEffects {
                 );
             });
             drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    private static void renderLightleak(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        if (DeadeyeClient.isEnabled) {
+            if (lightleakStatus == 15) return;
+            int width = drawContext.getScaledWindowWidth();
+            int height = drawContext.getScaledWindowHeight();
+
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.disableDepthTest();
+
+            drawContext.getMatrices().push();
+            drawContext.getMatrices().translate((float) width / 2, (float) height / 2, 0.0F);
+            drawContext.getMatrices().scale(1.0F, 1.0F, 1.0F);
+            drawContext.getMatrices().translate((float) -width / 2, (float) -height / 2, 0.0F);
+            drawContext.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            drawContext.drawTexture(
+                    DEADEYE_LIGHTLEAK.get(lightleakStatus), 0, 0, -90, 0, 0, width, height, lightleakDirection ? -width : width, height
+            );
+            drawContext.getMatrices().pop();
+
+            RenderSystem.disableBlend();
+            RenderSystem.enableDepthTest();
+
+            if (System.currentTimeMillis() - lightleakTimer > 40) {
+                lightleakStatus = MathHelper.clamp(lightleakStatus + 1, 0, 15);
+                lightleakTimer = System.currentTimeMillis();
+            }
         }
     }
 }
