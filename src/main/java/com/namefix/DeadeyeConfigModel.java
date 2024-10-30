@@ -48,6 +48,7 @@ public class DeadeyeConfigModel {
     public static class ClientNest {
         // Client
         public boolean disableDeadeyeEffects = false;
+        public boolean disableLightleakEffect = false;
         @RangeConstraint(min = 0f, max = 10.0f)
         public float deadeyeVignetteStrength = 3.0f;
         @RangeConstraint(min = 0, max = 100)

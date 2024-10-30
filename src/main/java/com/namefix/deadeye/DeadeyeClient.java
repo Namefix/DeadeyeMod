@@ -55,7 +55,6 @@ public class DeadeyeClient {
 
     static SoundBackgroundLoop soundBackground;
     static SoundBackgroundLoop soundBackground2;
-    public static float soundVolume = DeadeyeMod.CONFIG.client.deadeyeVolume()/100;
 
     static boolean heartbeat = false;
     static long lastHeartbeat = System.currentTimeMillis();
@@ -114,13 +113,13 @@ public class DeadeyeClient {
         assert client.player != null;
         if(!heartbeat) {    // beat in
             if(System.currentTimeMillis() - lastHeartbeat > heartbeatInDuration-(heartbeatInDuration*(deadeyeEnding/1.5))) {
-                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_IN, soundVolume, 1.0f);
+                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_IN, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
                 lastHeartbeat = System.currentTimeMillis();
                 heartbeat = true;
             }
         } else {            // beat out
             if(System.currentTimeMillis() - lastHeartbeat > heartbeatOutDuration-(heartbeatOutDuration*(deadeyeEnding/1.5))) {
-                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_OUT, soundVolume, 1.0f);
+                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_OUT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
                 lastHeartbeat = System.currentTimeMillis();
                 heartbeat = false;
             }
@@ -271,7 +270,7 @@ public class DeadeyeClient {
                 if(ent == null) return;
 
                 marks.add(new DeadeyeTarget(ent, hit.getPos()));
-                client.player.playSound(SoundHandler.DEADEYE_ARTHUR_PAINT, soundVolume, 1.0f); // placeholder for now
+                client.player.playSound(SoundHandler.DEADEYE_ARTHUR_PAINT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
 
                 ClientPlayNetworking.send(new DeadeyeMarkingPayload(true));
             }
@@ -285,26 +284,26 @@ public class DeadeyeClient {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
         if(!isEnabled) {
-            client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, soundVolume, 1.0f);
+            client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
 
             DeadeyeEffects.lightleakDirection = client.player.getRandom().nextBoolean();
             DeadeyeEffects.lightleakTimer = System.currentTimeMillis();
             DeadeyeEffects.lightleakStatus = 0;
 
-            soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, soundVolume/2, true);
+            soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/2, true);
             client.getSoundManager().play(soundBackground);
-            soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, soundVolume/20, false);
+            soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, false);
             client.getSoundManager().play(soundBackground2);
 
             isEnabled = true;
         }
         else {
-            client.player.playSound(SoundHandler.DEADEYE_JOHN_EXIT, soundVolume, 1.0f);
+            client.player.playSound(SoundHandler.DEADEYE_JOHN_EXIT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
 
             ClientPlayNetworking.send(new DeadeyeMarkingPayload(false));
             soundBackground.setDone();
             soundBackground2.setDone();
-            if(playerData.deadeyeMeter == 0.0f) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, soundVolume/20, 1.0f);
+            if(playerData.deadeyeMeter == 0.0f) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
             marks.clear();
             shootingMarks = false;
             startLerpingTime = 0;

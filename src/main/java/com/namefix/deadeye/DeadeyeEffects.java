@@ -27,38 +27,27 @@ public class DeadeyeEffects {
     public static boolean lightleakDirection = false;
 
     private static final Identifier DEADEYE_MARK = Identifier.of(DeadeyeMod.MOD_ID, "textures/cross.png");
-    static int markWidth = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
-    static int markHeight = DeadeyeMod.CONFIG.client.deadeyeMarkSize();;
-    static int halfMarkWidth = markWidth / 2;
-    static int halfMarkHeight = markHeight / 2;
-
-    public static void setMarkSize(int size) {
-        markWidth = size;
-        markHeight = size;
-        halfMarkWidth = markWidth / 2;
-        halfMarkHeight = markHeight / 2;
-    }
+    static int markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
 
     private static final ManagedShaderEffect DEADEYE_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json"));
-    public static float vignetteStrength = DeadeyeMod.CONFIG.client.deadeyeVignetteStrength();
-    public static boolean renderDisabled = DeadeyeMod.CONFIG.client.disableDeadeyeEffects();
 
     public static void renderShader(float tickDelta) {
-        if(DeadeyeClient.isEnabled && !renderDisabled) {
+        if(DeadeyeClient.isEnabled && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
             DEADEYE_SHADER.setUniformValue("TickDelta", tickDelta);
-            DEADEYE_SHADER.setUniformValue("VignetteStrength", vignetteStrength);
+            DEADEYE_SHADER.setUniformValue("VignetteStrength", DeadeyeMod.CONFIG.client.deadeyeVignetteStrength());
             DEADEYE_SHADER.setUniformValue("DeadeyeEndValue", DeadeyeClient.deadeyeEnding);
             DEADEYE_SHADER.render(tickDelta);
         }
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) renderLightleak(drawContext, renderTickCounter);
+        if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext, renderTickCounter);
 
         if(DeadeyeClient.isEnabled) {
             // Render dead eye marks
             DeadeyeClient.marks.forEach((mark) -> {
                 mark.renderTick++;
+                markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
                 Vec3d markPos = RendererUtils.worldSpaceToScreenSpace(mark.getCurrentOffset());
                 if (!RendererUtils.screenSpaceCoordinateIsVisible(markPos)) return;
 
@@ -66,14 +55,14 @@ public class DeadeyeEffects {
                 else drawContext.setShaderColor(0.78f, 0.09f, 0.09f, 1.0f);
 
                 int sizeModifier = 0;
-                if(mark.renderTick < 5) sizeModifier = markWidth;
-                else if(mark.renderTick < 10) sizeModifier = markWidth/2;
+                if(mark.renderTick < 5) sizeModifier = markSize;
+                else if(mark.renderTick < 10) sizeModifier = markSize/2;
 
-                int posX = (int) Math.round(markPos.x) - halfMarkWidth-sizeModifier/2;
-                int posY = (int) Math.round(markPos.y) - halfMarkHeight-sizeModifier/2;
+                int posX = (int) Math.round(markPos.x) - markSize/2-sizeModifier/2;
+                int posY = (int) Math.round(markPos.y) - markSize/2-sizeModifier/2;
 
                 drawContext.drawTexture(
-                        DEADEYE_MARK, posX, posY, markWidth+sizeModifier, markHeight+sizeModifier,
+                        DEADEYE_MARK, posX, posY, markSize+sizeModifier, markSize+sizeModifier,
                         0, 0, 64, 64, 64, 64
                 );
             });
