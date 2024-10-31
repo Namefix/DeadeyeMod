@@ -37,11 +37,6 @@ public class ConfigHandler {
         DeadeyeClient.markLimit = DeadeyeMod.CONFIG.server.maxMarks();
         DeadeyeClient.markFocusSpeed = DeadeyeMod.CONFIG.server.markFocusSpeed();
         DeadeyeClient.deadeyeConsumeRate = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount();
-
-        DeadeyeEffects.renderDisabled = DeadeyeMod.CONFIG.client.disableDeadeyeEffects();
-        DeadeyeEffects.vignetteStrength = DeadeyeMod.CONFIG.client.deadeyeVignetteStrength();
-        DeadeyeClient.soundVolume = DeadeyeMod.CONFIG.client.deadeyeVolume()/100;
-        DeadeyeEffects.setMarkSize(DeadeyeMod.CONFIG.client.deadeyeMarkSize());
     }
 
 
@@ -49,13 +44,20 @@ public class ConfigHandler {
         List<String> entities = DeadeyeMod.CONFIG.server.markableEntities();
         List<EntityType<?>> entityTypes = new ArrayList<>();
 
-        // TODO: Support wildcard in entity types (minecraft:*)
         for (String entity : entities) {
-            if(!Registries.ENTITY_TYPE.containsId(Identifier.tryParse(entity))) {
-                DeadeyeMod.LOGGER.warn("Error while parsing entity type: {}", entity);
-                continue;
+            if (entity.endsWith(":*")) {
+                String namespace = entity.split(":")[0];
+                Registries.ENTITY_TYPE.stream()
+                        .filter(entityType -> namespace.equals(Registries.ENTITY_TYPE.getId(entityType).getNamespace()))
+                        .forEach(entityTypes::add);
+            } else {
+                Identifier id = Identifier.tryParse(entity);
+                if (id == null || !Registries.ENTITY_TYPE.containsId(id)) {
+                    DeadeyeMod.LOGGER.warn("Error while parsing entity type: {}", entity);
+                    continue;
+                }
+                entityTypes.add(Registries.ENTITY_TYPE.get(id));
             }
-            entityTypes.add(Registries.ENTITY_TYPE.get(Identifier.of(entity)));
         }
 
         return entityTypes;
@@ -65,13 +67,20 @@ public class ConfigHandler {
         List<String> itemStrings = DeadeyeMod.CONFIG.server.markingItems();
         List<Item> items = new ArrayList<>();
 
-        // TODO: Support wildcard in item types (minecraft:*)
         for (String item : itemStrings) {
-            if(!Registries.ITEM.containsId(Identifier.tryParse(item))) {
-                DeadeyeMod.LOGGER.warn("Error while parsing item: {}", item);
-                continue;
+            if (item.endsWith(":*")) {
+                String namespace = item.split(":")[0];
+                Registries.ITEM.stream()
+                        .filter(itemType -> namespace.equals(Registries.ITEM.getId(itemType).getNamespace()))
+                        .forEach(items::add);
+            } else {
+                Identifier id = Identifier.tryParse(item);
+                if (id == null || !Registries.ITEM.containsId(id)) {
+                    DeadeyeMod.LOGGER.warn("Error while parsing item: {}", item);
+                    continue;
+                }
+                items.add(Registries.ITEM.get(id));
             }
-            items.add(Registries.ITEM.get(Identifier.of(item)));
         }
 
         return items;

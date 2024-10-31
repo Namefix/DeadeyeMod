@@ -1,0 +1,30 @@
+{
+  "category.deadeye-mod": "Deadeye Mod",
+  "key.deadeye-mod.toggle": "Deadeye'ı Aç/Kapat",
+  "key.deadeye-mod.mark": "Hedef İşaretle",
+  "key.deadeye-mod.shoot_targets": "Hedefleri Vur",
+
+  "text.config.deadeye-mod.title": "Deadeye Mod",
+
+  "text.config.deadeye-mod.category.server": "Sunucu",
+  "text.config.deadeye-mod.option.server.deadeyeSlowdown": "Deadeye Yavaşlatması",
+  "text.config.deadeye-mod.option.server.markableEntities": "İşaretlenebilir Canlılar",
+  "text.config.deadeye-mod.option.server.markingItems": "İşaretleme Eşyaları",
+  "text.config.deadeye-mod.option.server.markFocusSpeed": "İşaret Dönme Hızı",
+  "text.config.deadeye-mod.option.server.maxMarks": "Maksimum İşaret",
+  "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier": "İşaret Mermi Hız Çarpanı",
+  "text.config.deadeye-mod.option.server.deadeyeIdleConsumeAmount": "Deadeye Kullanım Miktarı (Tick Başına)",
+  "text.config.deadeye-mod.option.server.deadeyeKillRefillAmount": "Öldürme Başına Deadeye Dolumu",
+
+  "text.config.deadeye-mod.category.client": "İstemci",
+  "text.config.deadeye-mod.option.client.disableDeadeyeEffects": "Deadeye Efektlerini Kapat",
+  "text.config.deadeye-mod.option.client.disableLightleakEffect": "Deadeye Işık Süzmesini Kapat",
+  "text.config.deadeye-mod.option.client.deadeyeVignetteStrength": "Deadeye Vinyet Yoğunluğu",
+  "text.config.deadeye-mod.option.client.deadeyeVolume": "Deadeye Ses Efekt Seviyesi",
+  "text.config.deadeye-mod.option.client.deadeyeMarkSize": "Deadeye İşaret Boyutu",
+
+  "sound.deadeye-mod.enter": "Deadeye'a girildi",
+  "sound.deadeye-mod.exit": "Deadeye'dan çıkıldı",
+  "sound.deadeye-mod.background": "Odaklanıyor",
+  "sound.deadeye-mod.paint": "Hedef boyandı"
+}

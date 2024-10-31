@@ -18,6 +18,7 @@
 
   "text.config.deadeye-mod.category.client": "Client",
   "text.config.deadeye-mod.option.client.disableDeadeyeEffects": "Disable Deadeye Effects",
+  "text.config.deadeye-mod.option.client.disableLightleakEffect": "Disable Light Leak Effects",
   "text.config.deadeye-mod.option.client.deadeyeVignetteStrength": "Deadeye Vignette Strength",
   "text.config.deadeye-mod.option.client.deadeyeVolume": "Deadeye Sound Effect Volume",
   "text.config.deadeye-mod.option.client.deadeyeMarkSize": "Deadeye Mark Size",
