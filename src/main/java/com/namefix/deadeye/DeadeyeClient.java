@@ -10,7 +10,6 @@ import com.namefix.handlers.KeybindHandler;
 import com.namefix.handlers.SoundHandler;
 import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.payload.*;
-import com.namefix.sound.SoundBackgroundLoop;
 import com.namefix.utils.Utils;
 import com.vicmatskiv.pointblank.item.FireMode;
 import com.vicmatskiv.pointblank.item.GunItem;
@@ -23,7 +22,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -55,14 +53,6 @@ public class DeadeyeClient {
     static long shootWait = 0;
     static long startLerpingTime = 0;
     static Item shootStartItem = null;
-
-    static SoundBackgroundLoop soundBackground;
-    static SoundBackgroundLoop soundBackground2;
-
-    static boolean heartbeat = false;
-    static long lastHeartbeat = System.currentTimeMillis();
-    static int heartbeatInDuration = 1150;
-    static int heartbeatOutDuration = 350;
 
     // Adding fast pull functionality to bows when in deadeye
     public static void initializeBowProperties() {
@@ -106,27 +96,7 @@ public class DeadeyeClient {
 
     public static void render(WorldRenderContext worldRenderContext) {
         shootingTick(worldRenderContext);
-        heartbeatTick();
-    }
-
-    // Processing heartbeats
-    private static void heartbeatTick() {
-        if(!isEnabled || MinecraftClient.getInstance().isPaused()) return;
-        MinecraftClient client = MinecraftClient.getInstance();
-        assert client.player != null;
-        if(!heartbeat) {    // beat in
-            if(System.currentTimeMillis() - lastHeartbeat > heartbeatInDuration-(heartbeatInDuration*(deadeyeEnding/1.5))) {
-                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_IN, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
-                lastHeartbeat = System.currentTimeMillis();
-                heartbeat = true;
-            }
-        } else {            // beat out
-            if(System.currentTimeMillis() - lastHeartbeat > heartbeatOutDuration-(heartbeatOutDuration*(deadeyeEnding/1.5))) {
-                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_OUT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
-                lastHeartbeat = System.currentTimeMillis();
-                heartbeat = false;
-            }
-        }
+        DeadeyeEffects.heartbeatTick();
     }
 
     // All logic related to shooting marked targets
@@ -285,23 +255,11 @@ public class DeadeyeClient {
         else if(status == DeadeyeMod.DeadeyeStatus.DISABLED || status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) isEnabled = false;
 
         if(isEnabled) {
-            client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
-
-            DeadeyeEffects.lightleakDirection = client.player.getRandom().nextBoolean();
-            DeadeyeEffects.lightleakTimer = System.currentTimeMillis();
-            DeadeyeEffects.lightleakStatus = 0;
-
-            soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/2, true);
-            client.getSoundManager().play(soundBackground);
-            soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, false);
-            client.getSoundManager().play(soundBackground2);
+            DeadeyeEffects.updateEffects(status);
         }
         else {
-            client.player.playSound(SoundHandler.DEADEYE_JOHN_EXIT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+            DeadeyeEffects.updateEffects(status);
 
-            soundBackground.setDone();
-            soundBackground2.setDone();
-            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
             marks.clear();
             shootingMarks = false;
             startLerpingTime = 0;

@@ -2,9 +2,13 @@ package com.namefix.deadeye;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.namefix.DeadeyeMod;
+import com.namefix.handlers.SoundHandler;
+import com.namefix.sound.SoundBackgroundLoop;
 import me.x150.renderer.util.RendererUtils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -26,10 +30,61 @@ public class DeadeyeEffects {
     public static int lightleakStatus = 0;
     public static boolean lightleakDirection = false;
 
+    static SoundBackgroundLoop soundBackground;
+    static SoundBackgroundLoop soundBackground2;
+
+    static boolean heartbeat = false;
+    static long lastHeartbeat = System.currentTimeMillis();
+    static int heartbeatInDuration = 1150;
+    static int heartbeatOutDuration = 350;
+
     private static final Identifier DEADEYE_MARK = Identifier.of(DeadeyeMod.MOD_ID, "textures/cross.png");
     static int markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
 
     private static final ManagedShaderEffect DEADEYE_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json"));
+
+    // Processing heartbeats
+    public static void heartbeatTick() {
+        if(!DeadeyeClient.isEnabled || MinecraftClient.getInstance().isPaused()) return;
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
+        if(!heartbeat) {    // beat in
+            if(System.currentTimeMillis() - lastHeartbeat > heartbeatInDuration-(heartbeatInDuration*(DeadeyeClient.deadeyeEnding/1.5))) {
+                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_IN, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+                lastHeartbeat = System.currentTimeMillis();
+                heartbeat = true;
+            }
+        } else {            // beat out
+            if(System.currentTimeMillis() - lastHeartbeat > heartbeatOutDuration-(heartbeatOutDuration*(DeadeyeClient.deadeyeEnding/1.5))) {
+                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_OUT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+                lastHeartbeat = System.currentTimeMillis();
+                heartbeat = false;
+            }
+        }
+    }
+
+    public static void updateEffects(DeadeyeMod.DeadeyeStatus status) {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        if(status == DeadeyeMod.DeadeyeStatus.ENABLED) {
+            client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+
+            lightleakDirection = client.player.getRandom().nextBoolean();
+            lightleakTimer = System.currentTimeMillis();
+            lightleakStatus = 0;
+
+            soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/2, true);
+            client.getSoundManager().play(soundBackground);
+            soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, false);
+            client.getSoundManager().play(soundBackground2);
+        } else if(status == DeadeyeMod.DeadeyeStatus.DISABLED || status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) {
+            client.player.playSound(SoundHandler.DEADEYE_JOHN_EXIT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
+
+            soundBackground.setDone();
+            soundBackground2.setDone();
+        }
+    }
 
     public static void renderShader(float tickDelta) {
         if(DeadeyeClient.isEnabled && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
