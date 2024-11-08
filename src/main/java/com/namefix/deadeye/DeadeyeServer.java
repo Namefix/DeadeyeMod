@@ -110,6 +110,7 @@ public class DeadeyeServer {
         ServerPlayerEntity player = context.player();
         if(!deadeyeUsers.containsKey(player.getUuid())) return;
         PlayerServerData data = deadeyeUsers.get(player.getUuid());
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
 
         TargetingInteractionType interactionType = TargetingInteractionType.values()[payload.interactionType()];
         Vec3d pos = context.player().getEyePos();
@@ -141,7 +142,7 @@ public class DeadeyeServer {
 
         data.markList.removeFirst();
 
-        if(data.markList.isEmpty()) updateDeadeyeStatus(context.server(), player, DeadeyeMod.DeadeyeStatus.DISABLED);
+        if(data.markList.isEmpty()) updateDeadeyeStatus(context.server(), player, playerState.deadeyeMeter <= 0.0f ? DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY : DeadeyeMod.DeadeyeStatus.DISABLED);
     }
 
     public static void updatePhase(ServerPlayerEntity player, PlayerServerData.ShootingPhase phase) {
