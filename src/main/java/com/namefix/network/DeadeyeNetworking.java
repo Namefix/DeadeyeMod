@@ -12,43 +12,50 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 public class DeadeyeNetworking {
-    public static final CustomPayload.Id<DeadeyeTogglePayload> DEADEYE_TOGGLE = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_toggle"));
-    public static final CustomPayload.Id<DeadeyeShootPayload> DEADEYE_SHOOT = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_shoot"));
     public static final CustomPayload.Id<ReloadConfigPayload> RELOAD_CONFIG = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "reload_config"));
     public static final CustomPayload.Id<DeadeyeMeterPayload> DEADEYE_METER = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_meter"));
     public static final CustomPayload.Id<InitialSyncPayload> INITIAL_SYNC = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "initial_sync"));
-    public static final CustomPayload.Id<DeadeyeForceTogglePayload> DEADEYE_FORCE_TOGGLE = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_force"));
-    public static final CustomPayload.Id<DeadeyeMarkingPayload> DEADEYE_MARKING = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_marking"));
-    public static final CustomPayload.Id<DeadeyeForceShootPayload> DEADEYE_FORCE_SHOOT = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_force_shoot"));
-    public static final CustomPayload.Id<DeadeyeShootingPayload> DEADEYE_SHOOTING = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_shooting"));
+
+    public static final CustomPayload.Id<DeadeyeRequestPayload> DEADEYE_REQUEST = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_request"));
+    public static final CustomPayload.Id<DeadeyeUpdatePayload> DEADEYE_UPDATE = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_update"));
+    public static final CustomPayload.Id<DeadeyeMarkPayload> DEADEYE_MARK = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_mark"));
+    public static final CustomPayload.Id<DeadeyePhasePayload> DEADEYE_PHASE = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_phase"));
+    public static final CustomPayload.Id<DeadeyeShotRequestPayload> DEADEYE_SHOT_REQUEST = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_shot_request"));
 
     public static void initializeServerPayloads() {
         PayloadTypeRegistry.playS2C().register(RELOAD_CONFIG, ReloadConfigPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DEADEYE_METER, DeadeyeMeterPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(INITIAL_SYNC, InitialSyncPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(DEADEYE_FORCE_TOGGLE, DeadeyeForceTogglePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(DEADEYE_FORCE_SHOOT, DeadeyeForceShootPayload.CODEC);
+
+        PayloadTypeRegistry.playS2C().register(DEADEYE_UPDATE, DeadeyeUpdatePayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(DEADEYE_MARK, DeadeyeMarkPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(DEADEYE_PHASE, DeadeyePhasePayload.CODEC);
     }
 
     public static void initializeClientPayloads() {
-        PayloadTypeRegistry.playC2S().register(DEADEYE_TOGGLE, DeadeyeTogglePayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(DEADEYE_SHOOT, DeadeyeShootPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(DEADEYE_MARKING, DeadeyeMarkingPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(DEADEYE_SHOOTING, DeadeyeShootingPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(DEADEYE_REQUEST, DeadeyeRequestPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(DEADEYE_MARK, DeadeyeMarkPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(DEADEYE_PHASE, DeadeyePhasePayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(DEADEYE_SHOT_REQUEST, DeadeyeShotRequestPayload.CODEC);
     }
 
     public static void initializeServerReceivers() {
-        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_TOGGLE, DeadeyeServer::deadeyeToggle);
-        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOOT, DeadeyeServer::receiveDeadeyeTargetShoot);
-        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_MARKING, DeadeyeServer::updateMarkingStatus);
-        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOOTING, DeadeyeServer::updateShootingStatus);
+        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_REQUEST, DeadeyeServer::receiveDeadeyeRequest);
+        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOT_REQUEST, DeadeyeServer::receiveShot);
+
+        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_REQUEST, DeadeyeServer::receiveDeadeyeRequest);
+        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_MARK, DeadeyeServer::receiveMarkRequest);
+        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_PHASE, DeadeyeServer::receivePhaseUpdate);
+        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOT_REQUEST, DeadeyeServer::receiveShot);
     }
 
     public static void initializeClientReceivers() {
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.RELOAD_CONFIG, (ReloadConfigPayload payload, ClientPlayNetworking.Context context) -> {ConfigHandler.ReloadConfigClient();});
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_METER, DeadeyeClient::deadeyeMeterUpdate);
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.INITIAL_SYNC, DeadeyeClient::receiveInitialSync);
-        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_TOGGLE, DeadeyeClient::deadeyeForceUpdate);
-        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_FORCE_SHOOT, DeadeyeClient::deadeyeForceShoot);
+
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_UPDATE, DeadeyeClient::receiveDeadeyeUpdate);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_MARK, DeadeyeClient::receiveDeadeyeMark);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_PHASE, DeadeyeClient::receivePhaseUpdate);
     }
 }

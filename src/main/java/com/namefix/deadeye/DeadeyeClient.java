@@ -2,7 +2,9 @@ package com.namefix.deadeye;
 
 import com.namefix.DeadeyeMod;
 import com.namefix.DeadeyeMod.TargetingInteractionType;
+import com.namefix.data.DeadeyeTarget;
 import com.namefix.data.PlayerSaveData;
+import com.namefix.data.PlayerServerData;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.KeybindHandler;
 import com.namefix.handlers.SoundHandler;
@@ -27,6 +29,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +93,7 @@ public class DeadeyeClient {
 
     public static void deadeyeListener(MinecraftClient client) {
         while (KeybindHandler.keyDeadeyeToggle.wasPressed()) {
-            toggle();
+            requestDeadeye();
         }
 
         while (KeybindHandler.keyDeadeyeMark.wasPressed()) mark(client);
@@ -135,15 +138,11 @@ public class DeadeyeClient {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
 
-         ItemStack item = client.player.getMainHandStack();
+        ItemStack item = client.player.getMainHandStack();
         TargetingInteractionType targetingType;
 
-        if(item == null) {
-            toggle();
-            return;
-        }
         if(!item.getItem().equals(shootStartItem)) {
-            toggle();
+            requestDeadeye();
             return;
         }
 
@@ -183,19 +182,8 @@ public class DeadeyeClient {
             if(shootWait == 0) shootWait = System.currentTimeMillis() + 250;
             if(System.currentTimeMillis() < shootWait) return;
 
-            targetingType = getTargetingInteractionType(item);
-            if(targetingType == TargetingInteractionType.BOW) {
-                if(!client.player.isInCreativeMode() && !client.player.getInventory().contains(((RangedWeaponItem) item.getItem()).getProjectiles())) {
-                    toggle();
-                    return;
-                }
-            }
+            targetingType = Utils.getTargetingInteractionType(item);
             if(targetingType == TargetingInteractionType.POINT_BLANK_GUN) {
-                if(PointBlankIntegration.getGunAmmo(item) == 0) {
-                    toggle();
-                    return;
-                }
-
                 if(!PointBlankIntegration.canGunShoot(item)) return;
             }
 
@@ -210,24 +198,13 @@ public class DeadeyeClient {
                 // DEFAULT: Execute left click
                 case DEFAULT -> KeyBinding.onKeyPressed(client.options.attackKey.getDefaultKey());
             }
-            ClientPlayNetworking.send(new DeadeyeShootPayload(targetingType.toString(), mark.getCurrentOffset().toVector3f(), marks.size()-1<=0));
+            ClientPlayNetworking.send(new DeadeyeShotRequestPayload(targetingType.ordinal(), mark.getCurrentOffset().toVector3f()));
 
             marks.removeFirst();
             lerpWait = System.currentTimeMillis() + 100;
             shootWait = 0;
             startLerpingTime = System.currentTimeMillis();
-
-            if (marks.isEmpty()) {
-                toggle();
-            }
         }
-    }
-
-    private static TargetingInteractionType getTargetingInteractionType(ItemStack item) {
-        if(item.getItem() instanceof RangedWeaponItem) return TargetingInteractionType.BOW;
-        if(item.getItem() instanceof ProjectileItem) return TargetingInteractionType.THROWABLE;
-        if(PointBlankIntegration.isLoaded && item.getItem() instanceof GunItem) return TargetingInteractionType.POINT_BLANK_GUN;
-        return TargetingInteractionType.DEFAULT;
     }
 
     private static void startShootingTargets(Item startItem) {
@@ -236,7 +213,7 @@ public class DeadeyeClient {
         startLerpingTime = System.currentTimeMillis();
         lerpWait = System.currentTimeMillis() + 250;
 
-        ClientPlayNetworking.send(new DeadeyeShootingPayload(true));
+        ClientPlayNetworking.send(new DeadeyePhasePayload(PlayerServerData.ShootingPhase.SHOOTING.ordinal()));
     }
 
     // Marking targets
@@ -269,21 +246,45 @@ public class DeadeyeClient {
                 if(deadeyeMarkableEntities.contains(eHit.getEntity().getType())) ent = eHit.getEntity();
                 if(ent == null) return;
 
-                marks.add(new DeadeyeTarget(ent, hit.getPos()));
-                client.player.playSound(SoundHandler.DEADEYE_ARTHUR_PAINT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
-
-                ClientPlayNetworking.send(new DeadeyeMarkingPayload(true));
+                ClientPlayNetworking.send(new DeadeyeMarkPayload(hit.getPos().toVector3f(), ent.getId()));
             }
-            if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(item)) startShootingTargets(client.player.getMainHandStack().getItem());
-            if(marks.size() >= markLimit) startShootingTargets(client.player.getMainHandStack().getItem());
         }
     }
 
+    public static void requestDeadeye() {
+        ClientPlayNetworking.send(new DeadeyeRequestPayload(!isEnabled));
+    }
+
+    public static void receiveDeadeyeUpdate(DeadeyeUpdatePayload payload, ClientPlayNetworking.Context context) {
+        if(payload.status() == DeadeyeMod.DeadeyeStatus.EMPTY.ordinal()) return;
+        setDeadeye(DeadeyeMod.DeadeyeStatus.values()[payload.status()]);
+    }
+
+    public static void receiveDeadeyeMark(DeadeyeMarkPayload payload, ClientPlayNetworking.Context context) {
+        if(!isEnabled) return;
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        Entity ent = context.player().getWorld().getEntityById(payload.entityId());
+        if(ent == null) return;
+        marks.add(new DeadeyeTarget(ent, new Vec3d(payload.pos())));
+        client.player.playSound(SoundHandler.DEADEYE_ARTHUR_PAINT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
+        if(Utils.getTargetingInteractionType(client.player.getMainHandStack()) == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(client.player.getMainHandStack())) startShootingTargets(client.player.getMainHandStack().getItem());
+        if(marks.size() >= markLimit) startShootingTargets(client.player.getMainHandStack().getItem());
+    }
+
+    public static void receivePhaseUpdate(DeadeyePhasePayload payload, ClientPlayNetworking.Context context) {
+        if(payload.phase() == PlayerServerData.ShootingPhase.SHOOTING.ordinal()) startShootingTargets(context.player().getInventory().getMainHandStack().getItem());
+    }
+
     // Toggling deadeye
-    public static void toggle() {
+    public static void setDeadeye(DeadeyeMod.DeadeyeStatus status) {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
-        if(!isEnabled) {
+
+        if(status == DeadeyeMod.DeadeyeStatus.ENABLED) isEnabled = true;
+        else if(status == DeadeyeMod.DeadeyeStatus.DISABLED || status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) isEnabled = false;
+
+        if(isEnabled) {
             client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
 
             DeadeyeEffects.lightleakDirection = client.player.getRandom().nextBoolean();
@@ -294,36 +295,27 @@ public class DeadeyeClient {
             client.getSoundManager().play(soundBackground);
             soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, false);
             client.getSoundManager().play(soundBackground2);
-
-            isEnabled = true;
         }
         else {
             client.player.playSound(SoundHandler.DEADEYE_JOHN_EXIT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
 
-            ClientPlayNetworking.send(new DeadeyeMarkingPayload(false));
             soundBackground.setDone();
             soundBackground2.setDone();
-            if(playerData.deadeyeMeter == 0.0f) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
+            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
             marks.clear();
             shootingMarks = false;
             startLerpingTime = 0;
-            isEnabled = false;
+            deadeyeEnding = 0f;
         }
-        ClientPlayNetworking.send(new DeadeyeTogglePayload(isEnabled));
     }
 
     public static void tick(MinecraftClient client) {
         if(MinecraftClient.getInstance().isPaused()) return;
         assert client.player != null;
         if(isEnabled) {
-            if(client.player.isDead()) toggle();
             if(!shootingMarks) {
                 playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - deadeyeConsumeRate, 0.0f, 100.0f);
                 deadeyeEnding = MathHelper.clamp(1f - (playerData.deadeyeMeter / 20f), 0f, 1f);
-            }
-            if(playerData.deadeyeMeter == 0.0f && !shootingMarks) {
-                if(!marks.isEmpty()) startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
-                else toggle();
             }
         }
     }
@@ -334,14 +326,5 @@ public class DeadeyeClient {
 
     public static void receiveInitialSync(InitialSyncPayload payload, ClientPlayNetworking.Context context) {
         playerData.deadeyeMeter = payload.deadeyeMeter();
-    }
-
-    public static void deadeyeForceUpdate(DeadeyeForceTogglePayload payload, ClientPlayNetworking.Context context) {
-        if(payload.status() != isEnabled) toggle();
-        playerData.deadeyeMeter = payload.meter();
-    }
-
-    public static void deadeyeForceShoot(DeadeyeForceShootPayload payload, ClientPlayNetworking.Context context) {
-        startShootingTargets(context.player().getInventory().getMainHandStack().getItem());
     }
 }

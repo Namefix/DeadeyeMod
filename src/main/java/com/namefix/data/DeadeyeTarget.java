@@ -1,4 +1,4 @@
-package com.namefix.deadeye;
+package com.namefix.data;
 
 import com.namefix.utils.Utils;
 import net.minecraft.client.MinecraftClient;
@@ -8,10 +8,10 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
 public class DeadeyeTarget {
-    Entity target;
+    public Entity target;
     Vec3d initialPose;
     Vec3d markOffset;
-    int renderTick = 0;
+    public int renderTick = 0;
 
     public DeadeyeTarget(Entity target, Vec3d initialPose) {
         this.target = target;

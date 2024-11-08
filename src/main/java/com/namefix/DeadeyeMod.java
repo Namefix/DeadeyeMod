@@ -28,6 +28,13 @@ public class DeadeyeMod implements ModInitializer {
 		POINT_BLANK_GUN
 	}
 
+	public enum DeadeyeStatus {
+		ENABLED,
+		DISABLED,
+		EMPTY,
+		DISABLED_EMPTY,
+	}
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("People don't forget. Nothing gets forgiven.");
