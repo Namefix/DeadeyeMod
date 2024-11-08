@@ -1,10 +1,16 @@
 package com.namefix.utils;
 
+import com.namefix.DeadeyeMod;
+import com.namefix.integrations.PointBlankIntegration;
+import com.vicmatskiv.pointblank.item.GunItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ProjectileItem;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -34,4 +40,12 @@ public class Utils {
         float yaw = MathHelper.wrapDegrees((float)(MathHelper.atan2(f, d) * 57.2957763671875) - 90.0F);
         return new Vec2f(pitch, yaw);
     }
+
+    public static DeadeyeMod.TargetingInteractionType getTargetingInteractionType(ItemStack item) {
+        if(item.getItem() instanceof RangedWeaponItem) return DeadeyeMod.TargetingInteractionType.BOW;
+        if(item.getItem() instanceof ProjectileItem) return DeadeyeMod.TargetingInteractionType.THROWABLE;
+        if(PointBlankIntegration.isLoaded && item.getItem() instanceof GunItem) return DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN;
+        return DeadeyeMod.TargetingInteractionType.DEFAULT;
+    }
+
 }

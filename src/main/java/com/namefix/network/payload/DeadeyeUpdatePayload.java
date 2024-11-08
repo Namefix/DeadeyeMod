@@ -6,11 +6,11 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 
-public record DeadeyeMarkingPayload(boolean status) implements CustomPayload {
-    public static final PacketCodec<RegistryByteBuf, DeadeyeMarkingPayload> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, DeadeyeMarkingPayload::status, DeadeyeMarkingPayload::new);
+public record DeadeyeUpdatePayload(int status) implements CustomPayload {
+    public static final PacketCodec<RegistryByteBuf, DeadeyeUpdatePayload> CODEC = PacketCodec.tuple(PacketCodecs.INTEGER, DeadeyeUpdatePayload::status, DeadeyeUpdatePayload::new);
 
     @Override
     public Id<? extends CustomPayload> getId() {
-        return DeadeyeNetworking.DEADEYE_MARKING;
+        return DeadeyeNetworking.DEADEYE_UPDATE;
     }
 }
