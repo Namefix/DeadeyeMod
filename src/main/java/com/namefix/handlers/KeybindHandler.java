@@ -33,6 +33,6 @@ public class KeybindHandler {
     public static void initialize() {
         keyDeadeyeToggle = registerKeybind("key.deadeye-mod.toggle", GLFW.GLFW_KEY_CAPS_LOCK);
         keyDeadeyeMark = registerKeybind("key.deadeye-mod.mark", GLFW.GLFW_KEY_X);
-        keyDeadeyeShootTargets = registerKeybindMouse("key.deadeye-mod.shoot_targets", GLFW.GLFW_MOUSE_BUTTON_LEFT);
+        keyDeadeyeShootTargets = registerKeybind("key.deadeye-mod.shoot_targets", GLFW.GLFW_KEY_G);
     }
 }

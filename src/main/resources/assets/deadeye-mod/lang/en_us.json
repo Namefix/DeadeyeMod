@@ -1,8 +1,8 @@
 {
   "category.deadeye-mod": "Deadeye Mod",
   "key.deadeye-mod.toggle": "Toggle Deadeye",
-  "key.deadeye-mod.mark": "Mark Targets",
-  "key.deadeye-mod.shoot_targets": "Shoot Targets",
+  "key.deadeye-mod.mark": "Mark a Target",
+  "key.deadeye-mod.shoot_targets": "Shoot Marked Targets",
 
   "text.config.deadeye-mod.title": "Deadeye Mod",
 
