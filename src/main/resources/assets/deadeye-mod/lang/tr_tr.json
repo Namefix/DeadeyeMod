@@ -1,4 +1,7 @@
 {
+  "modmenu.summaryTranslation.deadeye-mod": "Red Dead Redemption serisindeki Dead Eye Hedefleme mekaniğini ekler.",
+  "modmenu.descriptionTranslation.deadeye-mod": "Red Dead Redemption serisindeki Dead Eye Hedefleme mekaniğini ekler.",
+
   "category.deadeye-mod": "Deadeye Mod",
   "key.deadeye-mod.toggle": "Deadeye'ı Aç/Kapat",
   "key.deadeye-mod.mark": "Hedef İşaretle",
@@ -10,6 +13,7 @@
   "text.config.deadeye-mod.option.server.deadeyeSlowdown": "Deadeye Yavaşlatması",
   "text.config.deadeye-mod.option.server.markableEntities": "İşaretlenebilir Canlılar",
   "text.config.deadeye-mod.option.server.markingItems": "İşaretleme Eşyaları",
+  "text.config.deadeye-mod.option.server.maxTargetDistance": "Maksimum Hedef Uzaklığı",
   "text.config.deadeye-mod.option.server.markFocusSpeed": "İşaret Dönme Hızı",
   "text.config.deadeye-mod.option.server.maxMarks": "Maksimum İşaret",
   "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier": "İşaret Mermi Hız Çarpanı",

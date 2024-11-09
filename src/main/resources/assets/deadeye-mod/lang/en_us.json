@@ -1,4 +1,7 @@
 {
+  "modmenu.summaryTranslation.deadeye-mod": "Adds Dead Eye Targeting from the Red Dead Redemption series.",
+  "modmenu.descriptionTranslation.deadeye-mod": "Adds Dead Eye Targeting from the Red Dead Redemption series.",
+
   "category.deadeye-mod": "Deadeye Mod",
   "key.deadeye-mod.toggle": "Toggle Deadeye",
   "key.deadeye-mod.mark": "Mark a Target",
@@ -10,6 +13,7 @@
   "text.config.deadeye-mod.option.server.deadeyeSlowdown": "Deadeye Slowdown",
   "text.config.deadeye-mod.option.server.markableEntities": "Markable Entities",
   "text.config.deadeye-mod.option.server.markingItems": "Marking Items",
+  "text.config.deadeye-mod.option.server.maxTargetDistance": "Maximum Target Distance",
   "text.config.deadeye-mod.option.server.markFocusSpeed": "Mark Focus Speed",
   "text.config.deadeye-mod.option.server.maxMarks": "Maximum Marks",
   "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier": "Mark Projectile Speed Multiplier",

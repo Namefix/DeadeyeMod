@@ -25,6 +25,10 @@ public class DeadeyeConfigModel {
         @Sync(Option.SyncMode.OVERRIDE_CLIENT)
         public List<String> markingItems = new ArrayList<>(List.of("minecraft:bow", "minecraft:crossbow"));
 
+        @RangeConstraint(min = 1.0f, max = 5000.0f)
+        @Sync(Option.SyncMode.OVERRIDE_CLIENT)
+        public float maxTargetDistance = 1000.0f;
+
         @RangeConstraint(min = 0.5f, max = 5.0f)
         @Sync(Option.SyncMode.OVERRIDE_CLIENT)
         public float markFocusSpeed = 2.0f;

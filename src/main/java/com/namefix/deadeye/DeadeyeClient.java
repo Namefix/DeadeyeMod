@@ -205,7 +205,7 @@ public class DeadeyeClient {
                 interactionType = TargetingInteractionType.POINT_BLANK_GUN;
             }
 
-            double maxDistance = 1000;
+            double maxDistance = DeadeyeMod.CONFIG.server.maxTargetDistance();
             HitResult hit = Utils.raycastEntity(client.player, maxDistance);
             if(hit == null) return;
 
