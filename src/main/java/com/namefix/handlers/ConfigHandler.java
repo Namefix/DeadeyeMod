@@ -34,9 +34,6 @@ public class ConfigHandler {
         DeadeyeMod.CONFIG.load();
         DeadeyeClient.deadeyeMarkableEntities = LoadDeadeyeMarkableEntities();
         DeadeyeClient.deadeyeMarkingItems = LoadDeadeyeMarkingItems();
-        DeadeyeClient.markLimit = DeadeyeMod.CONFIG.server.maxMarks();
-        DeadeyeClient.markFocusSpeed = DeadeyeMod.CONFIG.server.markFocusSpeed();
-        DeadeyeClient.deadeyeConsumeRate = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount();
     }
 
 

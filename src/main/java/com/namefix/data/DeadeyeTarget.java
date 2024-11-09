@@ -1,6 +1,8 @@
 package com.namefix.data;
 
 import com.namefix.utils.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
@@ -25,6 +27,7 @@ public class DeadeyeTarget {
     }
 
     // Returns current angle to the target (pitch,yaw)
+    @Environment(EnvType.CLIENT)
     public Vec2f getCurrentHeading() {
         return Utils.getHeadingFromTarget(MinecraftClient.getInstance().player, EntityAnchorArgumentType.EntityAnchor.EYES, getCurrentOffset());
     }

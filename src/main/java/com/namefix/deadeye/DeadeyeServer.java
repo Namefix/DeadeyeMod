@@ -12,7 +12,6 @@ import com.namefix.network.payload.*;
 import com.namefix.utils.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -91,7 +90,9 @@ public class DeadeyeServer {
         if(!(ent instanceof LivingEntity) && !deadeyeMarkableEntities.contains(ent.getType())) return;
 
         updatePhase(player, PlayerServerData.ShootingPhase.MARKED);
-        data.markList.add(new DeadeyeTarget(ent, new Vec3d(payload.pos())));
+        Vec3d pos = new Vec3d(payload.pos());
+        DeadeyeTarget target = new DeadeyeTarget(ent, pos);
+        data.markList.add(target);
         ServerPlayNetworking.send(player, payload);
 
         if(data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
@@ -156,7 +157,7 @@ public class DeadeyeServer {
     }
 
     public static void onPlayerDisconnect(ServerPlayNetworkHandler serverPlayNetworkHandler, MinecraftServer minecraftServer) {
-        deadeyeUsers.remove(serverPlayNetworkHandler.player.getUuid());
+        updateDeadeyeStatus(minecraftServer, serverPlayNetworkHandler.player, DeadeyeMod.DeadeyeStatus.DISABLED);
     }
 
     // Give deadeye meter to a player after kill

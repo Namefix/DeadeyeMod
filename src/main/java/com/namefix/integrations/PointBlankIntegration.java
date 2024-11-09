@@ -3,6 +3,8 @@ package com.namefix.integrations;
 import com.vicmatskiv.pointblank.client.GunClientState;
 import com.vicmatskiv.pointblank.item.FireMode;
 import com.vicmatskiv.pointblank.item.GunItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,6 +25,7 @@ public class PointBlankIntegration {
         return markCount < getGunAmmo(item);
     }
 
+    @Environment(EnvType.CLIENT)
     public static boolean canGunShoot(ItemStack item) {
         if(!(item.getItem() instanceof GunItem)) return false;
         PlayerEntity player = MinecraftClient.getInstance().player;
@@ -34,6 +37,7 @@ public class PointBlankIntegration {
         else return state.isIdle();
     }
 
+    @Environment(EnvType.CLIENT)
     public static int getGunAmmo(ItemStack item) {
         if(!(item.getItem() instanceof GunItem)) return 0;
         PlayerEntity player = MinecraftClient.getInstance().player;

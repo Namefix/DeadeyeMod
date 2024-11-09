@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -40,14 +41,11 @@ public class DeadeyeClient {
     public static boolean isEnabled = false;
     public static PlayerServerData.ShootingPhase shootingPhase = PlayerServerData.ShootingPhase.NONE;
     public static float deadeyeEnding = 0.0f;
-    public static float deadeyeConsumeRate = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount();
 
     public static List<EntityType<?>> deadeyeMarkableEntities = ConfigHandler.LoadDeadeyeMarkableEntities();
     public static List<Item> deadeyeMarkingItems = ConfigHandler.LoadDeadeyeMarkingItems();
 
     static ArrayList<DeadeyeTarget> marks = new ArrayList<>();
-    public static int markLimit = DeadeyeMod.CONFIG.server.maxMarks();
-    public static float markFocusSpeed = DeadeyeMod.CONFIG.server.markFocusSpeed();
 
     public static boolean shootingMarks = false;
     static long lerpWait = 0;
@@ -126,7 +124,7 @@ public class DeadeyeClient {
         float pPitch = client.player.getPitch();
         float pYaw = client.player.getYaw();
 
-        float interpolationFactor = markFocusSpeed * worldRenderContext.tickCounter().getLastFrameDuration();
+        float interpolationFactor = DeadeyeMod.CONFIG.server.markFocusSpeed() * worldRenderContext.tickCounter().getLastFrameDuration();
         if(System.currentTimeMillis() - startLerpingTime > 3_000) interpolationFactor *= 4;
         if(PointBlankIntegration.isLoaded) if(PointBlankIntegration.getGunFiremode(item) == FireMode.AUTOMATIC) interpolationFactor *= 8;
 
@@ -195,7 +193,7 @@ public class DeadeyeClient {
     // Marking targets
     public static void mark(MinecraftClient client) {
         if(DeadeyeClient.isEnabled && !shootingMarks) {
-            if(marks.size() >= markLimit) return;
+            if(marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return;
             assert client.player != null;
             ItemStack item = client.player.getMainHandStack();
             if(item == null) return;
@@ -247,7 +245,7 @@ public class DeadeyeClient {
         marks.add(new DeadeyeTarget(ent, new Vec3d(payload.pos())));
         client.player.playSound(SoundHandler.DEADEYE_ARTHUR_PAINT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
         if(Utils.getTargetingInteractionType(client.player.getMainHandStack()) == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(client.player.getMainHandStack())) startShootingTargets(client.player.getMainHandStack().getItem());
-        if(marks.size() >= markLimit) startShootingTargets(client.player.getMainHandStack().getItem());
+        if(marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
     }
 
     public static void receivePhaseUpdate(DeadeyePhasePayload payload, ClientPlayNetworking.Context context) {
@@ -282,7 +280,7 @@ public class DeadeyeClient {
         assert client.player != null;
         if(isEnabled) {
             if(!shootingMarks) {
-                playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - deadeyeConsumeRate, 0.0f, 100.0f);
+                playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, 100.0f);
                 deadeyeEnding = MathHelper.clamp(1f - (playerData.deadeyeMeter / 20f), 0f, 1f);
             }
         }
@@ -294,5 +292,9 @@ public class DeadeyeClient {
 
     public static void receiveInitialSync(InitialSyncPayload payload, ClientPlayNetworking.Context context) {
         playerData.deadeyeMeter = payload.deadeyeMeter();
+    }
+
+    public static void disconnect(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient client) {
+        if(isEnabled) setDeadeye(DeadeyeMod.DeadeyeStatus.DISABLED);
     }
 }

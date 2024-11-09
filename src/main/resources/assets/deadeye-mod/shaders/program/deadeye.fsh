@@ -51,7 +51,7 @@ void main() {
 
     float distanceFactor = pow(normalizedDistance, VignetteStrength);
 
-    float slowTime = Time * 0.10;  // slowFactor is a value greater than 1 to slow down the time
+    float slowTime = Time * 0.10;
     float intensity = 5.0 + clamp((sin(slowTime*4) - 0.1), -0.5, 0.5);
 
     texColor = clamp(vec4(texColor.r + 0.3, texColor.g + 0.2, texColor.b, texColor.a), 0.0, 1.0);

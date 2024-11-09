@@ -8,6 +8,7 @@ import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -20,6 +21,8 @@ public class DeadeyeModClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(DeadeyeClient::deadeyeListener);
         ClientTickEvents.END_CLIENT_TICK.register(DeadeyeClient::tick);
+        ClientPlayConnectionEvents.DISCONNECT.register(DeadeyeClient::disconnect);
+
         WorldRenderEvents.START.register(DeadeyeClient::render);
 
         HudRenderCallback.EVENT.register(DeadeyeEffects::renderGraphics);
