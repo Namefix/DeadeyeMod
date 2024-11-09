@@ -30,5 +30,7 @@
   "sound.deadeye-mod.enter": "Entered deadeye",
   "sound.deadeye-mod.exit": "Exited deadeye",
   "sound.deadeye-mod.background": "Concentrating",
-  "sound.deadeye-mod.paint": "Painted target"
+  "sound.deadeye-mod.paint": "Painted target",
+
+  "gamerule.disableDeadeye": "Disable deadeye"
 }

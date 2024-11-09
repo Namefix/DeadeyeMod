@@ -7,6 +7,7 @@ import com.namefix.data.PlayerSaveData;
 import com.namefix.data.PlayerServerData;
 import com.namefix.data.StateSaverAndLoader;
 import com.namefix.handlers.ConfigHandler;
+import com.namefix.handlers.GameruleHandler;
 import com.namefix.network.payload.*;
 import com.namefix.utils.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -33,8 +34,6 @@ import org.joml.Vector3f;
 import java.util.*;
 
 public class DeadeyeServer {
-    public static boolean deadeyeEnabled = true;
-
     public static Map<UUID, PlayerServerData> deadeyeUsers = new HashMap<>();
     public static List<EntityType<?>> deadeyeMarkableEntities = ConfigHandler.LoadDeadeyeMarkableEntities();
     public static List<Item> deadeyeItems = ConfigHandler.LoadDeadeyeMarkingItems();
@@ -44,7 +43,7 @@ public class DeadeyeServer {
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(context.player());
 
         if(payload.status()) {  // Player wants to enable deadeye
-            if(!deadeyeEnabled) return;
+            if(context.player().getWorld().getGameRules().getBoolean(GameruleHandler.DISABLE_DEADEYE)) return;
             if(playerState.deadeyeMeter <= 0f) {
                 ServerPlayNetworking.send(context.player(), new DeadeyeUpdatePayload(DeadeyeMod.DeadeyeStatus.EMPTY.ordinal()));
                 return;

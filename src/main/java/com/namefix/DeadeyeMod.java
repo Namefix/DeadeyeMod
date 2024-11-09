@@ -2,6 +2,7 @@ package com.namefix;
 
 import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.handlers.CommandHandler;
+import com.namefix.handlers.GameruleHandler;
 import com.namefix.handlers.SoundHandler;
 import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.DeadeyeNetworking;
@@ -41,6 +42,7 @@ public class DeadeyeMod implements ModInitializer {
 
 		SoundHandler.initialize();
 		CommandHandler.initialize();
+		GameruleHandler.initialize();
 
 		ServerTickEvents.END_SERVER_TICK.register(DeadeyeServer::onTick);
 		ServerLivingEntityEvents.AFTER_DEATH.register(DeadeyeServer::awardDeadeyeMeter);
