@@ -90,7 +90,7 @@ public class DeadeyeServer {
         if(ent == null) return;
         if(!(ent instanceof LivingEntity) && !deadeyeMarkableEntities.contains(ent.getType())) return;
 
-        data.shootingPhase = PlayerServerData.ShootingPhase.MARKED;
+        updatePhase(player, PlayerServerData.ShootingPhase.MARKED);
         data.markList.add(new DeadeyeTarget(ent, new Vec3d(payload.pos())));
         ServerPlayNetworking.send(player, payload);
 

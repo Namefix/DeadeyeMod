@@ -38,6 +38,7 @@ public class DeadeyeClient {
     public static PlayerSaveData playerData = new PlayerSaveData();
 
     public static boolean isEnabled = false;
+    public static PlayerServerData.ShootingPhase shootingPhase = PlayerServerData.ShootingPhase.NONE;
     public static float deadeyeEnding = 0.0f;
     public static float deadeyeConsumeRate = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount();
 
@@ -92,6 +93,10 @@ public class DeadeyeClient {
             assert client.player != null;
             startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
         }
+
+        if(client.options.attackKey.isPressed() && !marks.isEmpty()) {
+            startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
+        }
     }
 
     public static void render(WorldRenderContext worldRenderContext) {
@@ -123,7 +128,7 @@ public class DeadeyeClient {
 
         float interpolationFactor = markFocusSpeed * worldRenderContext.tickCounter().getLastFrameDuration();
         if(System.currentTimeMillis() - startLerpingTime > 3_000) interpolationFactor *= 4;
-        if(PointBlankIntegration.getGunFiremode(item) == FireMode.AUTOMATIC) interpolationFactor *= 8;
+        if(PointBlankIntegration.isLoaded) if(PointBlankIntegration.getGunFiremode(item) == FireMode.AUTOMATIC) interpolationFactor *= 8;
 
         Vec2f targetHeading = mark.getCurrentHeading();
         float targetPitch = targetHeading.x;
@@ -183,6 +188,7 @@ public class DeadeyeClient {
         startLerpingTime = System.currentTimeMillis();
         lerpWait = System.currentTimeMillis() + 250;
 
+        shootingPhase = PlayerServerData.ShootingPhase.SHOOTING;
         ClientPlayNetworking.send(new DeadeyePhasePayload(PlayerServerData.ShootingPhase.SHOOTING.ordinal()));
     }
 
@@ -200,9 +206,11 @@ public class DeadeyeClient {
                 if(!client.player.isInCreativeMode() && !client.player.getInventory().contains(ranged.getProjectiles())) return;
                 interactionType = TargetingInteractionType.BOW;
             }
-            if(item.getItem() instanceof GunItem) {
-                if(!PointBlankIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
-                interactionType = TargetingInteractionType.POINT_BLANK_GUN;
+            if(PointBlankIntegration.isLoaded) {
+                if (item.getItem() instanceof GunItem) {
+                    if (!PointBlankIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
+                    interactionType = TargetingInteractionType.POINT_BLANK_GUN;
+                }
             }
 
             double maxDistance = DeadeyeMod.CONFIG.server.maxTargetDistance();
@@ -243,6 +251,7 @@ public class DeadeyeClient {
     }
 
     public static void receivePhaseUpdate(DeadeyePhasePayload payload, ClientPlayNetworking.Context context) {
+        shootingPhase = PlayerServerData.ShootingPhase.values()[payload.phase()];
         if(payload.phase() == PlayerServerData.ShootingPhase.SHOOTING.ordinal()) startShootingTargets(context.player().getInventory().getMainHandStack().getItem());
     }
 
@@ -260,6 +269,7 @@ public class DeadeyeClient {
         else {
             DeadeyeEffects.updateEffects(status);
 
+            shootingPhase = PlayerServerData.ShootingPhase.NONE;
             marks.clear();
             shootingMarks = false;
             startLerpingTime = 0;
