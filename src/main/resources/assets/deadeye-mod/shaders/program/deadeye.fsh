@@ -51,20 +51,8 @@ void main() {
 
     float distanceFactor = pow(normalizedDistance, VignetteStrength);
 
-    float minPulseInterval = 5.0;
-    float maxPulseInterval = 10.0;
-
-    float pulseInterval = mix(minPulseInterval, maxPulseInterval, hash(floor(Time / maxPulseInterval)));
-
-    float pulseStartTime = floor(Time / pulseInterval) * pulseInterval;
-
-    float timeScale = 0.25;
-    float accumulatedTime = (Time + TickDelta) * timeScale;
-
-    float pulsePhase = clamp((accumulatedTime - pulseStartTime), 0.0, 1.0);
-
-    float timePulse = sin(pulsePhase * 3.14159) * 0.5 + 0.5;
-    float intensity = 5.0 * mix(0.8, 1.0, timePulse);
+    float slowTime = Time * 0.10;  // slowFactor is a value greater than 1 to slow down the time
+    float intensity = 5.0 + clamp((sin(slowTime*4) - 0.1), -0.5, 0.5);
 
     texColor = clamp(vec4(texColor.r + 0.3, texColor.g + 0.2, texColor.b, texColor.a), 0.0, 1.0);
 
