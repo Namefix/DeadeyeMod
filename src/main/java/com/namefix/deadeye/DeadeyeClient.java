@@ -271,6 +271,7 @@ public class DeadeyeClient {
             marks.clear();
             shootingMarks = false;
             startLerpingTime = 0;
+            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) playerData.deadeyeMeter = 0.0f;
             deadeyeEnding = 0f;
         }
     }
