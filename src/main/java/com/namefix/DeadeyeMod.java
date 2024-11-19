@@ -45,7 +45,7 @@ public class DeadeyeMod implements ModInitializer {
 		GameruleHandler.initialize();
 
 		ServerTickEvents.END_SERVER_TICK.register(DeadeyeServer::onTick);
-		ServerLivingEntityEvents.AFTER_DEATH.register(DeadeyeServer::awardDeadeyeMeter);
+		ServerLivingEntityEvents.AFTER_DEATH.register(DeadeyeServer::deadeyeMeterKillReward);
 		ServerPlayConnectionEvents.JOIN.register(DeadeyeServer::onPlayerConnect);
 		ServerPlayConnectionEvents.DISCONNECT.register(DeadeyeServer::onPlayerDisconnect);
 

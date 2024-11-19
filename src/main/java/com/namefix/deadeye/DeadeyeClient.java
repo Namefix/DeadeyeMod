@@ -250,7 +250,11 @@ public class DeadeyeClient {
 
     public static void receivePhaseUpdate(DeadeyePhasePayload payload, ClientPlayNetworking.Context context) {
         shootingPhase = PlayerServerData.ShootingPhase.values()[payload.phase()];
-        if(payload.phase() == PlayerServerData.ShootingPhase.SHOOTING.ordinal()) startShootingTargets(context.player().getInventory().getMainHandStack().getItem());
+        if(payload.phase() == PlayerServerData.ShootingPhase.SHOOTING.ordinal()) {
+            DeadeyeClient.playerData.deadeyeMeter = 0.0f;
+            DeadeyeClient.playerData.deadeyeCore = 0.0f;
+            startShootingTargets(context.player().getInventory().getMainHandStack().getItem());
+        }
     }
 
     // Toggling deadeye
@@ -262,6 +266,7 @@ public class DeadeyeClient {
         else if(status == DeadeyeMod.DeadeyeStatus.DISABLED || status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) isEnabled = false;
 
         if(isEnabled) {
+            calculateDeadeyeEnding();
             DeadeyeEffects.updateEffects(status);
         }
         else {
@@ -271,7 +276,10 @@ public class DeadeyeClient {
             marks.clear();
             shootingMarks = false;
             startLerpingTime = 0;
-            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) playerData.deadeyeMeter = 0.0f;
+            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) {
+                playerData.deadeyeMeter = 0.0f;
+                playerData.deadeyeCore = 0.0f;
+            }
             deadeyeEnding = 0f;
         }
     }
@@ -281,18 +289,28 @@ public class DeadeyeClient {
         assert client.player != null;
         if(isEnabled) {
             if(!shootingMarks) {
-                playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, 100.0f);
-                deadeyeEnding = MathHelper.clamp(1f - (playerData.deadeyeMeter / 20f), 0f, 1f);
+                if(playerData.deadeyeMeter > 0) playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, 160.0f);
+                else playerData.deadeyeCore = MathHelper.clamp(playerData.deadeyeCore - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, 80.0f);
+                calculateDeadeyeEnding();
             }
         }
     }
 
+    public static void calculateDeadeyeEnding() {
+        deadeyeEnding = MathHelper.clamp(1f - ((playerData.deadeyeCore/20f)+(playerData.deadeyeMeter/20f)), 0f, 1f);
+    }
+
     public static void deadeyeMeterUpdate(DeadeyeMeterPayload payload, ClientPlayNetworking.Context context) {
-        playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+payload.amount(),0f,100f);
+        playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+payload.amount(),0f,160f);
+    }
+
+    public static void deadeyeCoreUpdate(DeadeyeCorePayload payload, ClientPlayNetworking.Context context) {
+        playerData.deadeyeCore = MathHelper.clamp(playerData.deadeyeCore+payload.amount(),0f,80f);
     }
 
     public static void receiveInitialSync(InitialSyncPayload payload, ClientPlayNetworking.Context context) {
         playerData.deadeyeMeter = payload.deadeyeMeter();
+        playerData.deadeyeCore = payload.deadeyeCore();
     }
 
     public static void disconnect(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient client) {
