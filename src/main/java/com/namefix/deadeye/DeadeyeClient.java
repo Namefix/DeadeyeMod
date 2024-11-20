@@ -289,7 +289,7 @@ public class DeadeyeClient {
         assert client.player != null;
         if(isEnabled) {
             if(!shootingMarks) {
-                if(playerData.deadeyeMeter > 0) playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, 160.0f);
+                if(playerData.deadeyeMeter > 0) playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, getMaxMeter(3));
                 else playerData.deadeyeCore = MathHelper.clamp(playerData.deadeyeCore - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, 80.0f);
                 calculateDeadeyeEnding();
             }
@@ -300,17 +300,22 @@ public class DeadeyeClient {
         deadeyeEnding = MathHelper.clamp(1f - ((playerData.deadeyeCore/20f)+(playerData.deadeyeMeter/20f)), 0f, 1f);
     }
 
+    public static float getMaxMeter(int tonicLevel) {
+        return (playerData.deadeyeLevel*10)+(tonicLevel*20);
+    }
+
     public static void deadeyeMeterUpdate(DeadeyeMeterPayload payload, ClientPlayNetworking.Context context) {
-        playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+payload.amount(),0f,160f);
+        playerData.deadeyeMeter = MathHelper.clamp(payload.amount(),0f, getMaxMeter(3));
     }
 
     public static void deadeyeCoreUpdate(DeadeyeCorePayload payload, ClientPlayNetworking.Context context) {
-        playerData.deadeyeCore = MathHelper.clamp(playerData.deadeyeCore+payload.amount(),0f,80f);
+        playerData.deadeyeCore = MathHelper.clamp(payload.amount(),0f,80f);
     }
 
     public static void receiveInitialSync(InitialSyncPayload payload, ClientPlayNetworking.Context context) {
         playerData.deadeyeMeter = payload.deadeyeMeter();
         playerData.deadeyeCore = payload.deadeyeCore();
+        playerData.deadeyeLevel = payload.deadeyeLevel();
     }
 
     public static void disconnect(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient client) {

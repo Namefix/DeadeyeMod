@@ -153,7 +153,7 @@ public class DeadeyeServer {
 
     public static void onPlayerConnect(ServerPlayNetworkHandler serverPlayNetworkHandler, PacketSender packetSender, MinecraftServer minecraftServer) {
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(serverPlayNetworkHandler.player);
-        ServerPlayNetworking.send(serverPlayNetworkHandler.player, new InitialSyncPayload(playerState.deadeyeMeter, playerState.deadeyeCore));
+        ServerPlayNetworking.send(serverPlayNetworkHandler.player, new InitialSyncPayload(playerState.deadeyeMeter, playerState.deadeyeCore, playerState.deadeyeLevel));
     }
 
     public static void onPlayerDisconnect(ServerPlayNetworkHandler serverPlayNetworkHandler, MinecraftServer minecraftServer) {
@@ -165,9 +165,13 @@ public class DeadeyeServer {
         if (!(damageSource.getAttacker() instanceof PlayerEntity player)) return;
         if (DeadeyeServer.deadeyeUsers.get(player.getUuid()) != null) return;
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
-        playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount(), 0f, 100f);
+        playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount(), 0f, playerData.deadeyeLevel*10);
 
-        ServerPlayNetworking.send((ServerPlayerEntity) player, new DeadeyeMeterPayload(DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount()));
+        ServerPlayNetworking.send((ServerPlayerEntity) player, new DeadeyeMeterPayload(playerData.deadeyeMeter));
+    }
+
+    public static float getMaxDeadeye(PlayerSaveData playerData) {
+        return (playerData.deadeyeLevel*10)+60f;
     }
 
     public static void onTick(MinecraftServer minecraftServer) {
@@ -187,7 +191,7 @@ public class DeadeyeServer {
             }
 
             if (data.shootingPhase != PlayerServerData.ShootingPhase.SHOOTING) {
-                if(playerState.deadeyeMeter > 0)playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, 160f);
+                if(playerState.deadeyeMeter > 0)playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, getMaxDeadeye(playerState));
                 else playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, 80f);
                 if (playerState.deadeyeMeter == 0f && playerState.deadeyeCore == 0f) {
                     if (data.shootingPhase != PlayerServerData.ShootingPhase.MARKED) {

@@ -272,26 +272,30 @@ public class DeadeyeEffects {
     }
 
     private static void renderMeter(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        float deadeyeMeter = DeadeyeClient.playerData.deadeyeMeter;
+
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
 
-        drawContext.setShaderColor(0.33f, 0.31f, 0.31f, 1.0f);
-        drawContext.drawTexture(
-                DEADEYE_METER_TRACK.getLast(), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
-        );
+        if(DeadeyeClient.playerData.deadeyeLevel > 0) {
+            drawContext.setShaderColor(0.33f, 0.31f, 0.31f, 1.0f);
+            drawContext.drawTexture(
+                    DEADEYE_METER_TRACK.get(MathHelper.clamp(DeadeyeClient.playerData.deadeyeLevel - 1, 0, 9)), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
+            );
+        }
 
-        if(meterLastAmount > 100f) {
-            float currentMeter = DeadeyeClient.playerData.deadeyeMeter;
-
-            if((meterLastAmount >= 140f && currentMeter < 140f) ||
-                (meterLastAmount >= 120f && currentMeter < 120f) ||
-                (currentMeter < 100f)) {
+        boolean tonic = false;
+        if(meterLastAmount > DeadeyeClient.getMaxMeter(0)) {
+            tonic = true;
+            if((meterLastAmount >= DeadeyeClient.getMaxMeter(2) && deadeyeMeter < DeadeyeClient.getMaxMeter(2)) ||
+                (meterLastAmount >= DeadeyeClient.getMaxMeter(1) && deadeyeMeter < DeadeyeClient.getMaxMeter(1)) ||
+                (deadeyeMeter < DeadeyeClient.getMaxMeter(0))) {
                 meterBlink = 1.0f;
             }
         }
 
-        meterLastAmount = DeadeyeClient.playerData.deadeyeMeter;
+        meterLastAmount = deadeyeMeter;
 
         if(meterBlink > 0.0f) meterBlink -= (renderTickCounter.getLastFrameDuration() / 20.0f)*4;
         if(meterBlink > 0.75f || meterBlink < 0.50f && meterBlink > 0.25f) return;
@@ -299,8 +303,8 @@ public class DeadeyeEffects {
         Vector3f color = getMeterColor();
         drawContext.setShaderColor(color.x, color.y, color.z, 1.0f);
 
-        if(Math.round(DeadeyeClient.playerData.deadeyeMeter) > 0) {
-            int meterIndex = Math.clamp(Math.round(DeadeyeClient.playerData.deadeyeMeter), 0, 99);
+        if(Math.round(deadeyeMeter) > 0) {
+            int meterIndex = tonic ? 99 : Math.clamp(Math.round(deadeyeMeter), 0, 99);
             drawContext.drawTexture(
                     DEADEYE_METER.get(meterIndex), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
             );
@@ -313,9 +317,9 @@ public class DeadeyeEffects {
     }
 
     private static Vector3f getMeterColor() {
-        if(DeadeyeClient.playerData.deadeyeMeter >= 140) return meterFortification.getLast();
-        else if(DeadeyeClient.playerData.deadeyeMeter >= 120) return meterFortification.get(1);
-        else if(DeadeyeClient.playerData.deadeyeMeter > 100) return meterFortification.getFirst();
+        if(DeadeyeClient.playerData.deadeyeMeter >= DeadeyeClient.getMaxMeter(2)) return meterFortification.getLast();
+        else if(DeadeyeClient.playerData.deadeyeMeter >= DeadeyeClient.getMaxMeter(1)) return meterFortification.get(1);
+        else if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(0)) return meterFortification.getFirst();
         else return new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
