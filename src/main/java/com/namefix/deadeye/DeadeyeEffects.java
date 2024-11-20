@@ -80,6 +80,7 @@ public class DeadeyeEffects {
     static int markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
 
     private static final ManagedShaderEffect DEADEYE_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json"));
+    public static float shaderFade = 0.0f;
 
     // Processing heartbeats
     public static void heartbeatTick() {
@@ -126,15 +127,19 @@ public class DeadeyeEffects {
     }
 
     public static void renderShader(float tickDelta) {
-        if(DeadeyeClient.isEnabled && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
+        if(shaderFade > 0.0 && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
             DEADEYE_SHADER.setUniformValue("TickDelta", tickDelta);
             DEADEYE_SHADER.setUniformValue("VignetteStrength", DeadeyeMod.CONFIG.client.deadeyeVignetteStrength());
             DEADEYE_SHADER.setUniformValue("DeadeyeEndValue", DeadeyeClient.deadeyeEnding);
+            DEADEYE_SHADER.setUniformValue("Fade", shaderFade);
             DEADEYE_SHADER.render(tickDelta);
         }
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        if(DeadeyeClient.isEnabled) shaderFade = MathHelper.clamp(shaderFade + (renderTickCounter.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+        else shaderFade = MathHelper.clamp(shaderFade - (renderTickCounter.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+
         if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext, renderTickCounter);
 
         if(DeadeyeClient.isEnabled) renderMarks(drawContext, renderTickCounter);

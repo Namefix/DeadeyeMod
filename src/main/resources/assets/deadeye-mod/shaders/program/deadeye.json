@@ -16,6 +16,7 @@
     { "name": "Time",           "type": "float",     "count": 1,    "values": [ 0.0 ]},
     { "name": "TickDelta",      "type": "float",     "count": 1,    "values": [ 0.0 ]},
     { "name": "VignetteStrength", "type": "float",  "count": 1,    "values": [ 0.0 ]},
-    { "name": "DeadeyeEndValue", "type": "float",    "count": 1,    "values": [ 0.0 ]}
+    { "name": "DeadeyeEndValue", "type": "float",    "count": 1,    "values": [ 0.0 ]},
+    { "name": "Fade",           "type": "float",     "count": 1,    "values": [ 0.0 ]}
   ]
 }
