@@ -11,6 +11,7 @@ uniform float Time;
 uniform float TickDelta;
 uniform float VignetteStrength;
 uniform float DeadeyeEndValue;
+uniform float Fade;
 
 float hash(float n) {
     return fract(sin(n) * 43758.5453);
@@ -31,6 +32,7 @@ vec4 applyRadialBlur(vec2 uv, vec2 mid, float strength, int samples) {
 }
 
 void main() {
+    vec4 baseColor = texture(DiffuseSampler, texCoord);
     vec4 texColor = texture(DiffuseSampler, texCoord);
 
     vec2 mid = vec2(0.5, 0.5);
@@ -59,5 +61,5 @@ void main() {
     float reduction = distanceFactor / intensity;
     texColor.rgb = clamp(texColor.rgb - reduction * 1.5, 0.0, 1.0);
 
-    fragColor = texColor;
+    fragColor = mix(baseColor, texColor, Fade);
 }

@@ -1,5 +1,6 @@
 package com.namefix.deadeye;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.namefix.DeadeyeMod;
 import com.namefix.handlers.SoundHandler;
@@ -12,6 +13,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Vector3f;
 import org.ladysnake.satin.api.managed.ManagedShaderEffect;
 import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
@@ -21,18 +23,54 @@ import java.util.stream.IntStream;
 public class DeadeyeEffects {
     DeadeyeEffects() {}
 
+    // load every meter related textures
+    private static final Identifier DEADEYE_CORE_BG = Identifier.of(DeadeyeMod.MOD_ID, "textures/deadeye-core/core-background.png");
+    private static final List<Identifier> DEADEYE_CORE = IntStream.rangeClosed(1, 16)
+            .mapToObj(i -> Identifier.of(DeadeyeMod.MOD_ID, String.format("textures/deadeye-core/core%02d.png", i)))
+            .toList();
+    private static final List<Identifier> DEADEYE_METER_TRACK = IntStream.rangeClosed(1, 10)
+            .mapToObj(i -> Identifier.of(DeadeyeMod.MOD_ID, String.format("textures/meter-track/track%02d.png", i)))
+            .toList();
+    private static final List<Identifier> DEADEYE_METER = IntStream.rangeClosed(1, 100)
+            .mapToObj(i -> Identifier.of(DeadeyeMod.MOD_ID, String.format("textures/meter/meter%02d.png", i)))
+            .toList();
+
     // load every lightleak texture
     private static final List<Identifier> DEADEYE_LIGHTLEAK = IntStream.rangeClosed(1, 15)
             .mapToObj(i -> Identifier.of(DeadeyeMod.MOD_ID, String.format("textures/lightleak/lightleak%02d.png", i)))
             .toList();
 
+    // meter variables
+    private static final List<Vector3f> meterFortification = Lists.newArrayList(
+            new Vector3f(1f, 0.969f, 0.776f),
+            new Vector3f(1f, 0.969f, 0.659f),
+            new Vector3f(0.976f, 0.925f, 0.412f)
+    );
+
+    public static int meterX = 0;
+    public static int meterY = 0;
+    public static int meterSize = 16;
+
+    private static int meterCoreLastIndex = 0;
+    private static boolean meterCoreEffect = false;
+    private static float meterCoreEffectTime = 0.0f;
+
+    private static float meterCoreLastAmount = 0.0f;
+    private static float meterCoreBlink = 0.0f;
+
+    private static float meterLastAmount = 0.0f;
+    private static float meterBlink = 0.0f;
+
+    // lightleak variables
     public static long lightleakTimer = 0;
     public static int lightleakStatus = 0;
     public static boolean lightleakDirection = false;
 
+    // sounds
     static SoundBackgroundLoop soundBackground;
     static SoundBackgroundLoop soundBackground2;
 
+    // heartbeat and clock tick variables
     static boolean heartbeat = false;
     static long lastHeartbeat = System.currentTimeMillis();
     static int heartbeatInDuration = 1150;
@@ -42,6 +80,7 @@ public class DeadeyeEffects {
     static int markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
 
     private static final ManagedShaderEffect DEADEYE_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json"));
+    public static float shaderFade = 0.0f;
 
     // Processing heartbeats
     public static void heartbeatTick() {
@@ -63,6 +102,7 @@ public class DeadeyeEffects {
         }
     }
 
+    // Update visual and sound effects after deadeye status changes
     public static void updateEffects(DeadeyeMod.DeadeyeStatus status) {
         MinecraftClient client = MinecraftClient.getInstance();
 
@@ -87,42 +127,59 @@ public class DeadeyeEffects {
     }
 
     public static void renderShader(float tickDelta) {
-        if(DeadeyeClient.isEnabled && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
+        if(shaderFade > 0.0 && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
             DEADEYE_SHADER.setUniformValue("TickDelta", tickDelta);
             DEADEYE_SHADER.setUniformValue("VignetteStrength", DeadeyeMod.CONFIG.client.deadeyeVignetteStrength());
             DEADEYE_SHADER.setUniformValue("DeadeyeEndValue", DeadeyeClient.deadeyeEnding);
+            DEADEYE_SHADER.setUniformValue("Fade", shaderFade);
             DEADEYE_SHADER.render(tickDelta);
         }
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        if(DeadeyeClient.isEnabled) shaderFade = MathHelper.clamp(shaderFade + (renderTickCounter.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+        else shaderFade = MathHelper.clamp(shaderFade - (renderTickCounter.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+
         if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext, renderTickCounter);
 
-        if(DeadeyeClient.isEnabled) {
-            // Render dead eye marks
-            DeadeyeClient.marks.forEach((mark) -> {
-                mark.renderTick++;
-                markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
-                Vec3d markPos = RendererUtils.worldSpaceToScreenSpace(mark.getCurrentOffset());
-                if (!RendererUtils.screenSpaceCoordinateIsVisible(markPos)) return;
+        if(DeadeyeClient.isEnabled) renderMarks(drawContext, renderTickCounter);
 
-                if(mark.renderTick < 10) drawContext.setShaderColor(1f, 1f, 1f, 1.0f);
-                else drawContext.setShaderColor(0.78f, 0.09f, 0.09f, 1.0f);
+        meterX = (drawContext.getScaledWindowWidth()/4);
+        meterY = drawContext.getScaledWindowHeight()-20;
+        renderCore(drawContext, renderTickCounter);
+        renderMeter(drawContext, renderTickCounter);
+    }
 
-                int sizeModifier = 0;
-                if(mark.renderTick < 5) sizeModifier = markSize;
-                else if(mark.renderTick < 10) sizeModifier = markSize/2;
+    private static void renderMarks(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        DeadeyeClient.marks.forEach((mark) -> {
+            mark.renderTick++;
+            markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
+            Vec3d markPos = RendererUtils.worldSpaceToScreenSpace(mark.getCurrentOffset());
+            if (!RendererUtils.screenSpaceCoordinateIsVisible(markPos)) return;
 
-                int posX = (int) Math.round(markPos.x) - markSize/2-sizeModifier/2;
-                int posY = (int) Math.round(markPos.y) - markSize/2-sizeModifier/2;
+            if(mark.renderTick < 10) drawContext.setShaderColor(1f, 1f, 1f, 1.0f);
+            else drawContext.setShaderColor(0.78f, 0.09f, 0.09f, 1.0f);
 
-                drawContext.drawTexture(
-                        DEADEYE_MARK, posX, posY, markSize+sizeModifier, markSize+sizeModifier,
-                        0, 0, 64, 64, 64, 64
-                );
-            });
-            drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        }
+            int sizeModifier = 0;
+            if(mark.renderTick < 5) sizeModifier = markSize;
+            else if(mark.renderTick < 10) sizeModifier = markSize/2;
+
+            int posX = (int) Math.round(markPos.x) - markSize/2-sizeModifier/2;
+            int posY = (int) Math.round(markPos.y) - markSize/2-sizeModifier/2;
+
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.disableDepthTest();
+
+            drawContext.drawTexture(
+                    DEADEYE_MARK, posX, posY, markSize+sizeModifier, markSize+sizeModifier,
+                    0, 0, 64, 64, 64, 64
+            );
+
+            RenderSystem.disableBlend();
+            RenderSystem.enableDepthTest();
+        });
+        drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private static void renderLightleak(DrawContext drawContext, RenderTickCounter renderTickCounter) {
@@ -153,5 +210,128 @@ public class DeadeyeEffects {
                 lightleakTimer = System.currentTimeMillis();
             }
         }
+    }
+
+    private static void renderCore(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
+
+        drawContext.drawTexture(
+                DEADEYE_CORE_BG, meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
+        );
+
+        if(meterCoreLastAmount > 20f) {
+            float currentCore = DeadeyeClient.playerData.deadeyeCore;
+
+            if((meterCoreLastAmount >= 60f && currentCore < 60f) ||
+                (meterCoreLastAmount >= 40f && currentCore < 40f) ||
+                (currentCore < 20f)) {
+                meterCoreBlink = 1.0f;
+            }
+        }
+
+        meterCoreLastAmount = DeadeyeClient.playerData.deadeyeCore;
+
+        if(meterCoreBlink > 0.0f) meterCoreBlink -= (renderTickCounter.getLastFrameDuration() / 20.0f)*4;
+        if(meterCoreBlink > 0.75f || meterCoreBlink < 0.50f && meterCoreBlink > 0.25f) return;
+
+        int coreIndex = MathHelper.clamp(Math.round(DeadeyeClient.playerData.deadeyeCore), 0, 15);
+        if(coreIndex < 4) drawContext.setShaderColor(0.8f, 0.075f, 0.024f, 1.0f);
+        else {
+            Vector3f color = getCoreColor();
+            drawContext.setShaderColor(color.x, color.y, color.z, 1.0f);
+        }
+
+        if(meterCoreEffect || meterCoreEffectTime < 0.0f) meterCoreEffectTime += renderTickCounter.getLastFrameDuration() / 20.0f;
+        if(meterCoreEffectTime > 1.0f) {
+            meterCoreEffect = false;
+            meterCoreEffectTime = -1.0f;
+        }
+
+        if(meterCoreLastIndex != coreIndex && !meterCoreEffect) {
+            if(meterCoreLastIndex > coreIndex && meterCoreEffectTime >= 0.0f) {
+                meterCoreEffect = true;
+                meterCoreEffectTime = 0.0f;
+            }
+        }
+
+        meterCoreLastIndex = coreIndex;
+        float progress = meterCoreEffectTime*16;
+        if(progress > 1.0f) meterCoreEffect = false;
+        float scale = 1.0f + (meterCoreEffect ? (progress < 0.5f
+                ? -0.1f * (progress / 0.5f)
+                : -0.1f * (1.0f - (progress - 0.5f) / 0.5f)) : 0f);
+        drawContext.getMatrices().push();
+        drawContext.getMatrices().translate(meterX + meterSize / 2.0f, meterY + meterSize / 2.0f, 0);
+        drawContext.getMatrices().scale(scale, scale, 1.0f);
+        drawContext.getMatrices().translate(-meterSize / 2.0f, -meterSize / 2.0f, 0);
+
+        // Draw your texture
+        drawContext.drawTexture(DEADEYE_CORE.get(coreIndex), 0, 0, -90, 0, 0, meterSize, meterSize, meterSize, meterSize);
+
+        drawContext.getMatrices().pop();
+
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
+    }
+
+    private static void renderMeter(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        float deadeyeMeter = DeadeyeClient.playerData.deadeyeMeter;
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
+
+        if(DeadeyeClient.playerData.deadeyeLevel > 0) {
+            drawContext.setShaderColor(0.33f, 0.31f, 0.31f, 1.0f);
+            drawContext.drawTexture(
+                    DEADEYE_METER_TRACK.get(MathHelper.clamp(DeadeyeClient.playerData.deadeyeLevel - 1, 0, 9)), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
+            );
+        }
+
+        boolean tonic = false;
+        if(meterLastAmount > DeadeyeClient.getMaxMeter(0)) {
+            tonic = true;
+            if((meterLastAmount >= DeadeyeClient.getMaxMeter(2) && deadeyeMeter < DeadeyeClient.getMaxMeter(2)) ||
+                (meterLastAmount >= DeadeyeClient.getMaxMeter(1) && deadeyeMeter < DeadeyeClient.getMaxMeter(1)) ||
+                (deadeyeMeter < DeadeyeClient.getMaxMeter(0))) {
+                meterBlink = 1.0f;
+            }
+        }
+
+        meterLastAmount = deadeyeMeter;
+
+        if(meterBlink > 0.0f) meterBlink -= (renderTickCounter.getLastFrameDuration() / 20.0f)*4;
+        if(meterBlink > 0.75f || meterBlink < 0.50f && meterBlink > 0.25f) return;
+
+        Vector3f color = getMeterColor();
+        drawContext.setShaderColor(color.x, color.y, color.z, 1.0f);
+
+        if(Math.round(deadeyeMeter) > 0) {
+            int meterIndex = tonic ? 99 : Math.clamp(Math.round(deadeyeMeter), 0, 99);
+            drawContext.drawTexture(
+                    DEADEYE_METER.get(meterIndex), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
+            );
+        }
+
+        drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
+    }
+
+    private static Vector3f getMeterColor() {
+        if(DeadeyeClient.playerData.deadeyeMeter >= DeadeyeClient.getMaxMeter(2)) return meterFortification.getLast();
+        else if(DeadeyeClient.playerData.deadeyeMeter >= DeadeyeClient.getMaxMeter(1)) return meterFortification.get(1);
+        else if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(0)) return meterFortification.getFirst();
+        else return new Vector3f(1.0f, 1.0f, 1.0f);
+    }
+
+    private static Vector3f getCoreColor() {
+        if(DeadeyeClient.playerData.deadeyeCore >= 60) return meterFortification.getLast();
+        else if(DeadeyeClient.playerData.deadeyeCore >= 40) return meterFortification.get(1);
+        else if(DeadeyeClient.playerData.deadeyeCore > 20) return meterFortification.getFirst();
+        else return new Vector3f(1.0f, 1.0f, 1.0f);
     }
 }

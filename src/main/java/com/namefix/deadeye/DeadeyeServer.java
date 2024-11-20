@@ -43,7 +43,7 @@ public class DeadeyeServer {
 
         if(payload.status()) {  // Player wants to enable deadeye
             if(context.player().getWorld().getGameRules().getBoolean(GameruleHandler.DISABLE_DEADEYE)) return;
-            if(playerState.deadeyeMeter <= 0f) {
+            if(playerState.deadeyeMeter <= 0f && playerState.deadeyeCore <= 0f) {
                 ServerPlayNetworking.send(context.player(), new DeadeyeUpdatePayload(DeadeyeMod.DeadeyeStatus.EMPTY.ordinal()));
                 return;
             }
@@ -142,7 +142,7 @@ public class DeadeyeServer {
 
         data.markList.removeFirst();
 
-        if(data.markList.isEmpty()) updateDeadeyeStatus(context.server(), player, playerState.deadeyeMeter <= 0.0f ? DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY : DeadeyeMod.DeadeyeStatus.DISABLED);
+        if(data.markList.isEmpty()) updateDeadeyeStatus(context.server(), player, playerState.deadeyeMeter <= 0.0f && playerState.deadeyeCore <= 0.0f ? DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY : DeadeyeMod.DeadeyeStatus.DISABLED);
     }
 
     public static void updatePhase(ServerPlayerEntity player, PlayerServerData.ShootingPhase phase) {
@@ -153,7 +153,7 @@ public class DeadeyeServer {
 
     public static void onPlayerConnect(ServerPlayNetworkHandler serverPlayNetworkHandler, PacketSender packetSender, MinecraftServer minecraftServer) {
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(serverPlayNetworkHandler.player);
-        ServerPlayNetworking.send(serverPlayNetworkHandler.player, new InitialSyncPayload(playerState.deadeyeMeter));
+        ServerPlayNetworking.send(serverPlayNetworkHandler.player, new InitialSyncPayload(playerState.deadeyeMeter, playerState.deadeyeCore, playerState.deadeyeLevel));
     }
 
     public static void onPlayerDisconnect(ServerPlayNetworkHandler serverPlayNetworkHandler, MinecraftServer minecraftServer) {
@@ -161,13 +161,17 @@ public class DeadeyeServer {
     }
 
     // Give deadeye meter to a player after kill
-    public static void awardDeadeyeMeter(LivingEntity livingEntity, DamageSource damageSource) {
+    public static void deadeyeMeterKillReward(LivingEntity livingEntity, DamageSource damageSource) {
         if (!(damageSource.getAttacker() instanceof PlayerEntity player)) return;
         if (DeadeyeServer.deadeyeUsers.get(player.getUuid()) != null) return;
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
-        playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount(), 0f, 100f);
+        playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount(), 0f, playerData.deadeyeLevel*10);
 
-        ServerPlayNetworking.send((ServerPlayerEntity) player, new DeadeyeMeterPayload(DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount()));
+        ServerPlayNetworking.send((ServerPlayerEntity) player, new DeadeyeMeterPayload(playerData.deadeyeMeter));
+    }
+
+    public static float getMaxDeadeye(PlayerSaveData playerData) {
+        return (playerData.deadeyeLevel*10)+60f;
     }
 
     public static void onTick(MinecraftServer minecraftServer) {
@@ -187,8 +191,9 @@ public class DeadeyeServer {
             }
 
             if (data.shootingPhase != PlayerServerData.ShootingPhase.SHOOTING) {
-                playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, 100f);
-                if (playerState.deadeyeMeter == 0f) {
+                if(playerState.deadeyeMeter > 0)playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, getMaxDeadeye(playerState));
+                else playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, 80f);
+                if (playerState.deadeyeMeter == 0f && playerState.deadeyeCore == 0f) {
                     if (data.shootingPhase != PlayerServerData.ShootingPhase.MARKED) {
                         updateDeadeyeStatus(minecraftServer, player, DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY);
                     } else {
