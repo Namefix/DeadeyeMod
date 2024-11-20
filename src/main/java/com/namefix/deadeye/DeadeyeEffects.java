@@ -13,6 +13,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.ladysnake.satin.api.managed.ManagedShaderEffect;
 import org.ladysnake.satin.api.managed.ShaderEffectManager;
@@ -41,6 +42,14 @@ public class DeadeyeEffects {
             .toList();
 
     // meter variables
+    public enum MeterPosition {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT,
+        NEAR_HOTBAR
+    }
+
     private static final List<Vector3f> meterFortification = Lists.newArrayList(
             new Vector3f(1f, 0.969f, 0.776f),
             new Vector3f(1f, 0.969f, 0.659f),
@@ -144,8 +153,9 @@ public class DeadeyeEffects {
 
         if(DeadeyeClient.isEnabled) renderMarks(drawContext, renderTickCounter);
 
-        meterX = (drawContext.getScaledWindowWidth()/4);
-        meterY = drawContext.getScaledWindowHeight()-20;
+        Vector2i meterCoords = getMeterCoordinates(drawContext, DeadeyeMod.CONFIG.client.meterPosition());
+        meterX = meterCoords.x;
+        meterY = meterCoords.y;
         renderCore(drawContext, renderTickCounter);
         renderMeter(drawContext, renderTickCounter);
     }
@@ -333,5 +343,26 @@ public class DeadeyeEffects {
         else if(DeadeyeClient.playerData.deadeyeCore >= 40) return meterFortification.get(1);
         else if(DeadeyeClient.playerData.deadeyeCore > 20) return meterFortification.getFirst();
         else return new Vector3f(1.0f, 1.0f, 1.0f);
+    }
+
+    private static Vector2i getMeterCoordinates(DrawContext ctx, MeterPosition pos) {
+        switch(pos) {
+            case TOP_LEFT -> {
+                return new Vector2i(4, 4);
+            }
+            case TOP_RIGHT -> {
+                return new Vector2i(ctx.getScaledWindowWidth()-20, 4);
+            }
+            case BOTTOM_LEFT -> {
+                return new Vector2i(4, ctx.getScaledWindowHeight()-20);
+            }
+            case BOTTOM_RIGHT -> {
+                return new Vector2i(ctx.getScaledWindowWidth()-20, ctx.getScaledWindowHeight()-20);
+            }
+            case NEAR_HOTBAR -> {
+                return new Vector2i(ctx.getScaledWindowWidth()/4, ctx.getScaledWindowHeight()-20);
+            }
+        }
+        return new Vector2i(0, 0);
     }
 }

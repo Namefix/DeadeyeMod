@@ -11,20 +11,48 @@
 
   "text.config.deadeye-mod.category.server": "Server",
   "text.config.deadeye-mod.option.server.deadeyeSlowdown": "Deadeye Slowdown",
+  "text.config.deadeye-mod.option.server.deadeyeSlowdown.tooltip": "Time slowdown while using Deadeye",
+
   "text.config.deadeye-mod.option.server.markableEntities": "Markable Entities",
+  "text.config.deadeye-mod.option.server.markableEntities.tooltip": "Entities that can be marked with Deadeye",
+
   "text.config.deadeye-mod.option.server.markingItems": "Marking Items",
+  "text.config.deadeye-mod.option.server.markingItems.tooltip": "Items that can be used to mark in Deadeye",
+
   "text.config.deadeye-mod.option.server.maxTargetDistance": "Maximum Target Distance",
+
   "text.config.deadeye-mod.option.server.markFocusSpeed": "Mark Focus Speed",
+  "text.config.deadeye-mod.option.server.markFocusSpeed.tooltip": "Camera turning speed in Deadeye",
+
   "text.config.deadeye-mod.option.server.maxMarks": "Maximum Marks",
+  "text.config.deadeye-mod.option.server.maxMarks.tooltip": "Maximum marks placed before shooting",
+
   "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier": "Mark Projectile Speed Multiplier",
+  "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier.tooltip": "Projectile speed of bows in Deadeye",
+
   "text.config.deadeye-mod.option.server.deadeyeIdleConsumeAmount": "Deadeye Idle Consume Amount (Per Tick)",
+
   "text.config.deadeye-mod.option.server.deadeyeKillRefillAmount": "Deadeye Refill Per Kill",
+  "text.config.deadeye-mod.option.server.deadeyeKillRefillAmount.tooltip": "Amount of Meter you get after getting a kill",
 
   "text.config.deadeye-mod.category.client": "Client",
   "text.config.deadeye-mod.option.client.disableDeadeyeEffects": "Disable Deadeye Effects",
+
   "text.config.deadeye-mod.option.client.disableLightleakEffect": "Disable Light Leak Effects",
+  "text.config.deadeye-mod.option.client.disableLightleakEffect.tooltip": "Disable entering effect of Deadeye",
+
+  "text.config.deadeye-mod.option.client.meterPosition": "Meter HUD Position",
+  "text.config.deadeye-mod.option.client.meterPosition.value.top_left": "Top Left",
+  "text.config.deadeye-mod.option.client.meterPosition.value.top_right": "Top Right",
+  "text.config.deadeye-mod.option.client.meterPosition.value.bottom_left": "Bottom Left",
+  "text.config.deadeye-mod.option.client.meterPosition.value.bottom_right": "Bottom Right",
+  "text.config.deadeye-mod.option.client.meterPosition.value.near_hotbar": "Near Hotbar",
+
   "text.config.deadeye-mod.option.client.deadeyeVignetteStrength": "Deadeye Vignette Strength",
+  "text.config.deadeye-mod.option.client.deadeyeVignetteStrength.tooltip": "Strength of vignette effect at the edges of the screen",
+
   "text.config.deadeye-mod.option.client.deadeyeVolume": "Deadeye Sound Effect Volume",
+
   "text.config.deadeye-mod.option.client.deadeyeMarkSize": "Deadeye Mark Size",
 
   "sound.deadeye-mod.enter": "Entered deadeye",
