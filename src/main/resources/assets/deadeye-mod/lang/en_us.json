@@ -32,5 +32,11 @@
   "sound.deadeye-mod.background": "Concentrating",
   "sound.deadeye-mod.paint": "Painted target",
 
-  "gamerule.disableDeadeye": "Disable deadeye"
+  "gamerule.disableDeadeye": "Disable deadeye",
+
+  "command.setmeter.success": "Set %s's Deadeye meter to %s.",
+  "command.setmeter.default": "Refilled %s's Deadeye meter.",
+  "command.setcore.success": "Set %s's Deadeye meter to %s.",
+  "command.setcore.default": "Refilled %s's Deadeye core.",
+  "command.setlevel.success": "Set %s's Deadeye level to %s."
 }

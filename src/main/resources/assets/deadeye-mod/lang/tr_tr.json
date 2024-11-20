@@ -32,5 +32,11 @@
   "sound.deadeye-mod.background": "Odaklanıyor",
   "sound.deadeye-mod.paint": "Hedef boyandı",
 
-  "gamerule.disableDeadeye": "Deadeye'ı devre dışı bırak"
+  "gamerule.disableDeadeye": "Deadeye'ı devre dışı bırak",
+
+  "command.setmeter.success": "%s oyuncusunun Deadeye metresi %s olarak ayarlandı.",
+  "command.setmeter.default": "%s oyuncusunun Deadeye metresi dolduruldu.",
+  "command.setcore.success": "%s oyuncusunun Deadeye çekirdeği %s olarak ayarlandı",
+  "command.setcore.default": "%s oyuncusunun Deadeye çekirdeği dolduruldu.",
+  "command.setlevel.success": "%s oyuncusunun Deadeye seviyesi %s olarak ayarlandı."
 }
