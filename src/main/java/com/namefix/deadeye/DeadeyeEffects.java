@@ -6,6 +6,7 @@ import com.namefix.DeadeyeMod;
 import com.namefix.handlers.SoundHandler;
 import com.namefix.sound.SoundBackgroundLoop;
 import me.x150.renderer.util.RendererUtils;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
@@ -88,8 +89,12 @@ public class DeadeyeEffects {
     private static final Identifier DEADEYE_MARK = Identifier.of(DeadeyeMod.MOD_ID, "textures/cross.png");
     static int markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
 
+    // shaders
     private static final ManagedShaderEffect DEADEYE_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json"));
-    public static float shaderFade = 0.0f;
+    public static float deadeyeFade = 0.0f;
+
+    private static final ManagedShaderEffect TONIC_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/tonic.json"));
+    public static float tonicDuration = 0.0f;
 
     // Processing heartbeats
     public static void heartbeatTick() {
@@ -109,6 +114,13 @@ public class DeadeyeEffects {
                 heartbeat = false;
             }
         }
+    }
+
+    public static void updateVariables(WorldRenderContext context) {
+        if(DeadeyeClient.isEnabled) deadeyeFade = MathHelper.clamp(deadeyeFade + (context.tickCounter().getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+        else deadeyeFade = MathHelper.clamp(deadeyeFade - (context.tickCounter().getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+
+        tonicDuration = MathHelper.clamp(tonicDuration-(context.tickCounter().getLastFrameDuration() / 20.0f), 0.0f, 1.0f);
     }
 
     // Update visual and sound effects after deadeye status changes
@@ -136,19 +148,22 @@ public class DeadeyeEffects {
     }
 
     public static void renderShader(float tickDelta) {
-        if(shaderFade > 0.0 && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
+        if(tonicDuration > 0.0f) {
+            TONIC_SHADER.setUniformValue("TickDelta", tickDelta);
+            TONIC_SHADER.setUniformValue("TonicDuration", tonicDuration);
+            TONIC_SHADER.render(tickDelta);
+        }
+
+        if(deadeyeFade > 0.0f && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
             DEADEYE_SHADER.setUniformValue("TickDelta", tickDelta);
             DEADEYE_SHADER.setUniformValue("VignetteStrength", DeadeyeMod.CONFIG.client.deadeyeVignetteStrength());
             DEADEYE_SHADER.setUniformValue("DeadeyeEndValue", DeadeyeClient.deadeyeEnding);
-            DEADEYE_SHADER.setUniformValue("Fade", shaderFade);
+            DEADEYE_SHADER.setUniformValue("Fade", deadeyeFade);
             DEADEYE_SHADER.render(tickDelta);
         }
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        if(DeadeyeClient.isEnabled) shaderFade = MathHelper.clamp(shaderFade + (renderTickCounter.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
-        else shaderFade = MathHelper.clamp(shaderFade - (renderTickCounter.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
-
         if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext, renderTickCounter);
 
         if(DeadeyeClient.isEnabled) renderMarks(drawContext, renderTickCounter);
@@ -309,6 +324,9 @@ public class DeadeyeEffects {
                 meterBlink = 1.0f;
             }
         }
+        if(deadeyeMeter > DeadeyeClient.getMaxMeter(0) && deadeyeMeter > meterLastAmount) {
+            meterBlink = 1.0f;
+        }
 
         meterLastAmount = deadeyeMeter;
 
@@ -332,15 +350,15 @@ public class DeadeyeEffects {
     }
 
     private static Vector3f getMeterColor() {
-        if(DeadeyeClient.playerData.deadeyeMeter >= DeadeyeClient.getMaxMeter(2)) return meterFortification.getLast();
-        else if(DeadeyeClient.playerData.deadeyeMeter >= DeadeyeClient.getMaxMeter(1)) return meterFortification.get(1);
+        if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(2)) return meterFortification.getLast();
+        else if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(1)) return meterFortification.get(1);
         else if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(0)) return meterFortification.getFirst();
         else return new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
     private static Vector3f getCoreColor() {
-        if(DeadeyeClient.playerData.deadeyeCore >= 60) return meterFortification.getLast();
-        else if(DeadeyeClient.playerData.deadeyeCore >= 40) return meterFortification.get(1);
+        if(DeadeyeClient.playerData.deadeyeCore > 60) return meterFortification.getLast();
+        else if(DeadeyeClient.playerData.deadeyeCore > 40) return meterFortification.get(1);
         else if(DeadeyeClient.playerData.deadeyeCore > 20) return meterFortification.getFirst();
         else return new Vector3f(1.0f, 1.0f, 1.0f);
     }
@@ -360,7 +378,7 @@ public class DeadeyeEffects {
                 return new Vector2i(ctx.getScaledWindowWidth()-20, ctx.getScaledWindowHeight()-20);
             }
             case NEAR_HOTBAR -> {
-                return new Vector2i(ctx.getScaledWindowWidth()/4, ctx.getScaledWindowHeight()-20);
+                return new Vector2i((ctx.getScaledWindowWidth()/4)-20, ctx.getScaledWindowHeight()-20);
             }
         }
         return new Vector2i(0, 0);

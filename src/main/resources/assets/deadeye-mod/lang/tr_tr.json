@@ -66,5 +66,9 @@
   "command.setmeter.default": "%s oyuncusunun Deadeye metresi dolduruldu.",
   "command.setcore.success": "%s oyuncusunun Deadeye çekirdeği %s olarak ayarlandı",
   "command.setcore.default": "%s oyuncusunun Deadeye çekirdeği dolduruldu.",
-  "command.setlevel.success": "%s oyuncusunun Deadeye seviyesi %s olarak ayarlandı."
+  "command.setlevel.success": "%s oyuncusunun Deadeye seviyesi %s olarak ayarlandı.",
+
+  "item.deadeye-mod.snake_oil.effect.empty": "Yılan Yağı",
+  "item.deadeye-mod.potent_snake_oil.effect.empty": "Güçlü Yılan Yağı",
+  "item.deadeye-mod.special_snake_oil.effect.empty": "Özel Yılan Yağı"
 }

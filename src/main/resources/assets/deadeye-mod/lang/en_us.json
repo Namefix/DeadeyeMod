@@ -66,5 +66,9 @@
   "command.setmeter.default": "Refilled %s's Deadeye meter.",
   "command.setcore.success": "Set %s's Deadeye meter to %s.",
   "command.setcore.default": "Refilled %s's Deadeye core.",
-  "command.setlevel.success": "Set %s's Deadeye level to %s."
+  "command.setlevel.success": "Set %s's Deadeye level to %s.",
+
+  "item.deadeye-mod.snake_oil.effect.empty": "Snake Oil",
+  "item.deadeye-mod.potent_snake_oil.effect.empty": "Potent Snake Oil",
+  "item.deadeye-mod.special_snake_oil.effect.empty": "Special Snake Oil"
 }

@@ -160,13 +160,44 @@ public class DeadeyeServer {
         updateDeadeyeStatus(minecraftServer, serverPlayNetworkHandler.player, DeadeyeMod.DeadeyeStatus.DISABLED);
     }
 
+    public static void setDeadeyeMeter(ServerPlayerEntity player, float amount) {
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
+        if(amount < 0) amount = getMaxDeadeye(playerState);
+        playerState.deadeyeMeter = amount;
+        ServerPlayNetworking.send(player, new DeadeyeMeterPayload(amount));
+    }
+
+    public static void setMeterTonicLevel(ServerPlayerEntity player, int level) {
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
+        playerState.deadeyeMeter = (playerState.deadeyeLevel*10)+(level*20);
+        ServerPlayNetworking.send(player, new DeadeyeMeterPayload(playerState.deadeyeMeter));
+    }
+
+    public static void setDeadeyeCore(ServerPlayerEntity player, float amount) {
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
+        playerState.deadeyeCore = amount;
+        ServerPlayNetworking.send(player, new DeadeyeCorePayload(amount));
+    }
+
+    public static void addDeadeyeCore(ServerPlayerEntity player, float amount, boolean meterCap) {
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
+        if(meterCap && playerState.deadeyeCore + amount > playerState.deadeyeLevel*10) return;
+        playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore+amount, 0.0f, 80f);
+        ServerPlayNetworking.send(player, new DeadeyeCorePayload(playerState.deadeyeCore));
+    }
+
+    public static void setDeadeyeLevel(ServerPlayerEntity player, int level) {
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
+        playerState.deadeyeLevel = level;
+        ServerPlayNetworking.send(player, new DeadeyeLevelPayload(level));
+    }
+
     // Give deadeye meter to a player after kill
     public static void deadeyeMeterKillReward(LivingEntity livingEntity, DamageSource damageSource) {
         if (!(damageSource.getAttacker() instanceof PlayerEntity player)) return;
         if (DeadeyeServer.deadeyeUsers.get(player.getUuid()) != null) return;
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
         playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount(), 0f, playerData.deadeyeLevel*10);
-
         ServerPlayNetworking.send((ServerPlayerEntity) player, new DeadeyeMeterPayload(playerData.deadeyeMeter));
     }
 
@@ -191,8 +222,11 @@ public class DeadeyeServer {
             }
 
             if (data.shootingPhase != PlayerServerData.ShootingPhase.SHOOTING) {
-                if(playerState.deadeyeMeter > 0)playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, getMaxDeadeye(playerState));
-                else playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0f, 80f);
+                float slowdownMultiplier = 20f/minecraftServer.getTickManager().getTickRate();
+                float decreaseAmount = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount() * slowdownMultiplier;
+
+                if(playerState.deadeyeMeter > 0)playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - decreaseAmount, 0f, getMaxDeadeye(playerState));
+                else playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore - decreaseAmount, 0f, 80f);
                 if (playerState.deadeyeMeter == 0f && playerState.deadeyeCore == 0f) {
                     if (data.shootingPhase != PlayerServerData.ShootingPhase.MARKED) {
                         updateDeadeyeStatus(minecraftServer, player, DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY);

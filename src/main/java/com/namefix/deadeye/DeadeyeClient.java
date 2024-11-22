@@ -100,6 +100,7 @@ public class DeadeyeClient {
     public static void render(WorldRenderContext worldRenderContext) {
         shootingTick(worldRenderContext);
         DeadeyeEffects.heartbeatTick();
+        DeadeyeEffects.updateVariables(worldRenderContext);
     }
 
     // All logic related to shooting marked targets
@@ -289,8 +290,11 @@ public class DeadeyeClient {
         assert client.player != null;
         if(isEnabled) {
             if(!shootingMarks) {
-                if(playerData.deadeyeMeter > 0) playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, getMaxMeter(3));
-                else playerData.deadeyeCore = MathHelper.clamp(playerData.deadeyeCore - DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount(), 0.0f, 80.0f);
+                float slowdownMultiplier = 20f/client.world.getTickManager().getTickRate();
+                float decreaseAmount = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount() * slowdownMultiplier;
+
+                if(playerData.deadeyeMeter > 0) playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - decreaseAmount, 0.0f, getMaxMeter(3));
+                else playerData.deadeyeCore = MathHelper.clamp(playerData.deadeyeCore - decreaseAmount, 0.0f, 80.0f);
                 calculateDeadeyeEnding();
             }
         }

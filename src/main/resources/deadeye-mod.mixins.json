@@ -5,6 +5,7 @@
   "mixins": [
     "BowItemMixin",
     "CrossbowItemMixin",
+    "ConsumeItemMixin",
     "pointblank.PointBlankFireModeFeatureMixin",
     "pointblank.PointBlankGunItemMixin"
   ],

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.namefix.data.PlayerSaveData;
 import com.namefix.data.StateSaverAndLoader;
+import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.network.payload.DeadeyeCorePayload;
 import com.namefix.network.payload.DeadeyeLevelPayload;
 import com.namefix.network.payload.DeadeyeMeterPayload;
@@ -51,22 +52,17 @@ public class CommandHandler {
     private static void setMeter(ServerPlayerEntity player, int amount) {
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
         if(amount < 0) amount = playerData.deadeyeLevel * 10;
-        playerData.deadeyeMeter = amount;
-        ServerPlayNetworking.send(player, new DeadeyeMeterPayload(playerData.deadeyeMeter));
+        DeadeyeServer.setDeadeyeMeter(player, amount);
     }
 
     private static void setCore(ServerPlayerEntity player, int amount) {
-        PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
         if(amount < 0) amount = 20;
-        playerData.deadeyeCore = amount;
-        ServerPlayNetworking.send(player, new DeadeyeCorePayload(playerData.deadeyeCore));
+        DeadeyeServer.setDeadeyeCore(player, amount);
     }
 
     private static void setLevel(ServerPlayerEntity player, int level) {
-        PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
         if(level < 0) level = 5;
-        playerData.deadeyeLevel = level;
-        ServerPlayNetworking.send(player, new DeadeyeLevelPayload(playerData.deadeyeLevel));
+        DeadeyeServer.setDeadeyeLevel(player, level);
     }
 
     public static void initialize() {
