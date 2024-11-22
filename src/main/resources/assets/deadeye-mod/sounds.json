@@ -1,6 +1,13 @@
 {
+  "tonic_drink": {
+    "subtitle": "sound.deadeye-mod.tonic_drink",
+    "sounds": [
+      "deadeye-mod:tonic_drink"
+    ]
+  },
+
   "deadeye_arthur_background": {
-    "subtitle": "sound.deadeye-mod.deadeyebackground",
+    "subtitle": "sound.deadeye-mod.arthur_background",
     "sounds": [
       "deadeye-mod:deadeye_arthur_background"
     ]

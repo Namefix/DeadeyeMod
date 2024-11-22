@@ -173,6 +173,7 @@ public class DeadeyeEffects {
         meterY = meterCoords.y;
         renderCore(drawContext, renderTickCounter);
         renderMeter(drawContext, renderTickCounter);
+        drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private static void renderMarks(DrawContext drawContext, RenderTickCounter renderTickCounter) {
@@ -342,8 +343,6 @@ public class DeadeyeEffects {
                     DEADEYE_METER.get(meterIndex), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
             );
         }
-
-        drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();

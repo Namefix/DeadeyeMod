@@ -2,6 +2,7 @@ package com.namefix.items;
 
 import com.namefix.deadeye.DeadeyeEffects;
 import com.namefix.deadeye.DeadeyeServer;
+import com.namefix.handlers.SoundHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
@@ -22,6 +23,7 @@ public class SnakeOilItem extends PotionItem {
             DeadeyeServer.setMeterTonicLevel((ServerPlayerEntity) user, level);
         } else {                // client side
             DeadeyeEffects.tonicDuration = 1.0f;
+            user.playSound(SoundHandler.TONIC_DRINK, 0.5f, 1.0f);
         }
 
         return super.finishUsing(stack, world, user);
