@@ -23,7 +23,7 @@
 			"com.namefix.DeadeyeModClient"
 		],
 		"fabric-datagen": [
-			"com.namefix.DeadeyeModDataGenerator"
+			"com.namefix.datagen.DeadeyeModDataGenerator"
 		]
 	},
 	"mixins": [

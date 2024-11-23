@@ -42,7 +42,7 @@ public class DeadeyeConfigModel {
         public float markProjectileSpeedMultiplier = .25f;
 
         @Sync(Option.SyncMode.OVERRIDE_CLIENT)
-        public float deadeyeIdleConsumeAmount = 1.0f;
+        public float deadeyeIdleConsumeAmount = 0.2f;
         public float deadeyeKillRefillAmount = 5f;
     }
 

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "deadeye-mod:block/tobacco_crop_stage1"
+  }
+}

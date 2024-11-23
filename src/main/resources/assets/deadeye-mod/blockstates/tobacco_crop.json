@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "deadeye-mod:block/tobacco_crop_stage0"
+    },
+    "age=1": {
+      "model": "deadeye-mod:block/tobacco_crop_stage0"
+    },
+    "age=2": {
+      "model": "deadeye-mod:block/tobacco_crop_stage1"
+    },
+    "age=3": {
+      "model": "deadeye-mod:block/tobacco_crop_stage1"
+    },
+    "age=4": {
+      "model": "deadeye-mod:block/tobacco_crop_stage2"
+    },
+    "age=5": {
+      "model": "deadeye-mod:block/tobacco_crop_stage2"
+    },
+    "age=6": {
+      "model": "deadeye-mod:block/tobacco_crop_stage3"
+    },
+    "age=7": {
+      "model": "deadeye-mod:block/tobacco_crop_stage3"
+    }
+  }
+}
