@@ -71,8 +71,17 @@
 
   "item.deadeye-mod.tobacco_seeds": "Tobacco Seeds",
   "item.deadeye-mod.tobacco": "Tobacco",
-
+  "item.deadeye-mod.tobacco_water": "Tobacco Water",
+  "item.deadeye-mod.potent_tobacco_water": "Potent Tobacco Water",
+  "item.deadeye-mod.special_tobacco_water": "Special Tobacco Water",
   "item.deadeye-mod.snake_oil.effect.empty": "Snake Oil",
+  "item.deadeye-mod.snake_oil.tooltip": "When Consumed: Refills and fortifies your Deadeye Meter slightly",
   "item.deadeye-mod.potent_snake_oil.effect.empty": "Potent Snake Oil",
-  "item.deadeye-mod.special_snake_oil.effect.empty": "Special Snake Oil"
+  "item.deadeye-mod.potent_snake_oil.tooltip": "When Consumed: Refills and fortifies your Deadeye Meter moderately",
+  "item.deadeye-mod.special_snake_oil.effect.empty": "Special Snake Oil",
+  "item.deadeye-mod.special_snake_oil.tooltip": "When Consumed: Refills and fortifies your Deadeye Meter greatly",
+  "item.deadeye-mod.cigarette.effect.empty": "Cigarette",
+  "item.deadeye-mod.cigarette.tooltip": "When Consumed: Adds 10 to your Deadeye Core",
+
+  "block.deadeye-mod.wild_tobacco": "Wild Tobacco"
 }

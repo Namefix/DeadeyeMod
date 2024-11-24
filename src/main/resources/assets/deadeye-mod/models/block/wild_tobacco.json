@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "deadeye-mod:block/wild_tobacco"
+  }
+}

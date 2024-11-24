@@ -20,6 +20,8 @@ public class LootTableProvider extends FabricBlockLootTableProvider {
     public void generate() {
         BlockStatePropertyLootCondition.Builder builder2 = BlockStatePropertyLootCondition.builder(BlockHandler.TOBACCO_CROP)
                 .properties(StatePredicate.Builder.create().exactMatch(TobaccoCropBlock.AGE, TobaccoCropBlock.MAX_AGE));
-        this.addDrop(BlockHandler.TOBACCO_CROP, this.cropDrops(BlockHandler.TOBACCO_CROP, ItemHandler.TOBACCO, ItemHandler.TOBACCO_SEEDS, builder2));
+        addDrop(BlockHandler.TOBACCO_CROP, cropDrops(BlockHandler.TOBACCO_CROP, ItemHandler.TOBACCO, ItemHandler.TOBACCO_SEEDS, builder2));
+
+        addDrop(BlockHandler.WILD_TOBACCO, ItemHandler.TOBACCO);
     }
 }

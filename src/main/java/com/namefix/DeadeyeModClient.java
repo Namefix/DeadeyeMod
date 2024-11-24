@@ -39,5 +39,6 @@ public class DeadeyeModClient implements ClientModInitializer {
         CommandHandler.initializeClient();
 
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), BlockHandler.TOBACCO_CROP);
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), BlockHandler.WILD_TOBACCO);
     }
 }

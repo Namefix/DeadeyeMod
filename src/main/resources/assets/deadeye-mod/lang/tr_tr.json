@@ -71,8 +71,17 @@
 
   "item.deadeye-mod.tobacco_seeds": "Tütün Tohumu",
   "item.deadeye-mod.tobacco": "Tütün",
-
+  "item.deadeye-mod.tobacco_water": "Tütün Suyu",
+  "item.deadeye-mod.potent_tobacco_water": "Güçlü Tütün Suyu",
+  "item.deadeye-mod.special_tobacco_water": "Özel Tütün Suyu",
   "item.deadeye-mod.snake_oil.effect.empty": "Yılan Yağı",
+  "item.deadeye-mod.snake_oil.tooltip": "İçildiğinde: Deadeye Metreni doldurup hafif seviyede güçlendirir",
   "item.deadeye-mod.potent_snake_oil.effect.empty": "Güçlü Yılan Yağı",
-  "item.deadeye-mod.special_snake_oil.effect.empty": "Özel Yılan Yağı"
+  "item.deadeye-mod.potent_snake_oil.tooltip": "İçildiğinde: Deadeye Metreni doldurup orta seviyede güçlendirir",
+  "item.deadeye-mod.special_snake_oil.effect.empty": "Özel Yılan Yağı",
+  "item.deadeye-mod.special_snake_oil.tooltip": "İçildiğinde: Deadeye Metreni doldurup yüksek seviyede güçlendirir",
+  "item.deadeye-mod.cigarette.effect.empty": "Sigara",
+  "item.deadeye-mod.cigarette.tooltip": "İçildiğinde: Deadeye Çekirdeğine 10 ekler.",
+
+  "block.deadeye-mod.wild_tobacco": "Yabani Tütün"
 }

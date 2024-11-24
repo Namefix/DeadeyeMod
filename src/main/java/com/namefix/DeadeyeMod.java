@@ -42,7 +42,7 @@ public class DeadeyeMod implements ModInitializer {
 		CommandHandler.initialize();
 		GameruleHandler.initialize();
 		ItemHandler.initialize();
-		RecipeHandler.initialize();
+		FeatureHandler.initialize();
 
 		ServerTickEvents.END_SERVER_TICK.register(DeadeyeServer::onTick);
 		ServerLivingEntityEvents.AFTER_DEATH.register(DeadeyeServer::deadeyeMeterKillReward);

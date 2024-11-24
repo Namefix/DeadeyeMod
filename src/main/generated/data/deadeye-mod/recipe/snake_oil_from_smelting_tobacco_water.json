@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.5,
+  "group": "deadeye-mod",
+  "ingredient": {
+    "item": "deadeye-mod:tobacco_water"
+  },
+  "result": {
+    "id": "deadeye-mod:snake_oil"
+  }
+}

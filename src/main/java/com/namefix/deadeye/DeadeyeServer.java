@@ -181,8 +181,8 @@ public class DeadeyeServer {
 
     public static void addDeadeyeCore(ServerPlayerEntity player, float amount, boolean meterCap) {
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
-        if(meterCap && playerState.deadeyeCore + amount > playerState.deadeyeLevel*10) return;
-        playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore+amount, 0.0f, 80f);
+        if(meterCap && playerState.deadeyeCore + amount > 20f) playerState.deadeyeCore = 20f;
+        else playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore+amount, 0.0f, 80f);
         ServerPlayNetworking.send(player, new DeadeyeCorePayload(playerState.deadeyeCore));
     }
 
