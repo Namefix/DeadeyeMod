@@ -22,6 +22,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
@@ -92,6 +93,8 @@ public class DeadeyeClient {
             startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
         }
 
+        while (KeybindHandler.keyDeadeyeQuickdraw.wasPressed() && !isEnabled) performQuickdraw();
+
         if(client.options.attackKey.isPressed() && !marks.isEmpty()) {
             startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
         }
@@ -101,6 +104,31 @@ public class DeadeyeClient {
         shootingTick(worldRenderContext);
         DeadeyeEffects.heartbeatTick();
         DeadeyeEffects.updateVariables(worldRenderContext);
+    }
+
+    // Quickdraw
+    private static void performQuickdraw() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerInventory inventory = client.player.getInventory();
+
+        int targetSlot = -1;
+        for (int i = 0; i <= 8; i++) {
+            ItemStack stackInSlot = inventory.getStack(i);
+            for (Item targetStack : deadeyeMarkingItems) {
+                if (ItemStack.areItemsEqual(stackInSlot, targetStack.getDefaultStack())) {
+                    targetSlot = i;
+                    break;
+                }
+            }
+            if (targetSlot != -1) {
+                break;
+            }
+        }
+
+        requestDeadeye();
+        if(targetSlot != -1) {
+            inventory.selectedSlot = targetSlot;
+        }
     }
 
     // All logic related to shooting marked targets
