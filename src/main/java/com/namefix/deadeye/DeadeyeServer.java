@@ -26,6 +26,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
@@ -189,16 +190,41 @@ public class DeadeyeServer {
     public static void setDeadeyeLevel(ServerPlayerEntity player, int level) {
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
         playerState.deadeyeLevel = level;
+        playerState.deadeyeXp = 0;
         ServerPlayNetworking.send(player, new DeadeyeLevelPayload(level));
+    }
+
+    public static void addDeadeyeXP(ServerPlayerEntity player, float xp) {
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
+        if(playerState.deadeyeLevel >= 10) return;
+        playerState.deadeyeXp += xp;
+        if(player.getWorld().getGameRules().getBoolean(GameruleHandler.DISABLE_DEADEYE_LEVELING)) return;
+        boolean leveledUp = false;
+        while(playerState.deadeyeXp >= calculateNeededXP(playerState.deadeyeLevel)) {
+            playerState.deadeyeXp -= calculateNeededXP(playerState.deadeyeLevel);
+            playerState.deadeyeLevel++;
+            leveledUp = true;
+        }
+        if(leveledUp) {
+            player.sendMessage(Text.translatable("text.deadeye-mod.levelup", playerState.deadeyeLevel));
+            ServerPlayNetworking.send(player, new DeadeyeLevelPayload(playerState.deadeyeLevel));
+        }
+    }
+
+    public static float calculateNeededXP(int level) {
+        return level * 10f;
     }
 
     // Give deadeye meter to a player after kill
     public static void deadeyeMeterKillReward(LivingEntity livingEntity, DamageSource damageSource) {
-        if (!(damageSource.getAttacker() instanceof PlayerEntity player)) return;
-        if (DeadeyeServer.deadeyeUsers.get(player.getUuid()) != null) return;
+        if (!(damageSource.getAttacker() instanceof ServerPlayerEntity player)) return;
+        if (DeadeyeServer.deadeyeUsers.get(player.getUuid()) != null) {
+            addDeadeyeXP(player, 0.5f);
+            return;
+        }
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
         playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount(), 0f, playerData.deadeyeLevel*10);
-        ServerPlayNetworking.send((ServerPlayerEntity) player, new DeadeyeMeterPayload(playerData.deadeyeMeter));
+        ServerPlayNetworking.send(player, new DeadeyeMeterPayload(playerData.deadeyeMeter));
     }
 
     public static float getMaxDeadeye(PlayerSaveData playerData) {
@@ -225,6 +251,7 @@ public class DeadeyeServer {
                 float slowdownMultiplier = 20f/minecraftServer.getTickManager().getTickRate();
                 float decreaseAmount = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount() * slowdownMultiplier;
 
+                addDeadeyeXP(player, 0.001f*slowdownMultiplier);
                 if(playerState.deadeyeMeter > 0)playerState.deadeyeMeter = MathHelper.clamp(playerState.deadeyeMeter - decreaseAmount, 0f, getMaxDeadeye(playerState));
                 else playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore - decreaseAmount, 0f, 80f);
                 if (playerState.deadeyeMeter == 0f && playerState.deadeyeCore == 0f) {

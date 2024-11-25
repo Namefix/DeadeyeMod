@@ -85,5 +85,7 @@
   "item.deadeye-mod.chewing_tobacco": "Chewing Tobacco",
   "item.deadeye-mod.chewing_tobacco.tooltip": "When Consumed: Slight meter fortification, Slight loss of core",
 
-  "block.deadeye-mod.wild_tobacco": "Wild Tobacco"
+  "block.deadeye-mod.wild_tobacco": "Wild Tobacco",
+
+  "text.deadeye-mod.levelup": "Your Deadeye has leveled up to %s!"
 }

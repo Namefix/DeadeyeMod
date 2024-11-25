@@ -85,5 +85,8 @@
   "item.deadeye-mod.chewing_tobacco": "Çiğneme Tütünü",
   "item.deadeye-mod.chewing_tobacco.tooltip": "Çiğnendiğinde: Hafif metre güçlendirmesi, Hafif çekirdek kaybı",
 
-  "block.deadeye-mod.wild_tobacco": "Yabani Tütün"
+  "block.deadeye-mod.wild_tobacco": "Yabani Tütün",
+
+  "text.deadeye-mod.levelup": "Deadeye'ın %s seviyesine atladı!"
+
 }

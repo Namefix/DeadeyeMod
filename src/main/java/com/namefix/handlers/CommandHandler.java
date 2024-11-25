@@ -6,7 +6,6 @@ import com.namefix.data.PlayerSaveData;
 import com.namefix.data.StateSaverAndLoader;
 import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.network.payload.DeadeyeCorePayload;
-import com.namefix.network.payload.DeadeyeLevelPayload;
 import com.namefix.network.payload.DeadeyeMeterPayload;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
