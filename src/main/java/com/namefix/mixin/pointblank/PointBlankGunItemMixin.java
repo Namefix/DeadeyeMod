@@ -1,11 +1,14 @@
 package com.namefix.mixin.pointblank;
 
+import com.namefix.DeadeyeMod;
 import com.namefix.deadeye.DeadeyeClient;
 import com.namefix.deadeye.DeadeyeServer;
+import com.vicmatskiv.pointblank.client.GunClientState;
 import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.objectweb.asm.tree.ClassNode;
@@ -34,6 +37,13 @@ public class PointBlankGunItemMixin implements IMixinConfigPlugin {
     private void modifyAdjustInaccuracyClient(PlayerEntity player, ItemStack itemStack, boolean isAiming, CallbackInfoReturnable<Double> cir) {
         if(DeadeyeClient.isEnabled) {
             cir.setReturnValue(0.0);
+        }
+    }
+
+    @Inject(method = "getDrawCooldownDuration", at = @At(value = "HEAD"), cancellable = true)
+    private void modifyGetDrawCooldownDuration(LivingEntity player, GunClientState state, ItemStack itemStack, CallbackInfoReturnable<Long> cir) {
+        if(DeadeyeClient.isEnabled) {
+            cir.setReturnValue(0L);
         }
     }
 

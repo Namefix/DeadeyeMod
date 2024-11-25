@@ -11,6 +11,7 @@ public class KeybindHandler {
     public static KeyBinding keyDeadeyeToggle;
     public static KeyBinding keyDeadeyeMark;
     public static KeyBinding keyDeadeyeShootTargets;
+    public static KeyBinding keyDeadeyeQuickdraw;
 
     private static KeyBinding registerKeybind(String translationKey, int key) {
         return KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -32,7 +33,8 @@ public class KeybindHandler {
 
     public static void initialize() {
         keyDeadeyeToggle = registerKeybind("key.deadeye-mod.toggle", GLFW.GLFW_KEY_CAPS_LOCK);
-        keyDeadeyeMark = registerKeybind("key.deadeye-mod.mark", GLFW.GLFW_KEY_X);
+        keyDeadeyeMark = registerKeybind("key.deadeye-mod.mark", GLFW.GLFW_KEY_GRAVE_ACCENT);
         keyDeadeyeShootTargets = registerKeybind("key.deadeye-mod.shoot_targets", GLFW.GLFW_KEY_G);
+        keyDeadeyeQuickdraw = registerKeybind("key.deadeye-mod.quickdraw", GLFW.GLFW_KEY_Z);
     }
 }
