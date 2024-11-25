@@ -65,5 +65,6 @@ public class RecipeProvider extends FabricRecipeProvider {
         offerSmelting(exporter, List.of(ItemHandler.TOBACCO_WATER), RecipeCategory.BREWING, ItemHandler.SNAKE_OIL, 0.5f, 200, DeadeyeMod.MOD_ID);
         offerSmelting(exporter, List.of(ItemHandler.POTENT_TOBACCO_WATER), RecipeCategory.BREWING, ItemHandler.POTENT_SNAKE_OIL, 1.0f, 200, DeadeyeMod.MOD_ID);
         offerSmelting(exporter, List.of(ItemHandler.SPECIAL_TOBACCO_WATER), RecipeCategory.BREWING, ItemHandler.SPECIAL_SNAKE_OIL, 1.5f, 200, DeadeyeMod.MOD_ID);
+        offerSmelting(exporter, List.of(ItemHandler.TOBACCO), RecipeCategory.BREWING, ItemHandler.CHEWING_TOBACCO, 0.5f, 200, DeadeyeMod.MOD_ID);
     }
 }

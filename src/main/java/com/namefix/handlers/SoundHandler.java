@@ -10,7 +10,7 @@ public class SoundHandler {
     private SoundHandler() {
     }
 
-    public static final SoundEvent TONIC_DRINK = registerSound("tonic_drink");
+    public static final SoundEvent CONSUME_TONIC = registerSound("consume_tonic");
 
     public static final SoundEvent DEADEYE_ARTHUR_BACKGROUND = registerSound("deadeye_arthur_background");
     public static final SoundEvent DEADEYE_ARTHUR_PAINT = registerSound("deadeye_arthur_paint");

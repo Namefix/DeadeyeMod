@@ -1,6 +1,7 @@
-// 1.21.1	2024-11-24T18:50:19.383008301	Deadeye Mod/Recipes
+// 1.21.1	2024-11-25T03:09:02.9526372	Deadeye Mod/Recipes
 3e9d477b7741bab708721d43ebf84bfe7369dbdf data/deadeye-mod/recipe/tobacco_water.json
 b1212d53b3a5b60ac3c0f4e559fb8be0c8ca8097 data/deadeye-mod/recipe/snake_oil_from_smelting_tobacco_water.json
+0258aa82ca1e2c87628aa2267a1869d8717bf9bc data/deadeye-mod/recipe/chewing_tobacco_from_smelting_tobacco.json
 850d266a08e1371a8bf5d0638095c9d8321e6a1f data/deadeye-mod/advancement/recipes/brewing/snake_oil_from_smelting_tobacco_water.json
 ffebb7245b044a803c9054fdd9b175791d3e67a8 data/deadeye-mod/advancement/recipes/brewing/potent_snake_oil_from_smelting_potent_tobacco_water.json
 f0626a3252d200d076c368186f07089d7f9fa0ac data/deadeye-mod/recipe/potent_snake_oil_from_smelting_potent_tobacco_water.json
@@ -12,6 +13,7 @@ f8ee66b25d12654d83f1b57e260a0c562791a5e3 data/deadeye-mod/advancement/recipes/br
 91afef3c9603713edec44953cd482b3bcfedc8d0 data/deadeye-mod/recipe/special_tobacco_water.json
 5f50b1a1f3a0b7df515faacac2de3d20fb5c553b data/deadeye-mod/recipe/cigarette.json
 fc213d535aae631882456015bd8d8ce07f80d26e data/deadeye-mod/advancement/recipes/brewing/special_tobacco_water.json
+976476112b6a2fd63636084dc829a88f7637a2c0 data/deadeye-mod/advancement/recipes/brewing/chewing_tobacco_from_smelting_tobacco.json
 f5e96796d649be34b3d85dfd1221dfdc0ae243cf data/deadeye-mod/recipe/tobacco_seeds.json
 fe422b503703cc4a3aedfb8d1bec72d69f3d616a data/deadeye-mod/advancement/recipes/misc/tobacco_seeds.json
 fa2fbd2d13ac1b4bccf6c3ac943c44c928f7a5d8 data/deadeye-mod/advancement/recipes/brewing/special_snake_oil_from_smelting_special_tobacco_water.json

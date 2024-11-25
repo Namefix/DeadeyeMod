@@ -59,7 +59,7 @@
   "sound.deadeye-mod.exit": "Deadeye'dan çıkıldı",
   "sound.deadeye-mod.background": "Odaklanıyor",
   "sound.deadeye-mod.paint": "Hedef boyandı",
-  "sound.deadeye-mod.tonic_drink": "Tonik içildi",
+  "sound.deadeye-mod.tonic_drink": "Tonik kullanıldı",
 
   "gamerule.disableDeadeye": "Deadeye'ı devre dışı bırak",
 
@@ -81,7 +81,9 @@
   "item.deadeye-mod.special_snake_oil.effect.empty": "Özel Yılan Yağı",
   "item.deadeye-mod.special_snake_oil.tooltip": "İçildiğinde: Deadeye Metreni doldurup yüksek seviyede güçlendirir",
   "item.deadeye-mod.cigarette.effect.empty": "Sigara",
-  "item.deadeye-mod.cigarette.tooltip": "İçildiğinde: Deadeye Çekirdeğine 10 ekler.",
+  "item.deadeye-mod.cigarette.tooltip": "İçildiğinde: Deadeye Çekirdeğine 10 ekler",
+  "item.deadeye-mod.chewing_tobacco": "Çiğneme Tütünü",
+  "item.deadeye-mod.chewing_tobacco.tooltip": "Çiğnendiğinde: Hafif metre güçlendirmesi, Hafif çekirdek kaybı",
 
   "block.deadeye-mod.wild_tobacco": "Yabani Tütün"
 }

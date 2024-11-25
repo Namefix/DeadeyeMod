@@ -59,7 +59,7 @@
   "sound.deadeye-mod.exit": "Exited deadeye",
   "sound.deadeye-mod.background": "Concentrating",
   "sound.deadeye-mod.paint": "Painted target",
-  "sound.deadeye-mod.tonic_drink": "Drunk tonic",
+  "sound.deadeye-mod.tonic_drink": "Consumed tonic",
 
   "gamerule.disableDeadeye": "Disable deadeye",
 
@@ -82,6 +82,8 @@
   "item.deadeye-mod.special_snake_oil.tooltip": "When Consumed: Refills and fortifies your Deadeye Meter greatly",
   "item.deadeye-mod.cigarette.effect.empty": "Cigarette",
   "item.deadeye-mod.cigarette.tooltip": "When Consumed: Adds 10 to your Deadeye Core",
+  "item.deadeye-mod.chewing_tobacco": "Chewing Tobacco",
+  "item.deadeye-mod.chewing_tobacco.tooltip": "When Consumed: Slight meter fortification, Slight loss of core",
 
   "block.deadeye-mod.wild_tobacco": "Wild Tobacco"
 }

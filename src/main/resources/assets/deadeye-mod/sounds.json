@@ -1,8 +1,8 @@
 {
-  "tonic_drink": {
-    "subtitle": "sound.deadeye-mod.tonic_drink",
+  "consume_tonic": {
+    "subtitle": "sound.deadeye-mod.consume_tonic",
     "sounds": [
-      "deadeye-mod:tonic_drink"
+      "deadeye-mod:consume_tonic"
     ]
   },
 

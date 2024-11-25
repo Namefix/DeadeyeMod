@@ -1,9 +1,11 @@
 package com.namefix.handlers;
 
 import com.namefix.DeadeyeMod;
+import com.namefix.items.ChewingTobaccoItem;
 import com.namefix.items.CigaretteItem;
 import com.namefix.items.SnakeOilItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -25,6 +27,7 @@ public class ItemHandler {
     public static final Item SPECIAL_SNAKE_OIL = register("special_snake_oil", new SnakeOilItem(new PotionItem.Settings(), 3));
 
     public static final Item CIGARETTE = register("cigarette", new CigaretteItem(new PotionItem.Settings()));
+    public static final Item CHEWING_TOBACCO = register("chewing_tobacco", new ChewingTobaccoItem(new Item.Settings().food(new FoodComponent.Builder().alwaysEdible().build())));
 
     public static Item register(String id, Item item) {
         Identifier itemID = Identifier.of(DeadeyeMod.MOD_ID, id);
@@ -53,5 +56,7 @@ public class ItemHandler {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
                 .register((itemGroup) -> itemGroup.add(ItemHandler.CIGARETTE));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+                .register((itemGroup) -> itemGroup.add(ItemHandler.CHEWING_TOBACCO));
     }
 }

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "cookingtime": 200,
+  "experience": 0.5,
+  "group": "deadeye-mod",
+  "ingredient": {
+    "item": "deadeye-mod:tobacco"
+  },
+  "result": {
+    "id": "deadeye-mod:chewing_tobacco"
+  }
+}
