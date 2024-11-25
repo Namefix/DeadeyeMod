@@ -32,7 +32,7 @@ public class DeadeyeConfigModel {
 
         @RangeConstraint(min = 0.5f, max = 5.0f)
         @Sync(Option.SyncMode.OVERRIDE_CLIENT)
-        public float markFocusSpeed = 2.0f;
+        public float markFocusSpeed = 0.5f;
 
         @RangeConstraint(min = 0, max = 50)
         @Sync(Option.SyncMode.OVERRIDE_CLIENT)

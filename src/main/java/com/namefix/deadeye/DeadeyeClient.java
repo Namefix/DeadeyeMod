@@ -110,6 +110,7 @@ public class DeadeyeClient {
         if (System.currentTimeMillis() < lerpWait) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
+        float slowdownMultiplier = 20f/client.world.getTickManager().getTickRate();
         assert client.player != null;
 
         ItemStack item = client.player.getMainHandStack();
@@ -125,7 +126,7 @@ public class DeadeyeClient {
         float pPitch = client.player.getPitch();
         float pYaw = client.player.getYaw();
 
-        float interpolationFactor = DeadeyeMod.CONFIG.server.markFocusSpeed() * worldRenderContext.tickCounter().getLastFrameDuration();
+        float interpolationFactor = DeadeyeMod.CONFIG.server.markFocusSpeed() * worldRenderContext.tickCounter().getLastFrameDuration() * slowdownMultiplier;
         if(System.currentTimeMillis() - startLerpingTime > 3_000) interpolationFactor *= 4;
         if(PointBlankIntegration.isLoaded) if(PointBlankIntegration.getGunFiremode(item) == FireMode.AUTOMATIC) interpolationFactor *= 8;
 
