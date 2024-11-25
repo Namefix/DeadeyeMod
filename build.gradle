@@ -56,7 +56,7 @@ dependencies {
 
 	modImplementation "org.ladysnake:satin:${satin_version}"
 	include "org.ladysnake:satin:${satin_version}"
-	include modImplementation("io.github.0x3c50.renderer:renderer-fabric:1.2.1")
+	include modImplementation("io.github.0x3c50.renderer:renderer-fabric:${project.renderer_version}")
 	annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
 
 	modCompileOnly "curse.maven:geckolib-388172:5763140"
