@@ -258,6 +258,8 @@ public class DeadeyeServer {
                     if (data.shootingPhase != PlayerServerData.ShootingPhase.MARKED) {
                         updateDeadeyeStatus(minecraftServer, player, DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY);
                     } else {
+                        setDeadeyeMeter(player, 0);
+                        setDeadeyeCore(player, 0);
                         updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
                     }
                 }

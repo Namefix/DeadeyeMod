@@ -25,7 +25,7 @@ public class ChewingTobaccoItem extends Item {
             DeadeyeServer.setMeterTonicLevel((ServerPlayerEntity) user, 1);
             DeadeyeServer.addDeadeyeCore((ServerPlayerEntity) user, -5, false);
         } else {                // client side
-            DeadeyeEffects.tonicDuration = 1.0f;
+            DeadeyeEffects.startTonicEffect();
             user.playSound(SoundHandler.CONSUME_TONIC, 0.5f, 1.0f);
         }
 

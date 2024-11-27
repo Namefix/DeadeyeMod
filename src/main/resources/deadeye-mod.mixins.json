@@ -4,12 +4,13 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BowItemMixin",
-    "CrossbowItemMixin",
     "ConsumeItemMixin",
+    "CrossbowItemMixin",
     "pointblank.PointBlankFireModeFeatureMixin",
     "pointblank.PointBlankGunItemMixin"
   ],
   "client": [
+    "GameRendererMixin",
     "LivingEntitySwingHandMixin",
     "MouseMixin",
     "PlayerAttackMixin"

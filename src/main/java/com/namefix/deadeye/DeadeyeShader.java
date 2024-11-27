@@ -1,0 +1,79 @@
+package com.namefix.deadeye;
+
+import com.google.gson.JsonSyntaxException;
+import com.namefix.DeadeyeMod;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.PostEffectProcessor;
+import net.minecraft.util.Identifier;
+
+import java.io.IOException;
+
+public class DeadeyeShader {
+    public enum ShaderType {
+        DEADEYE,
+        TONIC
+    }
+
+    private static final Identifier DEADEYE_PROCESSOR_ID = Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json");
+    private static PostEffectProcessor DEADEYE_PROCESSOR;
+
+    private static final Identifier TONIC_PROCESSOR_ID = Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/tonic.json");
+    private static PostEffectProcessor TONIC_PROCESSOR;
+
+    public static void loadDeadeyeProcessor(ShaderType type) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        PostEffectProcessor processor;
+        Identifier id;
+        if(type == ShaderType.DEADEYE) {
+            processor = DEADEYE_PROCESSOR;
+            id = DEADEYE_PROCESSOR_ID;
+        }
+        else if(type == ShaderType.TONIC) {
+            processor = TONIC_PROCESSOR;
+            id = TONIC_PROCESSOR_ID;
+        }
+        else return;
+
+        if (processor != null) {
+            processor.close();
+        }
+
+        try {
+            processor = new PostEffectProcessor(client.getTextureManager(), client.getResourceManager(), client.getFramebuffer(), id);
+            processor.setupDimensions(client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());
+
+            if (type == ShaderType.DEADEYE) {
+                DEADEYE_PROCESSOR = processor;
+            } else if (type == ShaderType.TONIC) {
+                TONIC_PROCESSOR = processor;
+            }
+        } catch (IOException e) {
+            DeadeyeMod.LOGGER.warn("Failed to load shader: {}", id, e);
+        } catch (JsonSyntaxException e) {
+            DeadeyeMod.LOGGER.warn("Failed to parse shader: {}", id, e);
+        }
+
+    }
+
+    public static void clearDeadeyeProcessor() {
+        if (DEADEYE_PROCESSOR != null) {
+            DEADEYE_PROCESSOR.close();
+        }
+        DEADEYE_PROCESSOR = null;
+    }
+
+    public static void clearTonicProcessor() {
+        if (TONIC_PROCESSOR != null) {
+            TONIC_PROCESSOR.close();
+        }
+        TONIC_PROCESSOR = null;
+    }
+
+    public static PostEffectProcessor getDeadeyeProcessor() {
+        return DEADEYE_PROCESSOR;
+    }
+
+    public static PostEffectProcessor getTonicProcessor() {
+        return TONIC_PROCESSOR;
+    }
+}

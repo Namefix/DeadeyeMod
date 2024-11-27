@@ -281,8 +281,6 @@ public class DeadeyeClient {
     public static void receivePhaseUpdate(DeadeyePhasePayload payload, ClientPlayNetworking.Context context) {
         shootingPhase = PlayerServerData.ShootingPhase.values()[payload.phase()];
         if(payload.phase() == PlayerServerData.ShootingPhase.SHOOTING.ordinal()) {
-            DeadeyeClient.playerData.deadeyeMeter = 0.0f;
-            DeadeyeClient.playerData.deadeyeCore = 0.0f;
             startShootingTargets(context.player().getInventory().getMainHandStack().getItem());
         }
     }

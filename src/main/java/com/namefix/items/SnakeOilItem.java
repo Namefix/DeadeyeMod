@@ -27,7 +27,7 @@ public class SnakeOilItem extends PotionItem {
         if (!world.isClient) {  // server side
             DeadeyeServer.setMeterTonicLevel((ServerPlayerEntity) user, level);
         } else {                // client side
-            DeadeyeEffects.tonicDuration = 1.0f;
+            DeadeyeEffects.startTonicEffect();
             user.playSound(SoundHandler.CONSUME_TONIC, 0.5f, 1.0f);
         }
 

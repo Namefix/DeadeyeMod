@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.namefix.DeadeyeMod;
 import com.namefix.handlers.SoundHandler;
 import com.namefix.sound.SoundBackgroundLoop;
-import me.x150.renderer.util.RendererUtils;
+import com.namefix.utils.Utils;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -16,8 +16,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.ladysnake.satin.api.managed.ManagedShaderEffect;
-import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -89,11 +87,9 @@ public class DeadeyeEffects {
     private static final Identifier DEADEYE_MARK = Identifier.of(DeadeyeMod.MOD_ID, "textures/cross.png");
     static int markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
 
-    // shaders
-    private static final ManagedShaderEffect DEADEYE_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json"));
+    // shader values
     public static float deadeyeFade = 0.0f;
 
-    private static final ManagedShaderEffect TONIC_SHADER = ShaderEffectManager.getInstance().manage(Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/tonic.json"));
     public static float tonicDuration = 0.0f;
 
     // Processing heartbeats
@@ -138,6 +134,8 @@ public class DeadeyeEffects {
             client.getSoundManager().play(soundBackground);
             soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, false);
             client.getSoundManager().play(soundBackground2);
+
+            DeadeyeShader.loadDeadeyeProcessor(DeadeyeShader.ShaderType.DEADEYE);
         } else if(status == DeadeyeMod.DeadeyeStatus.DISABLED || status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) {
             client.player.playSound(SoundHandler.DEADEYE_JOHN_EXIT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
             if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
@@ -147,20 +145,9 @@ public class DeadeyeEffects {
         }
     }
 
-    public static void renderShader(float tickDelta) {
-        if(tonicDuration > 0.0f) {
-            TONIC_SHADER.setUniformValue("TickDelta", tickDelta);
-            TONIC_SHADER.setUniformValue("TonicDuration", tonicDuration);
-            TONIC_SHADER.render(tickDelta);
-        }
-
-        if(deadeyeFade > 0.0f && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects()) {
-            DEADEYE_SHADER.setUniformValue("TickDelta", tickDelta);
-            DEADEYE_SHADER.setUniformValue("VignetteStrength", DeadeyeMod.CONFIG.client.deadeyeVignetteStrength());
-            DEADEYE_SHADER.setUniformValue("DeadeyeEndValue", DeadeyeClient.deadeyeEnding);
-            DEADEYE_SHADER.setUniformValue("Fade", deadeyeFade);
-            DEADEYE_SHADER.render(tickDelta);
-        }
+    public static void startTonicEffect() {
+        DeadeyeEffects.tonicDuration = 1.0f;
+        DeadeyeShader.loadDeadeyeProcessor(DeadeyeShader.ShaderType.TONIC);
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
@@ -180,8 +167,8 @@ public class DeadeyeEffects {
         DeadeyeClient.marks.forEach((mark) -> {
             mark.renderTick++;
             markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
-            Vec3d markPos = RendererUtils.worldSpaceToScreenSpace(mark.getCurrentOffset());
-            if (!RendererUtils.screenSpaceCoordinateIsVisible(markPos)) return;
+            Vec3d markPos = Utils.worldSpaceToScreenSpace(mark.getCurrentOffset());
+            if (!Utils.screenSpaceCoordinateIsVisible(markPos)) return;
 
             if(mark.renderTick < 10) drawContext.setShaderColor(1f, 1f, 1f, 1.0f);
             else drawContext.setShaderColor(0.78f, 0.09f, 0.09f, 1.0f);
