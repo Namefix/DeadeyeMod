@@ -21,38 +21,28 @@ public class DeadeyeShader {
     private static PostEffectProcessor TONIC_PROCESSOR;
 
     public static void loadDeadeyeProcessor(ShaderType type) {
+        if(type == ShaderType.DEADEYE) {
+            DEADEYE_PROCESSOR = loadProcessor(DEADEYE_PROCESSOR_ID);
+        } else {
+            TONIC_PROCESSOR = loadProcessor(TONIC_PROCESSOR_ID);
+        }
+    }
+
+    public static PostEffectProcessor loadProcessor(Identifier id) {
         MinecraftClient client = MinecraftClient.getInstance();
         PostEffectProcessor processor;
-        Identifier id;
-        if(type == ShaderType.DEADEYE) {
-            processor = DEADEYE_PROCESSOR;
-            id = DEADEYE_PROCESSOR_ID;
-        }
-        else if(type == ShaderType.TONIC) {
-            processor = TONIC_PROCESSOR;
-            id = TONIC_PROCESSOR_ID;
-        }
-        else return;
-
-        if (processor != null) {
-            processor.close();
-        }
 
         try {
             processor = new PostEffectProcessor(client.getTextureManager(), client.getResourceManager(), client.getFramebuffer(), id);
             processor.setupDimensions(client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());
-
-            if (type == ShaderType.DEADEYE) {
-                DEADEYE_PROCESSOR = processor;
-            } else if (type == ShaderType.TONIC) {
-                TONIC_PROCESSOR = processor;
-            }
+            return processor;
         } catch (IOException e) {
             DeadeyeMod.LOGGER.warn("Failed to load shader: {}", id, e);
         } catch (JsonSyntaxException e) {
             DeadeyeMod.LOGGER.warn("Failed to parse shader: {}", id, e);
         }
 
+        return null;
     }
 
     public static void clearDeadeyeProcessor() {
