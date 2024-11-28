@@ -3,7 +3,7 @@ package com.namefix.deadeye;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.namefix.DeadeyeMod;
-import com.namefix.handlers.SoundHandler;
+import com.namefix.data.DeadeyeSoundProfile;
 import com.namefix.sound.SoundBackgroundLoop;
 import com.namefix.utils.Utils;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -96,16 +96,17 @@ public class DeadeyeEffects {
     public static void heartbeatTick() {
         if(!DeadeyeClient.isEnabled || MinecraftClient.getInstance().isPaused()) return;
         MinecraftClient client = MinecraftClient.getInstance();
+        DeadeyeSoundProfile profile = DeadeyeProfiles.getSelectedSoundProfile();
         assert client.player != null;
         if(!heartbeat) {    // beat in
             if(System.currentTimeMillis() - lastHeartbeat > heartbeatInDuration-(heartbeatInDuration*(DeadeyeClient.deadeyeEnding/1.5))) {
-                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_IN, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+                client.player.playSound(profile.heartbeatInSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
                 lastHeartbeat = System.currentTimeMillis();
                 heartbeat = true;
             }
         } else {            // beat out
             if(System.currentTimeMillis() - lastHeartbeat > heartbeatOutDuration-(heartbeatOutDuration*(DeadeyeClient.deadeyeEnding/1.5))) {
-                client.player.playSound(SoundHandler.DEADEYE_JOHN_HEARTBEAT_OUT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+                client.player.playSound(profile.heartbeatOutSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
                 lastHeartbeat = System.currentTimeMillis();
                 heartbeat = false;
             }
@@ -122,23 +123,24 @@ public class DeadeyeEffects {
     // Update visual and sound effects after deadeye status changes
     public static void updateEffects(DeadeyeMod.DeadeyeStatus status) {
         MinecraftClient client = MinecraftClient.getInstance();
+        DeadeyeSoundProfile profile = DeadeyeProfiles.getSelectedSoundProfile();
 
         if(status == DeadeyeMod.DeadeyeStatus.ENABLED) {
-            client.player.playSound(SoundHandler.DEADEYE_JOHN_ENTER, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+            client.player.playSound(profile.enterSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
 
             lightleakDirection = client.player.getRandom().nextBoolean();
             lightleakTimer = System.currentTimeMillis();
             lightleakStatus = 0;
 
-            soundBackground = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/2, true);
+            soundBackground = new SoundBackgroundLoop(profile.backgroundSound, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/2, true);
             client.getSoundManager().play(soundBackground);
-            soundBackground2 = new SoundBackgroundLoop(SoundHandler.DEADEYE_JOHN_BACKGROUND2, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, false);
+            soundBackground2 = new SoundBackgroundLoop(profile.background2Sound, SoundCategory.AMBIENT, client.player, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, false);
             client.getSoundManager().play(soundBackground2);
 
             DeadeyeShader.loadDeadeyeProcessor(DeadeyeShader.ShaderType.DEADEYE);
         } else if(status == DeadeyeMod.DeadeyeStatus.DISABLED || status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) {
-            client.player.playSound(SoundHandler.DEADEYE_JOHN_EXIT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
-            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) client.player.playSound(SoundHandler.DEADEYE_JOHN_BACKGROUND2_END, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
+            client.player.playSound(profile.exitSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
+            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) client.player.playSound(profile.exitEmptySound, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
 
             soundBackground.setDone();
             soundBackground2.setDone();

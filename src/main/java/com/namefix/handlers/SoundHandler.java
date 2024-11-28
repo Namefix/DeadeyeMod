@@ -13,6 +13,10 @@ public class SoundHandler {
     public static final SoundEvent CONSUME_TONIC = registerSound("consume_tonic");
 
     public static final SoundEvent DEADEYE_ARTHUR_BACKGROUND = registerSound("deadeye_arthur_background");
+    public static final SoundEvent DEADEYE_ARTHUR_BACKGROUND2 = registerSound("deadeye_arthur_background2");
+    public static final SoundEvent DEADEYE_ARTHUR_EXIT = registerSound("deadeye_arthur_exit");
+    public static final SoundEvent DEADEYE_ARTHUR_TICK_IN = registerSound("deadeye_arthur_tick_in");
+    public static final SoundEvent DEADEYE_ARTHUR_TICK_OUT = registerSound("deadeye_arthur_tick_out");
     public static final SoundEvent DEADEYE_ARTHUR_PAINT = registerSound("deadeye_arthur_paint");
 
     public static final SoundEvent DEADEYE_JOHN_ENTER = registerSound("deadeye_john_enter");

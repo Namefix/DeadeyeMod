@@ -7,7 +7,6 @@ import com.namefix.data.PlayerSaveData;
 import com.namefix.data.PlayerServerData;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.KeybindHandler;
-import com.namefix.handlers.SoundHandler;
 import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.payload.*;
 import com.namefix.utils.Utils;
@@ -273,7 +272,7 @@ public class DeadeyeClient {
         Entity ent = context.player().getWorld().getEntityById(payload.entityId());
         if(ent == null) return;
         marks.add(new DeadeyeTarget(ent, new Vec3d(payload.pos())));
-        client.player.playSound(SoundHandler.DEADEYE_ARTHUR_PAINT, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
+        client.player.playSound(DeadeyeProfiles.getSelectedSoundProfile().paintTargetSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
         if(Utils.getTargetingInteractionType(client.player.getMainHandStack()) == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(client.player.getMainHandStack())) startShootingTargets(client.player.getMainHandStack().getItem());
         if(marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
     }

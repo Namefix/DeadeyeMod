@@ -1,5 +1,6 @@
 package com.namefix;
 
+import com.namefix.deadeye.DeadeyeProfiles;
 import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.handlers.*;
 import com.namefix.integrations.PointBlankIntegration;
@@ -43,6 +44,7 @@ public class DeadeyeMod implements ModInitializer {
 		GameruleHandler.initialize();
 		ItemHandler.initialize();
 		FeatureHandler.initialize();
+		DeadeyeProfiles.initialize();
 
 		ServerTickEvents.END_SERVER_TICK.register(DeadeyeServer::onTick);
 		ServerLivingEntityEvents.AFTER_DEATH.register(DeadeyeServer::deadeyeMeterKillReward);

@@ -7,63 +7,88 @@
   },
 
   "deadeye_arthur_background": {
-    "subtitle": "sound.deadeye-mod.arthur_background",
+    "subtitle": "sound.deadeye-mod.background",
     "sounds": [
-      "deadeye-mod:deadeye_arthur_background"
+      "deadeye-mod:arthur/deadeye_arthur_background"
+    ]
+  },
+
+  "deadeye_arthur_background2": {
+    "sounds": [
+      "deadeye-mod:arthur/deadeye_arthur_background2"
+    ]
+  },
+
+  "deadeye_arthur_exit": {
+    "subtitle": "sound.deadeye-mod.exit",
+    "sounds": [
+      "deadeye-mod:arthur/deadeye_arthur_exit"
+    ]
+  },
+
+  "deadeye_arthur_tick_in": {
+    "sounds": [
+      "deadeye-mod:arthur/deadeye_arthur_tick_in"
+    ]
+  },
+
+  "deadeye_arthur_tick_out": {
+    "sounds": [
+      "deadeye-mod:arthur/deadeye_arthur_tick_out"
     ]
   },
 
   "deadeye_arthur_paint": {
     "subtitle": "sound.deadeye-mod.paint",
     "sounds": [
-      "deadeye-mod:deadeye_arthur_paint"
+      "deadeye-mod:arthur/deadeye_arthur_paint"
     ]
   },
 
   "deadeye_john_enter": {
     "subtitle": "sound.deadeye-mod.enter",
     "sounds": [
-      "deadeye-mod:deadeye_john_enter"
+      "deadeye-mod:john/deadeye_john_enter"
     ]
   },
 
   "deadeye_john_background": {
     "subtitle": "sound.deadeye-mod.background",
     "sounds": [
-      "deadeye-mod:deadeye_john_background"
+      "deadeye-mod:john/deadeye_john_background"
     ],
     "stream": true
   },
 
   "deadeye_john_background2": {
     "sounds": [
-      "deadeye-mod:deadeye_john_background2"
+      "deadeye-mod:john/deadeye_john_background2"
     ],
     "stream": true
-  },
-
-  "deadeye_john_background2_end": {
-    "sounds": [
-      "deadeye-mod:deadeye_john_background2_end"
-    ]
-  },
-
-  "deadeye_john_heartbeat_in": {
-    "sounds": [
-      "deadeye-mod:deadeye_john_heartbeat_in"
-    ]
-  },
-
-  "deadeye_john_heartbeat_out": {
-    "sounds": [
-      "deadeye-mod:deadeye_john_heartbeat_out"
-    ]
   },
 
   "deadeye_john_exit": {
     "subtitle": "sound.deadeye-mod.exit",
     "sounds": [
-      "deadeye-mod:deadeye_john_exit"
+      "deadeye-mod:john/deadeye_john_exit"
+    ]
+  },
+
+  "deadeye_john_background2_end": {
+    "sounds": [
+      "deadeye-mod:john/deadeye_john_background2_end"
+    ]
+  },
+
+  "deadeye_john_heartbeat_in": {
+    "sounds": [
+      "deadeye-mod:john/deadeye_john_heartbeat_in"
+    ]
+  },
+
+  "deadeye_john_heartbeat_out": {
+    "sounds": [
+      "deadeye-mod:john/deadeye_john_heartbeat_out"
     ]
   }
 }
