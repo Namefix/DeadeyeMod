@@ -18,14 +18,18 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.item.BowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -96,7 +100,8 @@ public class DeadeyeServer {
         data.markList.add(target);
         ServerPlayNetworking.send(player, payload);
 
-        if(data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
+        if(interactionType == TargetingInteractionType.BOW && player.getProjectileType(heldItem).getCount() <= data.markList.size()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
+        if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
     }
 
     public static void receivePhaseUpdate(DeadeyePhasePayload payload, ServerPlayNetworking.Context context) {
@@ -109,37 +114,43 @@ public class DeadeyeServer {
 
     public static void receiveShot(DeadeyeShotRequestPayload payload, ServerPlayNetworking.Context context) {
         ServerPlayerEntity player = context.player();
+        ServerWorld world = (ServerWorld) player.getWorld();
         if(!deadeyeUsers.containsKey(player.getUuid())) return;
         PlayerServerData data = deadeyeUsers.get(player.getUuid());
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
 
         TargetingInteractionType interactionType = TargetingInteractionType.values()[payload.interactionType()];
-        Vec3d pos = context.player().getEyePos();
-        ItemStack item = context.player().getMainHandStack();
+        Vec3d pos = player.getEyePos();
+        ItemStack item = player.getMainHandStack();
 
         if(data.shootingItem != null && !data.shootingItem.getItem().equals(item.getItem())) {
             updateDeadeyeStatus(context.server(), player, DeadeyeMod.DeadeyeStatus.DISABLED);
             return;
         }
 
-        if (!context.player().isInCreativeMode() && item.getItem() instanceof RangedWeaponItem ranged) {
-            if (!context.player().getInventory().contains(ranged.getProjectiles())) return;
-            context.player().getProjectileType(item).setCount(context.player().getProjectileType(item).getCount() - 1);
+        if (!player.isInCreativeMode() && item.getItem() instanceof RangedWeaponItem ranged) {
+            if (!player.getInventory().contains(ranged.getProjectiles())) return;
         }
 
         data.shootingPhase = PlayerServerData.ShootingPhase.SHOOTING;
         switch(interactionType) {
             case BOW -> {
-                ItemStack projectileItem = context.player().getProjectileType(item).copyWithCount(1);
-                ArrowEntity arrow = new ArrowEntity(context.player().getWorld(), pos.x, pos.y, pos.z, projectileItem, item);
-                arrow.setOwner(context.player());
-                Vector3f motion = payload.shootPos().sub(context.player().getEyePos().toVector3f());
+                RangedWeaponItem ranged = (RangedWeaponItem) item.getItem();
+                ItemStack projectileItem = player.getProjectileType(item).copyWithCount(1);
+                ArrowEntity arrow = new ArrowEntity(world, pos.x, pos.y, pos.z, projectileItem, item);
+                arrow.setOwner(player);
+                Vector3f motion = payload.shootPos().sub(player.getEyePos().toVector3f());
                 arrow.addVelocity(new Vec3d(motion.mul(DeadeyeMod.CONFIG.server.markProjectileSpeedMultiplier())));
-                context.player().getWorld().spawnEntity(arrow);
+                world.spawnEntity(arrow);
 
-                context.player().getWorld().playSound(context.player(), pos.x, pos.y, pos.z, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                SoundEvent shootSound = item.getItem() instanceof BowItem ? SoundEvents.ENTITY_ARROW_SHOOT : SoundEvents.ITEM_CROSSBOW_SHOOT;
+                int i = ranged.getMaxUseTime(item, player);
+                world.playSound(null, player.getX(), player.getY(), player.getZ(), shootSound, SoundCategory.PLAYERS, 1.0F, 1.0F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + BowItem.getPullProgress(i) * 0.5F);
+                player.incrementStat(Stats.USED.getOrCreateStat(item.getItem()));
             }
         }
+
+        player.getProjectileType(item).decrementUnlessCreative(1, player);
 
         data.markList.removeFirst();
 
@@ -233,6 +244,7 @@ public class DeadeyeServer {
 
     public static void onTick(MinecraftServer minecraftServer) {
         Iterator<Map.Entry<UUID, PlayerServerData>> iterator = deadeyeUsers.entrySet().iterator();
+        List<UUID> toRemove = new ArrayList<>();
 
         while (iterator.hasNext()) {
             Map.Entry<UUID, PlayerServerData> entry = iterator.next();
@@ -244,7 +256,9 @@ public class DeadeyeServer {
             PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
 
             if (player.isDead()) {
-                updateDeadeyeStatus(minecraftServer, player, DeadeyeMod.DeadeyeStatus.DISABLED);
+                ServerPlayNetworking.send(player, new DeadeyeUpdatePayload(DeadeyeMod.DeadeyeStatus.DISABLED.ordinal()));
+                toRemove.add(user);
+                continue;
             }
 
             if (data.shootingPhase != PlayerServerData.ShootingPhase.SHOOTING) {
@@ -256,7 +270,8 @@ public class DeadeyeServer {
                 else playerState.deadeyeCore = MathHelper.clamp(playerState.deadeyeCore - decreaseAmount, 0f, 80f);
                 if (playerState.deadeyeMeter == 0f && playerState.deadeyeCore == 0f) {
                     if (data.shootingPhase != PlayerServerData.ShootingPhase.MARKED) {
-                        updateDeadeyeStatus(minecraftServer, player, DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY);
+                        ServerPlayNetworking.send(player, new DeadeyeUpdatePayload(DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY.ordinal()));
+                        toRemove.add(user);
                     } else {
                         setDeadeyeMeter(player, 0);
                         setDeadeyeCore(player, 0);
@@ -265,9 +280,18 @@ public class DeadeyeServer {
                 }
             } else {
                 if (data.shootingItem != null && !data.shootingItem.getItem().equals(player.getMainHandStack().getItem())) {
-                    updateDeadeyeStatus(minecraftServer, player, DeadeyeMod.DeadeyeStatus.DISABLED);
+                    ServerPlayNetworking.send(player, new DeadeyeUpdatePayload(DeadeyeMod.DeadeyeStatus.DISABLED.ordinal()));
+                    toRemove.add(user);
                 }
             }
+        }
+
+        for (UUID user : toRemove) {
+            deadeyeUsers.remove(user);
+        }
+
+        if (DeadeyeMod.CONFIG.server.deadeyeSlowdown() && deadeyeUsers.isEmpty()) {
+            minecraftServer.getTickManager().setTickRate(20.0f);
         }
     }
 }

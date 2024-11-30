@@ -2,10 +2,13 @@ package com.namefix.items;
 
 import com.namefix.deadeye.DeadeyeServer;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
@@ -22,8 +25,21 @@ public class CigaretteItem extends PotionItem {
         if (!world.isClient) {  // server side
             DeadeyeServer.addDeadeyeCore((ServerPlayerEntity) user, 10, true);
         }
+        PlayerEntity playerEntity = user instanceof PlayerEntity ? (PlayerEntity)user : null;
 
-        return super.finishUsing(stack, world, user);
+        if (playerEntity != null) {
+            playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
+            stack.decrementUnlessCreative(1, playerEntity);
+        }
+
+
+        if (playerEntity == null || !playerEntity.isInCreativeMode()) {
+            if (stack.isEmpty()) {
+                return new ItemStack(Items.AIR);
+            }
+        }
+
+        return stack;
     }
 
     @Override
