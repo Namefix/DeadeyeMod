@@ -48,6 +48,7 @@
   "text.config.deadeye-mod.option.client.meterPosition.value.bottom_left": "Bottom Left",
   "text.config.deadeye-mod.option.client.meterPosition.value.bottom_right": "Bottom Right",
   "text.config.deadeye-mod.option.client.meterPosition.value.near_hotbar": "Near Hotbar",
+  "text.config.deadeye-mod.option.client.meterPosition.value.none": "None",
 
   "text.config.deadeye-mod.option.client.deadeyeVignetteStrength": "Deadeye Vignette Strength",
   "text.config.deadeye-mod.option.client.deadeyeVignetteStrength.tooltip": "Strength of vignette effect at the edges of the screen",

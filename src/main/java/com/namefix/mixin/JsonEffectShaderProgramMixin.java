@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+// All this ain't nice, but couldn't find a better way to do it so this stays until it gets replaced.
 @Mixin(JsonEffectShaderProgram.class)
 public class JsonEffectShaderProgramMixin {
-    // This ain't nice, but couldn't find a better way to do it so this stays until it gets replaced.
     @Mutable
     @Shadow @Final private String name;
 

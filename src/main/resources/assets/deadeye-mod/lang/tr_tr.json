@@ -48,6 +48,7 @@
   "text.config.deadeye-mod.option.client.meterPosition.value.bottom_left": "Sol Alt",
   "text.config.deadeye-mod.option.client.meterPosition.value.bottom_right": "Sağ Alt",
   "text.config.deadeye-mod.option.client.meterPosition.value.near_hotbar": "Araç Çubuğu Yanı",
+  "text.config.deadeye-mod.option.client.meterPosition.value.none": "Kapalı",
 
   "text.config.deadeye-mod.option.client.deadeyeVignetteStrength": "Deadeye Vinyet Yoğunluğu",
   "text.config.deadeye-mod.option.client.deadeyeVignetteStrength.tooltip": "Ekranın köşesindeki vinyet efektinin yoğunluğu",
@@ -89,5 +90,4 @@
   "block.deadeye-mod.wild_tobacco": "Yabani Tütün",
 
   "text.deadeye-mod.levelup": "Deadeye'ın %s seviyesine atladı!"
-
 }

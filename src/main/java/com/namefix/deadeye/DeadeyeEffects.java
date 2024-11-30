@@ -42,11 +42,12 @@ public class DeadeyeEffects {
 
     // meter variables
     public enum MeterPosition {
+        NEAR_HOTBAR,
         TOP_LEFT,
         TOP_RIGHT,
         BOTTOM_LEFT,
         BOTTOM_RIGHT,
-        NEAR_HOTBAR
+        NONE
     }
 
     private static final List<Vector3f> meterFortification = Lists.newArrayList(
@@ -157,12 +158,14 @@ public class DeadeyeEffects {
 
         if(DeadeyeClient.isEnabled) renderMarks(drawContext, renderTickCounter);
 
-        Vector2i meterCoords = getMeterCoordinates(drawContext, DeadeyeMod.CONFIG.client.meterPosition());
-        meterX = meterCoords.x;
-        meterY = meterCoords.y;
-        renderCore(drawContext, renderTickCounter);
-        renderMeter(drawContext, renderTickCounter);
-        drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        if(!MinecraftClient.getInstance().options.hudHidden && DeadeyeMod.CONFIG.client.meterPosition() != MeterPosition.NONE) {
+            Vector2i meterCoords = getMeterCoordinates(drawContext, DeadeyeMod.CONFIG.client.meterPosition());
+            meterX = meterCoords.x;
+            meterY = meterCoords.y;
+            renderCore(drawContext, renderTickCounter);
+            renderMeter(drawContext, renderTickCounter);
+            drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        }
     }
 
     private static void renderMarks(DrawContext drawContext, RenderTickCounter renderTickCounter) {

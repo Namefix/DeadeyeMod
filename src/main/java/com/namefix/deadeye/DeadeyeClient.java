@@ -230,9 +230,10 @@ public class DeadeyeClient {
             TargetingInteractionType interactionType = TargetingInteractionType.DEFAULT;
 
             if(item.getItem() instanceof RangedWeaponItem ranged) {
-                if(client.player.isInCreativeMode()) return;
-                if(client.player.getProjectileType(item).getCount() <= marks.size()) return;
-                interactionType = TargetingInteractionType.BOW;
+                if(!client.player.isInCreativeMode()) {
+                    if (client.player.getProjectileType(item).getCount() <= marks.size()) return;
+                    interactionType = TargetingInteractionType.BOW;
+                }
             }
             if(PointBlankIntegration.isLoaded) {
                 if (item.getItem() instanceof GunItem) {

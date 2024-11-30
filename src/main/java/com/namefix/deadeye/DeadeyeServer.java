@@ -100,7 +100,7 @@ public class DeadeyeServer {
         data.markList.add(target);
         ServerPlayNetworking.send(player, payload);
 
-        if(interactionType == TargetingInteractionType.BOW && player.getProjectileType(heldItem).getCount() <= data.markList.size()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
+        if(!player.isInCreativeMode() && interactionType == TargetingInteractionType.BOW && player.getProjectileType(heldItem).getCount() <= data.markList.size()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
         if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
     }
 
