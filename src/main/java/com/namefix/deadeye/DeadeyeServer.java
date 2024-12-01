@@ -234,6 +234,7 @@ public class DeadeyeServer {
             return;
         }
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
+        if(playerData.deadeyeMeter > playerData.deadeyeLevel*10) return;
         playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter+DeadeyeMod.CONFIG.server.deadeyeKillRefillAmount(), 0f, playerData.deadeyeLevel*10);
         ServerPlayNetworking.send(player, new DeadeyeMeterPayload(playerData.deadeyeMeter));
     }

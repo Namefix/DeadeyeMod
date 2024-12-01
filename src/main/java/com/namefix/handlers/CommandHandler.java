@@ -22,32 +22,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 public class CommandHandler {
-
-    private static void refillDeadeye(CommandContext<ServerCommandSource> context, boolean core, boolean meter, boolean fortify) {
-        PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(context.getSource().getPlayer());
-        StringBuilder message = new StringBuilder("Refilled");
-        if(fortify) message.append(" and fortified ");
-        message.append("your Deadeye ");
-        if(core) {
-            if(fortify) playerData.deadeyeCore = 80.0f;
-            else playerData.deadeyeCore = 20.0f;
-            ServerPlayNetworking.send(context.getSource().getPlayer(), new DeadeyeCorePayload(playerData.deadeyeCore));
-
-            message.append("core");
-            if(meter) message.append(" and ");
-        }
-        if(meter) {
-            if(fortify) playerData.deadeyeMeter = 160f;
-            else playerData.deadeyeMeter = 100.0f;
-            ServerPlayNetworking.send(context.getSource().getPlayer(), new DeadeyeMeterPayload(playerData.deadeyeMeter));
-
-            message.append("meter");
-        }
-        message.append(" to default values.");
-
-        context.getSource().sendMessage(Text.literal(message.toString()));
-    }
-
     private static void setMeter(ServerPlayerEntity player, int amount) {
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
         if(amount < 0) amount = playerData.deadeyeLevel * 10;

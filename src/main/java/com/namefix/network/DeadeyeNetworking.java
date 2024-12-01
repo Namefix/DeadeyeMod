@@ -45,9 +45,6 @@ public class DeadeyeNetworking {
 
     public static void initializeServerReceivers() {
         ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_REQUEST, DeadeyeServer::receiveDeadeyeRequest);
-        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOT_REQUEST, DeadeyeServer::receiveShot);
-
-        ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_REQUEST, DeadeyeServer::receiveDeadeyeRequest);
         ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_MARK, DeadeyeServer::receiveMarkRequest);
         ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_PHASE, DeadeyeServer::receivePhaseUpdate);
         ServerPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SHOT_REQUEST, DeadeyeServer::receiveShot);
