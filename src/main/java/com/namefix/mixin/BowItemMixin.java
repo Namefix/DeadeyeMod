@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BowItemMixin {
     @Inject(method = "getPullProgress", at = @At("HEAD"), cancellable = true)
     @Environment(EnvType.SERVER)
-    private static void modifyBowPullProgress(int useTicks, CallbackInfoReturnable<Float> info) {
+    private static void deadeyemod_modifyBowPullProgress(int useTicks, CallbackInfoReturnable<Float> info) {
         if(!DeadeyeServer.deadeyeUsers.isEmpty()) {
             float drawSpeedMultiplier = 4.0f;
             info.setReturnValue(Math.min((float) useTicks / (20.0f / drawSpeedMultiplier), 1.0f));
@@ -23,7 +23,7 @@ public class BowItemMixin {
 
     @Inject(method = "getPullProgress", at = @At("HEAD"), cancellable = true)
     @Environment(EnvType.CLIENT)
-    private static void modifyBowPullProgressClient(int useTicks, CallbackInfoReturnable<Float> info) {
+    private static void deadeyemod_modifyBowPullProgressClient(int useTicks, CallbackInfoReturnable<Float> info) {
         if(DeadeyeClient.isEnabled) {
             float drawSpeedMultiplier = 4.0f;
             info.setReturnValue(Math.min((float) useTicks / (20.0f / drawSpeedMultiplier), 1.0f));

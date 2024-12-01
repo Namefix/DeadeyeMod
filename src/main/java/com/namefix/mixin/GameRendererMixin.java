@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;drawEntityOutlinesFramebuffer()V", shift = At.Shift.AFTER))
-    public void renderDeadeyeShaders(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci) {
+    public void deadeyemod_renderDeadeyeShaders(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci) {
         PostEffectProcessor deadeyeProcessor = DeadeyeShader.getDeadeyeProcessor();
         PostEffectProcessor tonicProcessor = DeadeyeShader.getTonicProcessor();
 
@@ -51,7 +51,7 @@ public class GameRendererMixin {
     }
 
     @WrapOperation(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V"))
-    private void deadeye_postWorldRender(WorldRenderer instance, RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, Matrix4f matrix4f2, Operation<Void> original) {
+    private void deadeyemod_postWorldRender(WorldRenderer instance, RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, Matrix4f matrix4f2, Operation<Void> original) {
         original.call(instance, tickCounter, renderBlockOutline, camera, gameRenderer, lightmapTextureManager, matrix4f, matrix4f2);
         MatrixStack matrix = new MatrixStack();
         matrix.multiplyPositionMatrix(matrix4f);

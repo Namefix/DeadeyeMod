@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntity.class)
 public class PlayerAttackMixin extends LivingEntitySwingHandMixin {
 	@Override
-	protected void onSwingHand(Hand hand, boolean fromServerPlayer, CallbackInfo ci) {
+	protected void deadeyemod_onSwingHand(Hand hand, boolean fromServerPlayer, CallbackInfo ci) {
 		if(DeadeyeClient.isEnabled) ci.cancel();
     }
 	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
