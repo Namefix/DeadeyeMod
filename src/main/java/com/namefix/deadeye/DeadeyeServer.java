@@ -8,8 +8,10 @@ import com.namefix.data.PlayerServerData;
 import com.namefix.data.StateSaverAndLoader;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.GameruleHandler;
+import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.network.payload.*;
 import com.namefix.utils.Utils;
+import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -77,18 +79,20 @@ public class DeadeyeServer {
         ServerPlayerEntity player = context.player();
         if(!deadeyeUsers.containsKey(player.getUuid())) return;
         PlayerServerData data = deadeyeUsers.get(player.getUuid());
-        if(data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return;
 
         ItemStack heldItem = player.getMainHandStack();
         if(heldItem == null) return;
         TargetingInteractionType interactionType = Utils.getTargetingInteractionType(heldItem);
+
+        if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && !PointBlankIntegration.canMarkTargets(heldItem, data.markList.size())) return; // if marks more than gun max ammo
+        if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return; // check mark limit
         if(interactionType == TargetingInteractionType.BOW) {
             if(!player.isInCreativeMode() && !player.getInventory().contains(((RangedWeaponItem) heldItem.getItem()).getProjectiles())) {
                 updateDeadeyeStatus(context.server(), player, DeadeyeMod.DeadeyeStatus.DISABLED);
                 return;
             }
         }
-        if(!deadeyeItems.contains(heldItem.getItem())) return;
+        if(!deadeyeItems.contains(heldItem.getItem()) && interactionType != TargetingInteractionType.POINT_BLANK_GUN) return;
 
         Entity ent = player.getWorld().getEntityById(payload.entityId());
         if(ent == null) return;
