@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Mouse.class)
 public class MouseMixin {
     @Inject(method = "updateMouse", at = @At("HEAD"), cancellable = true)
-    private void updateMouse(CallbackInfo ci) {
+    private void deadeyemod_updateMouse(CallbackInfo ci) {
         if(DeadeyeClient.isEnabled && DeadeyeClient.shootingMarks) {
             ci.cancel();
         }

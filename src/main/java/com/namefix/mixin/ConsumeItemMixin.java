@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public abstract class ConsumeItemMixin {
     @Inject(method="consumeItem", at=@At("HEAD"))
-    private void modifyEatFood(CallbackInfo ci) {
+    private void deadeyemod_modifyEatFood(CallbackInfo ci) {
         if(((Object) this) instanceof PlayerEntity player) {
             if(player.getWorld().isClient) return;
             ItemStack item = player.getActiveItem();

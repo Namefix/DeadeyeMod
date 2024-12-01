@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PointBlankGunItemMixin {
     @Inject(method = "adjustInaccuracy", at = @At(value = "HEAD"), cancellable = true)
     @Environment(EnvType.SERVER)
-    private void modifyAdjustInaccuracy(PlayerEntity player, ItemStack itemStack, boolean isAiming, CallbackInfoReturnable<Double> cir) {
+    private void deadeyemod_modifyAdjustInaccuracy(PlayerEntity player, ItemStack itemStack, boolean isAiming, CallbackInfoReturnable<Double> cir) {
         if(DeadeyeServer.deadeyeUsers.containsKey(player.getUuid())) {
             cir.setReturnValue(0.0);
         }
@@ -26,14 +26,14 @@ public class PointBlankGunItemMixin {
 
     @Inject(method = "adjustInaccuracy", at = @At(value = "HEAD"), cancellable = true)
     @Environment(EnvType.CLIENT)
-    private void modifyAdjustInaccuracyClient(PlayerEntity player, ItemStack itemStack, boolean isAiming, CallbackInfoReturnable<Double> cir) {
+    private void deadeyemod_modifyAdjustInaccuracyClient(PlayerEntity player, ItemStack itemStack, boolean isAiming, CallbackInfoReturnable<Double> cir) {
         if(DeadeyeClient.isEnabled) {
             cir.setReturnValue(0.0);
         }
     }
 
     @Inject(method = "getDrawCooldownDuration", at = @At(value = "HEAD"), cancellable = true)
-    private void modifyGetDrawCooldownDuration(LivingEntity player, GunClientState state, ItemStack itemStack, CallbackInfoReturnable<Long> cir) {
+    private void deadeyemod_modifyGetDrawCooldownDuration(LivingEntity player, GunClientState state, ItemStack itemStack, CallbackInfoReturnable<Long> cir) {
         if(DeadeyeClient.isEnabled) {
             cir.setReturnValue(0L);
         }

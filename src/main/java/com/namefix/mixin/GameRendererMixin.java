@@ -27,7 +27,7 @@ public class GameRendererMixin {
     @Shadow @Final private MinecraftClient client;
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;drawEntityOutlinesFramebuffer()V", shift = At.Shift.AFTER))
-    public void renderDeadeyeShaders(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
+    public void deadeyemod_renderDeadeyeShaders(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
         PostEffectProcessor deadeyeProcessor = DeadeyeShader.getDeadeyeProcessor();
         PostEffectProcessor tonicProcessor = DeadeyeShader.getTonicProcessor();
 
@@ -60,7 +60,7 @@ public class GameRendererMixin {
     }
 
     @WrapOperation(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;FJZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lorg/joml/Matrix4f;)V"))
-    private void deadeye_postWorldRender(WorldRenderer instance, MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, Operation<Void> original) {
+    private void deadeyemod_postWorldRender(WorldRenderer instance, MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, Operation<Void> original) {
         original.call(instance, matrices, tickDelta, limitTime, renderBlockOutline, camera, gameRenderer, lightmapTextureManager, projectionMatrix);
 
         Utils.lastProjMat.set(RenderSystem.getProjectionMatrix());

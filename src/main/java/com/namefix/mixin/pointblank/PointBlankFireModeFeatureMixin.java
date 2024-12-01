@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PointBlankFireModeFeatureMixin {
     @Inject(method = "getPelletCountAndSpread", at = @At("HEAD"), cancellable = true)
     @Environment(EnvType.SERVER)
-    private static void getPelletCountAndSpread(LivingEntity player, GunClientState state, ItemStack itemStack, CallbackInfoReturnable<Pair<Integer, Double>> cir) {
+    private static void deadeyemod_getPelletCountAndSpread(LivingEntity player, GunClientState state, ItemStack itemStack, CallbackInfoReturnable<Pair<Integer, Double>> cir) {
         if(DeadeyeServer.deadeyeUsers.containsKey(player.getUuid())) {
             Item var4 = itemStack.getItem();
             if (var4 instanceof GunItem gunItem) {
@@ -35,7 +35,7 @@ public class PointBlankFireModeFeatureMixin {
 
     @Inject(method = "getPelletCountAndSpread", at = @At("HEAD"), cancellable = true)
     @Environment(EnvType.CLIENT)
-    private static void getPelletCountAndSpreadClient(LivingEntity player, GunClientState state, ItemStack itemStack, CallbackInfoReturnable<Pair<Integer, Double>> cir) {
+    private static void deadeyemod_getPelletCountAndSpreadClient(LivingEntity player, GunClientState state, ItemStack itemStack, CallbackInfoReturnable<Pair<Integer, Double>> cir) {
         if(DeadeyeClient.isEnabled) {
             Item var4 = itemStack.getItem();
             if (var4 instanceof GunItem gunItem) {

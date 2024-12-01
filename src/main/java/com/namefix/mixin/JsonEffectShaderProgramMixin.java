@@ -20,12 +20,12 @@ public class JsonEffectShaderProgramMixin {
     @Shadow @Final private String name;
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;<init>(Ljava/lang/String;)V", shift = At.Shift.BEFORE))
-    public void onInit(ResourceManager resource, String name, CallbackInfo ci) {
+    public void deadeyemod_onInit(ResourceManager resource, String name, CallbackInfo ci) {
         this.name = name;
     }
 
     @Redirect(method = "<init>", at = @At(value = "NEW", target = "(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"))
-    private Identifier modifyIdentifier(String path) {
+    private Identifier deadeyemod_modifyIdentifier(String path) {
         if(name.startsWith("deadeye-mod:")) {
             String deadeyeName = name.replace("deadeye-mod:", "");
             return Identifier.of(DeadeyeMod.MOD_ID, "shaders/program/"+deadeyeName+".json");
@@ -34,7 +34,7 @@ public class JsonEffectShaderProgramMixin {
     }
 
     @Redirect(method = "loadEffect", at = @At(value = "NEW", target = "(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"))
-    private static Identifier loadEffect(String path) {
+    private static Identifier deadeyemod_loadEffect(String path) {
         if(path.startsWith("shaders/program/deadeye-mod:")) {
             String replaced = path.replace("shaders/program/deadeye-mod:", "");
             return Identifier.of(DeadeyeMod.MOD_ID, "shaders/program/"+replaced);
