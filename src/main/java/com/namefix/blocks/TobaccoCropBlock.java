@@ -28,7 +28,7 @@ public class TobaccoCropBlock extends CropBlock {
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return AGE_TO_SHAPE[getAge(state)];
     }
 }

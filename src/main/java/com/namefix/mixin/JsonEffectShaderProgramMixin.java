@@ -2,7 +2,7 @@ package com.namefix.mixin;
 
 import com.namefix.DeadeyeMod;
 import net.minecraft.client.gl.JsonEffectShaderProgram;
-import net.minecraft.resource.ResourceFactory;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,27 +19,27 @@ public class JsonEffectShaderProgramMixin {
     @Mutable
     @Shadow @Final private String name;
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;ofVanilla(Ljava/lang/String;)Lnet/minecraft/util/Identifier;", shift = At.Shift.BEFORE))
-    public void onInit(ResourceFactory factory, String name, CallbackInfo ci) {
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;<init>(Ljava/lang/String;)V", shift = At.Shift.BEFORE))
+    public void onInit(ResourceManager resource, String name, CallbackInfo ci) {
         this.name = name;
     }
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;ofVanilla(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"))
+    @Redirect(method = "<init>", at = @At(value = "NEW", target = "(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"))
     private Identifier modifyIdentifier(String path) {
         if(name.startsWith("deadeye-mod:")) {
             String deadeyeName = name.replace("deadeye-mod:", "");
             return Identifier.of(DeadeyeMod.MOD_ID, "shaders/program/"+deadeyeName+".json");
         }
-        else return Identifier.ofVanilla(path);
+        else return new Identifier(path);
     }
 
-    @Redirect(method = "loadEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;ofVanilla(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"))
+    @Redirect(method = "loadEffect", at = @At(value = "NEW", target = "(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"))
     private static Identifier loadEffect(String path) {
         if(path.startsWith("shaders/program/deadeye-mod:")) {
             String replaced = path.replace("shaders/program/deadeye-mod:", "");
             return Identifier.of(DeadeyeMod.MOD_ID, "shaders/program/"+replaced);
         } else {
-            return Identifier.ofVanilla(path);
+            return new Identifier(path);
         }
     }
 

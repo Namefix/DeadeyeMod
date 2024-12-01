@@ -115,10 +115,12 @@ public class DeadeyeEffects {
     }
 
     public static void updateVariables(WorldRenderContext context) {
-        if(DeadeyeClient.isEnabled) deadeyeFade = MathHelper.clamp(deadeyeFade + (context.tickCounter().getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
-        else deadeyeFade = MathHelper.clamp(deadeyeFade - (context.tickCounter().getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+        MinecraftClient client = MinecraftClient.getInstance();
 
-        tonicDuration = MathHelper.clamp(tonicDuration-(context.tickCounter().getLastFrameDuration() / 20.0f), 0.0f, 1.0f);
+        if(DeadeyeClient.isEnabled) deadeyeFade = MathHelper.clamp(deadeyeFade + (client.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+        else deadeyeFade = MathHelper.clamp(deadeyeFade - (client.getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+
+        tonicDuration = MathHelper.clamp(tonicDuration-(client.getLastFrameDuration() / 20.0f), 0.0f, 1.0f);
     }
 
     // Update visual and sound effects after deadeye status changes
@@ -153,22 +155,22 @@ public class DeadeyeEffects {
         DeadeyeShader.loadDeadeyeProcessor(DeadeyeShader.ShaderType.TONIC);
     }
 
-    public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext, renderTickCounter);
+    public static void renderGraphics(DrawContext drawContext, float v) {
+        if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext);
 
-        if(DeadeyeClient.isEnabled) renderMarks(drawContext, renderTickCounter);
+        if(DeadeyeClient.isEnabled) renderMarks(drawContext);
 
         if(!MinecraftClient.getInstance().options.hudHidden && DeadeyeMod.CONFIG.client.meterPosition() != MeterPosition.NONE) {
             Vector2i meterCoords = getMeterCoordinates(drawContext, DeadeyeMod.CONFIG.client.meterPosition());
             meterX = meterCoords.x;
             meterY = meterCoords.y;
-            renderCore(drawContext, renderTickCounter);
-            renderMeter(drawContext, renderTickCounter);
+            renderCore(drawContext);
+            renderMeter(drawContext);
             drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
 
-    private static void renderMarks(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+    private static void renderMarks(DrawContext drawContext) {
         DeadeyeClient.marks.forEach((mark) -> {
             mark.renderTick++;
             markSize = DeadeyeMod.CONFIG.client.deadeyeMarkSize();
@@ -200,7 +202,7 @@ public class DeadeyeEffects {
         drawContext.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
-    private static void renderLightleak(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+    private static void renderLightleak(DrawContext drawContext) {
         if (DeadeyeClient.isEnabled) {
             if (lightleakStatus == 15) return;
             int width = drawContext.getScaledWindowWidth();
@@ -230,7 +232,8 @@ public class DeadeyeEffects {
         }
     }
 
-    private static void renderCore(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+    private static void renderCore(DrawContext drawContext) {
+        MinecraftClient client = MinecraftClient.getInstance();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
@@ -251,7 +254,7 @@ public class DeadeyeEffects {
 
         meterCoreLastAmount = DeadeyeClient.playerData.deadeyeCore;
 
-        if(meterCoreBlink > 0.0f) meterCoreBlink -= (renderTickCounter.getLastFrameDuration() / 20.0f)*4;
+        if(meterCoreBlink > 0.0f) meterCoreBlink -= (client.getLastFrameDuration() / 20.0f)*4;
         if(meterCoreBlink > 0.75f || meterCoreBlink < 0.50f && meterCoreBlink > 0.25f) return;
 
         int coreIndex = MathHelper.clamp(Math.round(DeadeyeClient.playerData.deadeyeCore), 0, 15);
@@ -261,7 +264,7 @@ public class DeadeyeEffects {
             drawContext.setShaderColor(color.x, color.y, color.z, 1.0f);
         }
 
-        if(meterCoreEffect || meterCoreEffectTime < 0.0f) meterCoreEffectTime += renderTickCounter.getLastFrameDuration() / 20.0f;
+        if(meterCoreEffect || meterCoreEffectTime < 0.0f) meterCoreEffectTime += client.getLastFrameDuration() / 20.0f;
         if(meterCoreEffectTime > 1.0f) {
             meterCoreEffect = false;
             meterCoreEffectTime = -1.0f;
@@ -294,7 +297,8 @@ public class DeadeyeEffects {
         RenderSystem.enableDepthTest();
     }
 
-    private static void renderMeter(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+    private static void renderMeter(DrawContext drawContext) {
+        MinecraftClient client = MinecraftClient.getInstance();
         float deadeyeMeter = DeadeyeClient.playerData.deadeyeMeter;
 
         RenderSystem.enableBlend();
@@ -323,7 +327,7 @@ public class DeadeyeEffects {
 
         meterLastAmount = deadeyeMeter;
 
-        if(meterBlink > 0.0f) meterBlink -= (renderTickCounter.getLastFrameDuration() / 20.0f)*4;
+        if(meterBlink > 0.0f) meterBlink -= (client.getLastFrameDuration() / 20.0f)*4;
         if(meterBlink > 0.75f || meterBlink < 0.50f && meterBlink > 0.25f) return;
 
         Vector3f color = getMeterColor();

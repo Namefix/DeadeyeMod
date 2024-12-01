@@ -1,3 +1,3 @@
-// 1.21.1	2024-11-25T03:09:02.954445926	Deadeye Mod/Block Loot Tables
-30cfef67e006a96df441d5a7ea5efd82465e8fca data/deadeye-mod/loot_table/blocks/wild_tobacco.json
-c8344ec2bc1bbc7f42df52cfcd8d0e0d683ff731 data/deadeye-mod/loot_table/blocks/tobacco_crop.json
+// 1.20.1	2024-12-01T19:21:09.159830207	Deadeye Mod/Block Loot Tables
+c8344ec2bc1bbc7f42df52cfcd8d0e0d683ff731 data/deadeye-mod/loot_tables/blocks/tobacco_crop.json
+30cfef67e006a96df441d5a7ea5efd82465e8fca data/deadeye-mod/loot_tables/blocks/wild_tobacco.json

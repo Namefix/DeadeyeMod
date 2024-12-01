@@ -14,7 +14,8 @@
     "JsonEffectShaderProgramMixin",
     "LivingEntitySwingHandMixin",
     "MouseMixin",
-    "PlayerAttackMixin"
+    "PlayerAttackMixin",
+    "PostEffectProcessorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

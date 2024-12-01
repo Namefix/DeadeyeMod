@@ -3,7 +3,6 @@ package com.namefix.data;
 import com.namefix.DeadeyeMod;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
@@ -17,7 +16,7 @@ public class StateSaverAndLoader extends PersistentState {
     public HashMap<UUID, PlayerSaveData> players = new HashMap<>();
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+    public NbtCompound writeNbt(NbtCompound nbt) {
         NbtCompound playersNbt = new NbtCompound();
         players.forEach((uuid, playerData) -> {
             NbtCompound playerNbt = new NbtCompound();
@@ -33,7 +32,7 @@ public class StateSaverAndLoader extends PersistentState {
         return nbt;
     }
 
-    public static StateSaverAndLoader createFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public static StateSaverAndLoader createFromNbt(NbtCompound tag) {
         StateSaverAndLoader state = new StateSaverAndLoader();
         NbtCompound playersNbt = tag.getCompound("players");
         playersNbt.getKeys().forEach(key -> {
@@ -50,16 +49,10 @@ public class StateSaverAndLoader extends PersistentState {
         return state;
     }
 
-    private static Type<StateSaverAndLoader> type = new Type<>(
-            StateSaverAndLoader::new,
-            StateSaverAndLoader::createFromNbt,
-            null
-    );
-
     public static StateSaverAndLoader getServerState(MinecraftServer server) {
         PersistentStateManager persistentStateManager = server.getWorld(World.OVERWORLD).getPersistentStateManager();
 
-        StateSaverAndLoader state = persistentStateManager.getOrCreate(type, DeadeyeMod.MOD_ID);
+        StateSaverAndLoader state = persistentStateManager.getOrCreate(StateSaverAndLoader::createFromNbt, StateSaverAndLoader::new, DeadeyeMod.MOD_ID);
 
         state.markDirty();
         return state;

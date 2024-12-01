@@ -1,5 +1,7 @@
 package com.namefix.deadeye;
 
+import com.g4mesoft.core.client.GSClientController;
+import com.g4mesoft.module.tps.GSTpsModule;
 import com.namefix.DeadeyeMod;
 import com.namefix.DeadeyeMod.TargetingInteractionType;
 import com.namefix.data.DeadeyeTarget;
@@ -8,12 +10,13 @@ import com.namefix.data.PlayerServerData;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.KeybindHandler;
 import com.namefix.integrations.PointBlankIntegration;
-import com.namefix.network.payload.*;
+import com.namefix.network.DeadeyeNetworking;
 import com.namefix.utils.Utils;
 import com.vicmatskiv.pointblank.item.FireMode;
 import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -23,12 +26,14 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +60,7 @@ public class DeadeyeClient {
 
     // Adding fast pull functionality to bows when in deadeye
     public static void initializeBowProperties() {
-        ModelPredicateProviderRegistry.register(Items.BOW, Identifier.of("pull"), (itemStack, world, entity, seed) -> {
+        ModelPredicateProviderRegistry.register(Items.BOW, Identifier.of("minecraft", "pull"), (itemStack, world, entity, seed) -> {
             if (entity == null) {
                 return 0.0F;
             }
@@ -67,7 +72,7 @@ public class DeadeyeClient {
             return 0.0F;
         });
 
-        ModelPredicateProviderRegistry.register(Items.CROSSBOW, Identifier.of("pull"), (itemStack, world, entity, seed) -> {
+        ModelPredicateProviderRegistry.register(Items.CROSSBOW, Identifier.of("minecraft","pull"), (itemStack, world, entity, seed) -> {
             if (entity == null) {
                 return 0.0F;
             }
@@ -136,8 +141,11 @@ public class DeadeyeClient {
         if(marks.isEmpty() || !shootingMarks) return;
         if (System.currentTimeMillis() < lerpWait) return;
 
+        GSClientController gsclient = GSClientController.getInstance();
+        GSTpsModule tps = gsclient.getTpsModule();
+
         MinecraftClient client = MinecraftClient.getInstance();
-        float slowdownMultiplier = 20f/client.world.getTickManager().getTickRate();
+        float slowdownMultiplier = 20f/tps.getTps();
         assert client.player != null;
 
         ItemStack item = client.player.getMainHandStack();
@@ -153,7 +161,7 @@ public class DeadeyeClient {
         float pPitch = client.player.getPitch();
         float pYaw = client.player.getYaw();
 
-        float interpolationFactor = DeadeyeMod.CONFIG.server.markFocusSpeed() * worldRenderContext.tickCounter().getLastFrameDuration() * slowdownMultiplier;
+        float interpolationFactor = DeadeyeMod.CONFIG.server.markFocusSpeed() * client.getLastFrameDuration() * slowdownMultiplier;
         if(System.currentTimeMillis() - startLerpingTime > 3_000) interpolationFactor *= 4;
         if(PointBlankIntegration.isLoaded) if(PointBlankIntegration.getGunFiremode(item) == FireMode.AUTOMATIC) interpolationFactor *= 8;
 
@@ -200,7 +208,10 @@ public class DeadeyeClient {
                 // DEFAULT: Execute left click
                 case DEFAULT -> KeyBinding.onKeyPressed(client.options.attackKey.getDefaultKey());
             }
-            ClientPlayNetworking.send(new DeadeyeShotRequestPayload(targetingType.ordinal(), mark.getCurrentOffset().toVector3f()));
+            PacketByteBuf packet = PacketByteBufs.create();
+            packet.writeInt(targetingType.ordinal());
+            packet.writeVector3f(mark.getCurrentOffset().toVector3f());
+            ClientPlayNetworking.send(DeadeyeNetworking.DEADEYE_SHOT_REQUEST, packet);
 
             marks.removeFirst();
             lerpWait = System.currentTimeMillis() + 100;
@@ -216,7 +227,9 @@ public class DeadeyeClient {
         lerpWait = System.currentTimeMillis() + 250;
 
         shootingPhase = PlayerServerData.ShootingPhase.SHOOTING;
-        ClientPlayNetworking.send(new DeadeyePhasePayload(PlayerServerData.ShootingPhase.SHOOTING.ordinal()));
+        PacketByteBuf packet = PacketByteBufs.create();
+        packet.writeInt(PlayerServerData.ShootingPhase.SHOOTING.ordinal());
+        ClientPlayNetworking.send(DeadeyeNetworking.DEADEYE_PHASE, packet);
     }
 
     // Marking targets
@@ -230,7 +243,7 @@ public class DeadeyeClient {
             TargetingInteractionType interactionType = TargetingInteractionType.DEFAULT;
 
             if(item.getItem() instanceof RangedWeaponItem ranged) {
-                if(!client.player.isInCreativeMode()) {
+                if(!client.player.isCreative()) {
                     if (client.player.getProjectileType(item).getCount() <= marks.size()) return;
                     interactionType = TargetingInteractionType.BOW;
                 }
@@ -253,36 +266,43 @@ public class DeadeyeClient {
                 if(deadeyeMarkableEntities.contains(eHit.getEntity().getType())) ent = eHit.getEntity();
                 if(ent == null) return;
 
-                ClientPlayNetworking.send(new DeadeyeMarkPayload(hit.getPos().toVector3f(), ent.getId()));
+                PacketByteBuf packet = PacketByteBufs.create();
+                packet.writeVector3f(hit.getPos().toVector3f());
+                packet.writeInt(ent.getId());
+                ClientPlayNetworking.send(DeadeyeNetworking.DEADEYE_MARK, packet);
             }
         }
     }
 
     public static void requestDeadeye() {
-        ClientPlayNetworking.send(new DeadeyeRequestPayload(!isEnabled));
+        PacketByteBuf packet = PacketByteBufs.create();
+        packet.writeBoolean(!isEnabled);
+        ClientPlayNetworking.send(DeadeyeNetworking.DEADEYE_REQUEST, packet);
     }
 
-    public static void receiveDeadeyeUpdate(DeadeyeUpdatePayload payload, ClientPlayNetworking.Context context) {
-        if(payload.status() == DeadeyeMod.DeadeyeStatus.EMPTY.ordinal()) return;
-        setDeadeye(DeadeyeMod.DeadeyeStatus.values()[payload.status()]);
+    public static void receiveDeadeyeUpdate(int status) {
+        if(status == DeadeyeMod.DeadeyeStatus.EMPTY.ordinal()) return;
+        setDeadeye(DeadeyeMod.DeadeyeStatus.values()[status]);
     }
 
-    public static void receiveDeadeyeMark(DeadeyeMarkPayload payload, ClientPlayNetworking.Context context) {
+    public static void receiveDeadeyeMark(Vector3f pos, int entityId) {
         if(!isEnabled) return;
         MinecraftClient client = MinecraftClient.getInstance();
 
-        Entity ent = context.player().getWorld().getEntityById(payload.entityId());
+        Entity ent = client.world.getEntityById(entityId);
         if(ent == null) return;
-        marks.add(new DeadeyeTarget(ent, new Vec3d(payload.pos())));
+        marks.add(new DeadeyeTarget(ent, new Vec3d(pos)));
         client.player.playSound(DeadeyeProfiles.getSelectedSoundProfile().paintTargetSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
         if(Utils.getTargetingInteractionType(client.player.getMainHandStack()) == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(client.player.getMainHandStack())) startShootingTargets(client.player.getMainHandStack().getItem());
         if(marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
     }
 
-    public static void receivePhaseUpdate(DeadeyePhasePayload payload, ClientPlayNetworking.Context context) {
-        shootingPhase = PlayerServerData.ShootingPhase.values()[payload.phase()];
-        if(payload.phase() == PlayerServerData.ShootingPhase.SHOOTING.ordinal()) {
-            startShootingTargets(context.player().getInventory().getMainHandStack().getItem());
+    public static void receivePhaseUpdate(int phase) {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        shootingPhase = PlayerServerData.ShootingPhase.values()[phase];
+        if(phase == PlayerServerData.ShootingPhase.SHOOTING.ordinal()) {
+            startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
         }
     }
 
@@ -318,7 +338,8 @@ public class DeadeyeClient {
         assert client.player != null;
         if(isEnabled) {
             if(!shootingMarks) {
-                float slowdownMultiplier = 20f/client.world.getTickManager().getTickRate();
+                GSClientController gs = GSClientController.getInstance();
+                float slowdownMultiplier = 20f/gs.getTpsModule().getTps();
                 float decreaseAmount = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount() * slowdownMultiplier;
 
                 if(playerData.deadeyeMeter > 0) playerData.deadeyeMeter = MathHelper.clamp(playerData.deadeyeMeter - decreaseAmount, 0.0f, getMaxMeter(3));
@@ -336,22 +357,22 @@ public class DeadeyeClient {
         return (playerData.deadeyeLevel*10)+(tonicLevel*20);
     }
 
-    public static void deadeyeMeterUpdate(DeadeyeMeterPayload payload, ClientPlayNetworking.Context context) {
-        playerData.deadeyeMeter = MathHelper.clamp(payload.amount(),0f, getMaxMeter(3));
+    public static void deadeyeMeterUpdate(float amount) {
+        playerData.deadeyeMeter = MathHelper.clamp(amount,0f, getMaxMeter(3));
     }
 
-    public static void deadeyeCoreUpdate(DeadeyeCorePayload payload, ClientPlayNetworking.Context context) {
-        playerData.deadeyeCore = MathHelper.clamp(payload.amount(),0f,80f);
+    public static void deadeyeCoreUpdate(float amount) {
+        playerData.deadeyeCore = MathHelper.clamp(amount,0f,80f);
     }
 
-    public static void deadeyeLevelUpdate(DeadeyeLevelPayload payload, ClientPlayNetworking.Context context) {
-        playerData.deadeyeLevel = MathHelper.clamp(payload.level(),0,10);
+    public static void deadeyeLevelUpdate(int level) {
+        playerData.deadeyeLevel = MathHelper.clamp(level,0,10);
     }
 
-    public static void receiveInitialSync(InitialSyncPayload payload, ClientPlayNetworking.Context context) {
-        playerData.deadeyeMeter = payload.deadeyeMeter();
-        playerData.deadeyeCore = payload.deadeyeCore();
-        playerData.deadeyeLevel = payload.deadeyeLevel();
+    public static void receiveInitialSync(float meter, float core, int level) {
+        playerData.deadeyeMeter = meter;
+        playerData.deadeyeCore = core;
+        playerData.deadeyeLevel = level;
     }
 
     public static void disconnect(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient client) {

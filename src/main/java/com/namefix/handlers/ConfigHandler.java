@@ -2,9 +2,9 @@ package com.namefix.handlers;
 
 import com.namefix.DeadeyeMod;
 import com.namefix.deadeye.DeadeyeClient;
-import com.namefix.deadeye.DeadeyeEffects;
 import com.namefix.deadeye.DeadeyeServer;
-import com.namefix.network.payload.ReloadConfigPayload;
+import com.namefix.network.DeadeyeNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -24,7 +24,7 @@ public class ConfigHandler {
         DeadeyeMod.CONFIG.load();
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            ServerPlayNetworking.send(player, new ReloadConfigPayload());
+            ServerPlayNetworking.send(player, DeadeyeNetworking.RELOAD_CONFIG, PacketByteBufs.empty());
         }
 
     }

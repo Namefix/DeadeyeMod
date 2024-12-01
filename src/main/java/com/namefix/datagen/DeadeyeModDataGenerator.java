@@ -8,7 +8,6 @@ public class DeadeyeModDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(LootTableProvider::new);
-		pack.addProvider(RecipeProvider::new);
 		pack.addProvider(ItemTagProvider::new);
 		pack.addProvider(BlockTagProvider::new);
 	}

@@ -12,7 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ProjectileItem;
+import net.minecraft.item.Items;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
@@ -54,7 +54,17 @@ public class Utils {
 
     public static DeadeyeMod.TargetingInteractionType getTargetingInteractionType(ItemStack item) {
         if(item.getItem() instanceof RangedWeaponItem) return DeadeyeMod.TargetingInteractionType.BOW;
-        if(item.getItem() instanceof ProjectileItem) return DeadeyeMod.TargetingInteractionType.THROWABLE;
+
+        if(
+                item.getItem().equals(Items.SNOWBALL) ||
+                item.getItem().equals(Items.EGG) ||
+                item.getItem().equals(Items.SPLASH_POTION) ||
+                item.getItem().equals(Items.LINGERING_POTION) ||
+                item.getItem().equals(Items.ENDER_PEARL) ||
+                item.getItem().equals(Items.ENDER_EYE) ||
+                item.getItem().equals(Items.EXPERIENCE_BOTTLE)
+        ) return DeadeyeMod.TargetingInteractionType.THROWABLE;
+
         if(PointBlankIntegration.isLoaded && item.getItem() instanceof GunItem) return DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN;
         return DeadeyeMod.TargetingInteractionType.DEFAULT;
     }

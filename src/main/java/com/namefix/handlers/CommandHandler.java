@@ -5,13 +5,10 @@ import com.mojang.brigadier.context.CommandContext;
 import com.namefix.data.PlayerSaveData;
 import com.namefix.data.StateSaverAndLoader;
 import com.namefix.deadeye.DeadeyeServer;
-import com.namefix.network.payload.DeadeyeCorePayload;
-import com.namefix.network.payload.DeadeyeMeterPayload;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -22,32 +19,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 public class CommandHandler {
-
-    private static void refillDeadeye(CommandContext<ServerCommandSource> context, boolean core, boolean meter, boolean fortify) {
-        PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(context.getSource().getPlayer());
-        StringBuilder message = new StringBuilder("Refilled");
-        if(fortify) message.append(" and fortified ");
-        message.append("your Deadeye ");
-        if(core) {
-            if(fortify) playerData.deadeyeCore = 80.0f;
-            else playerData.deadeyeCore = 20.0f;
-            ServerPlayNetworking.send(context.getSource().getPlayer(), new DeadeyeCorePayload(playerData.deadeyeCore));
-
-            message.append("core");
-            if(meter) message.append(" and ");
-        }
-        if(meter) {
-            if(fortify) playerData.deadeyeMeter = 160f;
-            else playerData.deadeyeMeter = 100.0f;
-            ServerPlayNetworking.send(context.getSource().getPlayer(), new DeadeyeMeterPayload(playerData.deadeyeMeter));
-
-            message.append("meter");
-        }
-        message.append(" to default values.");
-
-        context.getSource().sendMessage(Text.literal(message.toString()));
-    }
-
     private static void setMeter(ServerPlayerEntity player, int amount) {
         PlayerSaveData playerData = StateSaverAndLoader.getPlayerState(player);
         if(amount < 0) amount = playerData.deadeyeLevel * 10;

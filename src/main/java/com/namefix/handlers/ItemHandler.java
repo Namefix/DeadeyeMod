@@ -5,7 +5,7 @@ import com.namefix.items.ChewingTobaccoItem;
 import com.namefix.items.CigaretteItem;
 import com.namefix.items.SnakeOilItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.component.type.FoodComponent;
+import net.minecraft.item.FoodComponent;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;

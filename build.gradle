@@ -44,11 +44,12 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modCompileOnly "curse.maven:g4mespeed-544459:5117535"
 
 	annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
 
-	modCompileOnly "curse.maven:geckolib-388172:5763140"
-	modCompileOnly "curse.maven:vics-point-blank-961053:5762976"
+	modCompileOnly "curse.maven:geckolib-388172:5675212"
+	modCompileOnly "curse.maven:vics-point-blank-961053:5762951"
 }
 
 processResources {
