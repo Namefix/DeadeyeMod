@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class PointBlankIntegration {
@@ -37,17 +38,18 @@ public class PointBlankIntegration {
         else return state.isIdle();
     }
 
-    @Environment(EnvType.CLIENT)
     public static int getGunAmmo(ItemStack item) {
         if(!(item.getItem() instanceof GunItem)) return 0;
-        PlayerEntity player = MinecraftClient.getInstance().player;
-        GunClientState state = GunClientState.getState(player, item, player.getInventory().selectedSlot, false);
-
-        return state.getAmmoCount(GunItem.getFireModeInstance(item));
+        return GunItem.getAmmo(item, GunItem.getFireModeInstance(item));
     }
 
     public static FireMode getGunFiremode(ItemStack item) {
         if(!(item.getItem() instanceof GunItem)) return null;
         return GunItem.getFireModeInstance(item).getType();
+    }
+
+    public static int getMaxAmmo(ItemStack item) {
+        if(!((item.getItem()) instanceof GunItem gun)) return 0;
+        return gun.getMaxAmmoCapacity(item, GunItem.getFireModeInstance(item));
     }
 }

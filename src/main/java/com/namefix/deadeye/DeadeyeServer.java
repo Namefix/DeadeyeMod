@@ -13,6 +13,7 @@ import com.namefix.handlers.GameruleHandler;
 import com.namefix.network.DeadeyeNetworking;
 import com.namefix.utils.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import com.namefix.integrations.PointBlankIntegration;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -91,18 +92,20 @@ public class DeadeyeServer {
     public static void receiveMarkRequest(MinecraftServer server, ServerPlayerEntity player, Vector3f pos, int entityId) {
         if(!deadeyeUsers.containsKey(player.getUuid())) return;
         PlayerServerData data = deadeyeUsers.get(player.getUuid());
-        if(data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return;
 
         ItemStack heldItem = player.getMainHandStack();
         if(heldItem == null) return;
         TargetingInteractionType interactionType = Utils.getTargetingInteractionType(heldItem);
+
+        if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && !PointBlankIntegration.canMarkTargets(heldItem, data.markList.size())) return; // if marks more than gun max ammo
+        if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return; // check mark limit
         if(interactionType == TargetingInteractionType.BOW) {
             if(!player.isCreative() && !player.getInventory().contains(ItemTags.ARROWS)) {
                 updateDeadeyeStatus(server, player, DeadeyeMod.DeadeyeStatus.DISABLED);
                 return;
             }
         }
-        if(!deadeyeItems.contains(heldItem.getItem())) return;
+        if(!deadeyeItems.contains(heldItem.getItem()) && interactionType != TargetingInteractionType.POINT_BLANK_GUN) return;
 
         Entity ent = player.getWorld().getEntityById(entityId);
         if(ent == null) return;

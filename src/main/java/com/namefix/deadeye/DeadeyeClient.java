@@ -235,24 +235,19 @@ public class DeadeyeClient {
     // Marking targets
     public static void mark(MinecraftClient client) {
         if(DeadeyeClient.isEnabled && !shootingMarks) {
-            if(marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return;
             assert client.player != null;
             ItemStack item = client.player.getMainHandStack();
             if(item == null) return;
-            if(!deadeyeMarkingItems.contains(item.getItem())) return;
-            TargetingInteractionType interactionType = TargetingInteractionType.DEFAULT;
 
-            if(item.getItem() instanceof RangedWeaponItem ranged) {
-                if(!client.player.isCreative()) {
-                    if (client.player.getProjectileType(item).getCount() <= marks.size()) return;
-                    interactionType = TargetingInteractionType.BOW;
-                }
+            TargetingInteractionType interactionType = Utils.getTargetingInteractionType(item);
+            if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return;
+            if(!deadeyeMarkingItems.contains(item.getItem()) && interactionType != TargetingInteractionType.POINT_BLANK_GUN) return;
+
+            if(interactionType == TargetingInteractionType.BOW) {
+                if(!client.player.isInCreativeMode() && client.player.getProjectileType(item).getCount() <= marks.size()) return;
             }
-            if(PointBlankIntegration.isLoaded) {
-                if (item.getItem() instanceof GunItem) {
-                    if (!PointBlankIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
-                    interactionType = TargetingInteractionType.POINT_BLANK_GUN;
-                }
+            if (interactionType == TargetingInteractionType.POINT_BLANK_GUN) {
+                if (!PointBlankIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
             }
 
             double maxDistance = DeadeyeMod.CONFIG.server.maxTargetDistance();
@@ -288,13 +283,14 @@ public class DeadeyeClient {
     public static void receiveDeadeyeMark(Vector3f pos, int entityId) {
         if(!isEnabled) return;
         MinecraftClient client = MinecraftClient.getInstance();
+        TargetingInteractionType interactionType = Utils.getTargetingInteractionType(client.player.getMainHandStack());
 
         Entity ent = client.world.getEntityById(entityId);
         if(ent == null) return;
         marks.add(new DeadeyeTarget(ent, new Vec3d(pos)));
         client.player.playSound(DeadeyeProfiles.getSelectedSoundProfile().paintTargetSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
-        if(Utils.getTargetingInteractionType(client.player.getMainHandStack()) == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(client.player.getMainHandStack())) startShootingTargets(client.player.getMainHandStack().getItem());
-        if(marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
+        if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(client.player.getMainHandStack())) startShootingTargets(client.player.getMainHandStack().getItem());
+        if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
     }
 
     public static void receivePhaseUpdate(int phase) {
