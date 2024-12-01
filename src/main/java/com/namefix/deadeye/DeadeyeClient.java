@@ -244,7 +244,7 @@ public class DeadeyeClient {
             if(!deadeyeMarkingItems.contains(item.getItem()) && interactionType != TargetingInteractionType.POINT_BLANK_GUN) return;
 
             if(interactionType == TargetingInteractionType.BOW) {
-                if(!client.player.isInCreativeMode() && client.player.getProjectileType(item).getCount() <= marks.size()) return;
+                if(!client.player.isCreative() && client.player.getProjectileType(item).getCount() <= marks.size()) return;
             }
             if (interactionType == TargetingInteractionType.POINT_BLANK_GUN) {
                 if (!PointBlankIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
