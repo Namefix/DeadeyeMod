@@ -330,7 +330,7 @@ public class DeadeyeEffects {
         drawContext.setShaderColor(color.x, color.y, color.z, 1.0f);
 
         if(Math.round(deadeyeMeter) > 0) {
-            int meterIndex = tonic ? 99 : Math.clamp(Math.round(deadeyeMeter), 0, 99);
+            int meterIndex = tonic ? 99 : MathHelper.clamp(Math.round(deadeyeMeter), 0, 99);
             drawContext.drawTexture(
                     DEADEYE_METER.get(meterIndex), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
             );
