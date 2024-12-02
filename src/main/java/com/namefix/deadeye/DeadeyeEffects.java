@@ -334,7 +334,7 @@ public class DeadeyeEffects {
         drawContext.setShaderColor(color.x, color.y, color.z, 1.0f);
 
         if(Math.round(deadeyeMeter) > 0) {
-            int meterIndex = tonic ? 99 : Math.clamp(Math.round(deadeyeMeter), 0, 99);
+            int meterIndex = tonic ? 99 : MathHelper.clamp(Math.round(deadeyeMeter), 0, 99);
             drawContext.drawTexture(
                     DEADEYE_METER.get(meterIndex), meterX, meterY, meterSize, meterSize, 0, 0, meterSize, meterSize, meterSize, meterSize
             );
@@ -345,16 +345,16 @@ public class DeadeyeEffects {
     }
 
     private static Vector3f getMeterColor() {
-        if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(2)) return meterFortification.getLast();
+        if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(2)) return meterFortification.get(meterFortification.size()-1);
         else if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(1)) return meterFortification.get(1);
-        else if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(0)) return meterFortification.getFirst();
+        else if(DeadeyeClient.playerData.deadeyeMeter > DeadeyeClient.getMaxMeter(0)) return meterFortification.get(0);
         else return new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
     private static Vector3f getCoreColor() {
-        if(DeadeyeClient.playerData.deadeyeCore > 60) return meterFortification.getLast();
+        if(DeadeyeClient.playerData.deadeyeCore > 60) return meterFortification.get(meterFortification.size()-1);
         else if(DeadeyeClient.playerData.deadeyeCore > 40) return meterFortification.get(1);
-        else if(DeadeyeClient.playerData.deadeyeCore > 20) return meterFortification.getFirst();
+        else if(DeadeyeClient.playerData.deadeyeCore > 20) return meterFortification.get(0);
         else return new Vector3f(1.0f, 1.0f, 1.0f);
     }
 

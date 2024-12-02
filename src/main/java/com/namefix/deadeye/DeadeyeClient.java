@@ -156,7 +156,7 @@ public class DeadeyeClient {
             return;
         }
 
-        DeadeyeTarget mark = marks.getFirst();
+        DeadeyeTarget mark = marks.get(0);
 
         float pPitch = client.player.getPitch();
         float pYaw = client.player.getYaw();
@@ -213,7 +213,7 @@ public class DeadeyeClient {
             packet.writeVector3f(mark.getCurrentOffset().toVector3f());
             ClientPlayNetworking.send(DeadeyeNetworking.DEADEYE_SHOT_REQUEST, packet);
 
-            marks.removeFirst();
+            if(!marks.isEmpty()) marks.remove(0);
             lerpWait = System.currentTimeMillis() + 100;
             shootWait = 0;
             startLerpingTime = System.currentTimeMillis();

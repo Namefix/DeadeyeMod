@@ -171,7 +171,7 @@ public class DeadeyeServer {
 
         if(!player.isCreative()) player.getProjectileType(item).decrement(1);
 
-        data.markList.removeFirst();
+        if(!data.markList.isEmpty()) data.markList.remove(0);
 
         if(data.markList.isEmpty()) updateDeadeyeStatus(server, player, playerState.deadeyeMeter <= 0.0f && playerState.deadeyeCore <= 0.0f ? DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY : DeadeyeMod.DeadeyeStatus.DISABLED);
     }
