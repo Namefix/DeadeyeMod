@@ -50,6 +50,8 @@ dependencies {
 
 	modCompileOnly "curse.maven:geckolib-388172:5675212"
 	modCompileOnly "curse.maven:vics-point-blank-961053:5762951"
+
+	modCompileOnly "curse.maven:timeless-and-classics-zero-1028108:5621380"
 }
 
 processResources {

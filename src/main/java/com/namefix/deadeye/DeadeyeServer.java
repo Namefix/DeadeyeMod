@@ -10,6 +10,7 @@ import com.namefix.data.PlayerServerData;
 import com.namefix.data.StateSaverAndLoader;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.GameruleHandler;
+import com.namefix.integrations.TACZIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import com.namefix.utils.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -95,17 +96,19 @@ public class DeadeyeServer {
 
         ItemStack heldItem = player.getMainHandStack();
         if(heldItem == null) return;
-        TargetingInteractionType interactionType = Utils.getTargetingInteractionType(heldItem);
 
+        TargetingInteractionType interactionType = Utils.getTargetingInteractionType(heldItem);
         if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && !PointBlankIntegration.canMarkTargets(heldItem, data.markList.size())) return; // if marks more than gun max ammo
-        if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return; // check mark limit
+        if(interactionType == TargetingInteractionType.TACZ_GUN && !TACZIntegration.canMarkTargets(heldItem, data.markList.size())) return;
+        if(!Utils.isInteractionGun(interactionType) && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return; // check mark limit
+
         if(interactionType == TargetingInteractionType.BOW) {
             if(!player.isCreative() && !player.getInventory().contains(ItemTags.ARROWS)) {
                 updateDeadeyeStatus(server, player, DeadeyeMod.DeadeyeStatus.DISABLED);
                 return;
             }
         }
-        if(!deadeyeItems.contains(heldItem.getItem()) && interactionType != TargetingInteractionType.POINT_BLANK_GUN) return;
+        if(!deadeyeItems.contains(heldItem.getItem()) && !Utils.isInteractionGun(interactionType)) return;
 
         Entity ent = player.getWorld().getEntityById(entityId);
         if(ent == null) return;
@@ -122,7 +125,7 @@ public class DeadeyeServer {
         ServerPlayNetworking.send(player, DeadeyeNetworking.DEADEYE_MARK, packet);
 
         if(!player.isCreative() && interactionType == TargetingInteractionType.BOW && player.getProjectileType(heldItem).getCount() <= data.markList.size()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
-        if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
+        if(!Utils.isInteractionGun(interactionType) && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) updatePhase(player, PlayerServerData.ShootingPhase.SHOOTING);
     }
 
     public static void receivePhaseUpdate(ServerPlayerEntity player, int phase) {

@@ -2,6 +2,8 @@ package com.namefix.utils;
 
 import com.namefix.DeadeyeMod;
 import com.namefix.integrations.PointBlankIntegration;
+import com.namefix.integrations.TACZIntegration;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -66,7 +68,13 @@ public class Utils {
         ) return DeadeyeMod.TargetingInteractionType.THROWABLE;
 
         if(PointBlankIntegration.isLoaded && item.getItem() instanceof GunItem) return DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN;
+        if(TACZIntegration.isLoaded && item.getItem() instanceof AbstractGunItem) return DeadeyeMod.TargetingInteractionType.TACZ_GUN;
         return DeadeyeMod.TargetingInteractionType.DEFAULT;
+    }
+
+    public static boolean isInteractionGun(DeadeyeMod.TargetingInteractionType interactionType) {
+        if(interactionType == DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN || interactionType == DeadeyeMod.TargetingInteractionType.TACZ_GUN) return true;
+        return false;
     }
 
     @Environment(EnvType.CLIENT)
