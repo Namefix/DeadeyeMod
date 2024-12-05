@@ -13,10 +13,12 @@ import com.namefix.handlers.GameruleHandler;
 import com.namefix.integrations.TACZIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import com.namefix.utils.Utils;
+import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import com.namefix.integrations.PointBlankIntegration;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -319,7 +321,7 @@ public class DeadeyeServer {
             }
 
             if (data.shootingPhase != PlayerServerData.ShootingPhase.SHOOTING) {
-
+                if(TACZIntegration.isLoaded) TACZIntegration.setDrawCooldown(player);
 
                 float slowdownMultiplier = 20f/tps.getTps();
                 float decreaseAmount = DeadeyeMod.CONFIG.server.deadeyeIdleConsumeAmount() * slowdownMultiplier;
