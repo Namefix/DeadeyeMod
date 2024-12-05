@@ -4,6 +4,7 @@ import com.namefix.deadeye.DeadeyeProfiles;
 import com.namefix.deadeye.DeadeyeServer;
 import com.namefix.handlers.*;
 import com.namefix.integrations.PointBlankIntegration;
+import com.namefix.integrations.TACZIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import net.fabricmc.api.ModInitializer;
 
@@ -25,7 +26,8 @@ public class DeadeyeMod implements ModInitializer {
 		DEFAULT,
 		BOW,
 		THROWABLE,
-		POINT_BLANK_GUN
+		POINT_BLANK_GUN,
+		TACZ_GUN
 	}
 
 	public enum DeadeyeStatus {
@@ -56,5 +58,6 @@ public class DeadeyeMod implements ModInitializer {
 		DeadeyeNetworking.initializeServerReceivers();
 
 		if(FabricLoader.getInstance().isModLoaded("pointblank")) PointBlankIntegration.initialize();
+		if(FabricLoader.getInstance().isModLoaded("tacz")) TACZIntegration.initialize();
 	}
 }

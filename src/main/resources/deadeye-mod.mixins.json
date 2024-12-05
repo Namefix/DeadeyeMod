@@ -7,7 +7,10 @@
     "ConsumeItemMixin",
     "CrossbowItemMixin",
     "pointblank.PointBlankFireModeFeatureMixin",
-    "pointblank.PointBlankGunItemMixin"
+    "pointblank.PointBlankGunItemMixin",
+    "tacz.InaccuracyTypeMixin",
+    "tacz.LivingEntityDrawGunMixin",
+    "tacz.ModernKineticGunItemMixin"
   ],
   "client": [
     "GameRendererMixin",

@@ -10,6 +10,7 @@ import com.namefix.data.PlayerServerData;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.KeybindHandler;
 import com.namefix.integrations.PointBlankIntegration;
+import com.namefix.integrations.TACZIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import com.namefix.utils.Utils;
 import com.vicmatskiv.pointblank.item.FireMode;
@@ -196,6 +197,9 @@ public class DeadeyeClient {
             if(targetingType == TargetingInteractionType.POINT_BLANK_GUN) {
                 if(!PointBlankIntegration.canGunShoot(item)) return;
             }
+            if(targetingType == TargetingInteractionType.TACZ_GUN) {
+                if(!TACZIntegration.canGunShoot(item)) return;
+            }
 
             assert client.interactionManager != null;
             switch(targetingType) {
@@ -205,6 +209,8 @@ public class DeadeyeClient {
                 case THROWABLE -> client.interactionManager.interactItem(client.player, client.player.getActiveHand());
                 // POINT_BLANK_GUN: Shoot. (Vic's Point Blank integration)
                 case POINT_BLANK_GUN -> PointBlankIntegration.shootGun((GunItem) item.getItem(), client.player, mark.target);
+                // TACZ_GUN: Wait for server to process shooting. (Timeless and Classics Zero integration)
+                case TACZ_GUN -> TACZIntegration.shootGun();
                 // DEFAULT: Execute left click
                 case DEFAULT -> KeyBinding.onKeyPressed(client.options.attackKey.getDefaultKey());
             }
@@ -240,14 +246,17 @@ public class DeadeyeClient {
             if(item == null) return;
 
             TargetingInteractionType interactionType = Utils.getTargetingInteractionType(item);
-            if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return;
-            if(!deadeyeMarkingItems.contains(item.getItem()) && interactionType != TargetingInteractionType.POINT_BLANK_GUN) return;
+            if(!Utils.isInteractionGun(interactionType) && marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return;
+            if(!deadeyeMarkingItems.contains(item.getItem()) && !Utils.isInteractionGun(interactionType)) return;
 
             if(interactionType == TargetingInteractionType.BOW) {
                 if(!client.player.isCreative() && client.player.getProjectileType(item).getCount() <= marks.size()) return;
             }
             if (interactionType == TargetingInteractionType.POINT_BLANK_GUN) {
                 if (!PointBlankIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
+            }
+            if(interactionType == TargetingInteractionType.TACZ_GUN) {
+                if(!TACZIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
             }
 
             double maxDistance = DeadeyeMod.CONFIG.server.maxTargetDistance();
@@ -289,8 +298,11 @@ public class DeadeyeClient {
         if(ent == null) return;
         marks.add(new DeadeyeTarget(ent, new Vec3d(pos)));
         client.player.playSound(DeadeyeProfiles.getSelectedSoundProfile().paintTargetSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f); // placeholder for now
-        if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(client.player.getMainHandStack())) startShootingTargets(client.player.getMainHandStack().getItem());
-        if(interactionType != TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
+
+        ItemStack mainStack = client.player.getMainHandStack();
+        if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(mainStack)) startShootingTargets(mainStack.getItem());
+        if(interactionType == TargetingInteractionType.TACZ_GUN && marks.size() >= TACZIntegration.getGunAmmo(mainStack)) startShootingTargets(mainStack.getItem());
+        if(!Utils.isInteractionGun(interactionType) && marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
     }
 
     public static void receivePhaseUpdate(int phase) {
