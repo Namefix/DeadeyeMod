@@ -10,6 +10,7 @@ import com.namefix.data.PlayerServerData;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.KeybindHandler;
 import com.namefix.integrations.PointBlankIntegration;
+import com.namefix.integrations.SAGIntegration;
 import com.namefix.integrations.TACZIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import com.namefix.utils.Utils;
@@ -200,6 +201,9 @@ public class DeadeyeClient {
             if(targetingType == TargetingInteractionType.TACZ_GUN) {
                 if(!TACZIntegration.canGunShoot(item)) return;
             }
+            if(targetingType == TargetingInteractionType.SAG_GUN) {
+                if(!SAGIntegration.canGunShoot(client.player, item)) return;
+            }
 
             assert client.interactionManager != null;
             switch(targetingType) {
@@ -211,6 +215,8 @@ public class DeadeyeClient {
                 case POINT_BLANK_GUN -> PointBlankIntegration.shootGun((GunItem) item.getItem(), client.player, mark.target);
                 // TACZ_GUN: Wait for server to process shooting. (Timeless and Classics Zero integration)
                 case TACZ_GUN -> TACZIntegration.shootGun();
+                // SAG_GUN: Request a shot from the server. (Simple Animated Guns integration)
+                case SAG_GUN -> SAGIntegration.shootGun(client.player, item);
                 // DEFAULT: Execute left click
                 case DEFAULT -> KeyBinding.onKeyPressed(client.options.attackKey.getDefaultKey());
             }
@@ -258,6 +264,9 @@ public class DeadeyeClient {
             if(interactionType == TargetingInteractionType.TACZ_GUN) {
                 if(!TACZIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
             }
+            if(interactionType == TargetingInteractionType.SAG_GUN) {
+                if(!SAGIntegration.canMarkTargets(item, marks.size()) && marks.isEmpty()) return;
+            }
 
             double maxDistance = DeadeyeMod.CONFIG.server.maxTargetDistance();
             HitResult hit = Utils.raycastEntity(client.player, maxDistance);
@@ -302,6 +311,7 @@ public class DeadeyeClient {
         ItemStack mainStack = client.player.getMainHandStack();
         if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && marks.size() >= PointBlankIntegration.getGunAmmo(mainStack)) startShootingTargets(mainStack.getItem());
         if(interactionType == TargetingInteractionType.TACZ_GUN && marks.size() >= TACZIntegration.getGunAmmo(mainStack)) startShootingTargets(mainStack.getItem());
+        if(interactionType == TargetingInteractionType.SAG_GUN && marks.size() >= SAGIntegration.getGunAmmo(mainStack)) startShootingTargets(mainStack.getItem());
         if(!Utils.isInteractionGun(interactionType) && marks.size() >= DeadeyeMod.CONFIG.server.maxMarks()) startShootingTargets(client.player.getMainHandStack().getItem());
     }
 

@@ -10,10 +10,12 @@ import com.namefix.data.PlayerServerData;
 import com.namefix.data.StateSaverAndLoader;
 import com.namefix.handlers.ConfigHandler;
 import com.namefix.handlers.GameruleHandler;
+import com.namefix.integrations.SAGIntegration;
 import com.namefix.integrations.TACZIntegration;
 import com.namefix.network.DeadeyeNetworking;
 import com.namefix.utils.Utils;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
+import net.elidhan.anim_guns.item.GunItem;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import com.namefix.integrations.PointBlankIntegration;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -102,6 +104,7 @@ public class DeadeyeServer {
         TargetingInteractionType interactionType = Utils.getTargetingInteractionType(heldItem);
         if(interactionType == TargetingInteractionType.POINT_BLANK_GUN && !PointBlankIntegration.canMarkTargets(heldItem, data.markList.size())) return; // if marks more than gun max ammo
         if(interactionType == TargetingInteractionType.TACZ_GUN && !TACZIntegration.canMarkTargets(heldItem, data.markList.size())) return;
+        if(interactionType == TargetingInteractionType.SAG_GUN && !SAGIntegration.canMarkTargets(heldItem, data.markList.size())) return;
         if(!Utils.isInteractionGun(interactionType) && data.markList.size() >= DeadeyeMod.CONFIG.server.maxMarks()) return; // check mark limit
 
         if(interactionType == TargetingInteractionType.BOW) {
@@ -152,7 +155,7 @@ public class DeadeyeServer {
             return;
         }
 
-        if (!player.isCreative() && item.getItem() instanceof RangedWeaponItem ranged) {
+        if (!player.isCreative() && interactionTypes == TargetingInteractionType.BOW) {
             if (!player.getInventory().contains(ItemTags.ARROWS)) return;
         }
 
@@ -171,10 +174,13 @@ public class DeadeyeServer {
                 int i = ranged.getMaxUseTime(item);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), shootSound, SoundCategory.PLAYERS, 1.0F, 1.0F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + BowItem.getPullProgress(i) * 0.5F);
                 player.incrementStat(Stats.USED.getOrCreateStat(item.getItem()));
+                if(!player.isCreative()) player.getProjectileType(item).decrement(1);
+            }
+            case SAG_GUN -> {
+                GunItem gun = (GunItem) item.getItem();
+                gun.shoot(player.getWorld(), player, item);
             }
         }
-
-        if(!player.isCreative()) player.getProjectileType(item).decrement(1);
 
         if(!data.markList.isEmpty()) data.markList.remove(0);
 

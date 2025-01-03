@@ -8,6 +8,7 @@
     "CrossbowItemMixin",
     "pointblank.PointBlankFireModeFeatureMixin",
     "pointblank.PointBlankGunItemMixin",
+    "sag.SAGGunItemMixin",
     "tacz.InaccuracyTypeMixin",
     "tacz.LivingEntityDrawGunMixin",
     "tacz.ModernKineticGunItemMixin"
