@@ -10,7 +10,7 @@
 <h2 align="center">Features</h2>
 
 - Near identical recreation of Dead Eye mechanics, sound and visual effects.
-- Tonics and provisions to boost your Deadeye core and meter. (See below)
+- Tonics and provisions to boost your Deadeye core and meter.
 - Using bows in Deadeye will let you pull back your bow faster.
 - Fully supports <a href="https://www.curseforge.com/minecraft/mc-mods/vics-point-blank">Vic’s Point Blank</a> weapons.
 - A quickdraw button to quickly draw the first weapon in your hotbar with Deadeye, letting you instantly shoot.
