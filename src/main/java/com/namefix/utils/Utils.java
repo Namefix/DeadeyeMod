@@ -55,6 +55,7 @@ public class Utils {
     }
 
     public static DeadeyeMod.TargetingInteractionType getTargetingInteractionType(ItemStack item) {
+        if(item.getItem() instanceof net.elidhan.anim_guns.item.GunItem) return DeadeyeMod.TargetingInteractionType.SAG_GUN;
         if(item.getItem() instanceof RangedWeaponItem) return DeadeyeMod.TargetingInteractionType.BOW;
 
         if(
@@ -73,8 +74,7 @@ public class Utils {
     }
 
     public static boolean isInteractionGun(DeadeyeMod.TargetingInteractionType interactionType) {
-        if(interactionType == DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN || interactionType == DeadeyeMod.TargetingInteractionType.TACZ_GUN) return true;
-        return false;
+        return interactionType == DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN || interactionType == DeadeyeMod.TargetingInteractionType.TACZ_GUN || interactionType == DeadeyeMod.TargetingInteractionType.SAG_GUN;
     }
 
     @Environment(EnvType.CLIENT)

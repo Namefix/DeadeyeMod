@@ -52,6 +52,9 @@ dependencies {
 	modCompileOnly "curse.maven:vics-point-blank-961053:5762951"
 
 	modCompileOnly "curse.maven:timeless-and-classics-zero-1028108:5621380"
+
+	modCompileOnly "curse.maven:azurelib-817423:6004978"
+	modCompileOnly "curse.maven:fabric-simple-animated-guns-664917:5547258"
 }
 
 processResources {
