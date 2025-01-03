@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.namefix.DeadeyeMod;
-import com.namefix.PostEffectProcessorInterface;
+import com.namefix.utils.PostEffectProcessorInterface;
 import com.namefix.deadeye.DeadeyeClient;
 import com.namefix.deadeye.DeadeyeEffects;
 import com.namefix.deadeye.DeadeyeShader;

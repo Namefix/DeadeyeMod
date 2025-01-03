@@ -1,6 +1,6 @@
 package com.namefix.mixin;
 
-import com.namefix.PostEffectProcessorInterface;
+import com.namefix.utils.PostEffectProcessorInterface;
 import net.minecraft.client.gl.PostEffectPass;
 import net.minecraft.client.gl.PostEffectProcessor;
 import org.spongepowered.asm.mixin.Final;
