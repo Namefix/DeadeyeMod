@@ -2,6 +2,7 @@ package com.namefix.utils;
 
 import com.namefix.DeadeyeMod;
 import com.namefix.integrations.PointBlankIntegration;
+import com.namefix.integrations.SAGIntegration;
 import com.namefix.integrations.TACZIntegration;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.vicmatskiv.pointblank.item.GunItem;
@@ -55,7 +56,15 @@ public class Utils {
     }
 
     public static DeadeyeMod.TargetingInteractionType getTargetingInteractionType(ItemStack item) {
-        if(item.getItem() instanceof net.elidhan.anim_guns.item.GunItem) return DeadeyeMod.TargetingInteractionType.SAG_GUN;
+        // temporary fix for now
+        try {
+            Class<?> sagGunItemClass = Class.forName("net.elidhan.anim_guns.item.GunItem");
+            if (sagGunItemClass.isInstance(item.getItem())) {
+                return DeadeyeMod.TargetingInteractionType.SAG_GUN;
+            }
+        }
+        catch(ClassNotFoundException ignored) {}
+
         if(item.getItem() instanceof RangedWeaponItem) return DeadeyeMod.TargetingInteractionType.BOW;
 
         if(
