@@ -11,16 +11,21 @@ public class SAGIntegration {
         isLoaded = true;
     }
 
-    public static boolean canMarkTargets(ItemStack item, int markCount) {
-        if(!(item.getItem() instanceof GunItem)) return false;
-
-        return markCount < getGunAmmo(item);
+    public static boolean isItemGun(ItemStack stack) {
+        if(!isLoaded) return false;
+        return stack.getItem() instanceof GunItem;
     }
 
     public static void shootGun(PlayerEntity player, ItemStack item) {
         if(!(item.getItem() instanceof GunItem gun)) return;
 
         gun.shoot(player.getWorld(), player, item);
+    }
+
+    public static boolean canMarkTargets(ItemStack item, int markCount) {
+        if(!(item.getItem() instanceof GunItem)) return false;
+
+        return markCount < getGunAmmo(item);
     }
 
     public static boolean canGunShoot(PlayerEntity user, ItemStack item) {

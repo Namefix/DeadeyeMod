@@ -61,6 +61,6 @@ public class DeadeyeMod implements ModInitializer {
 
 		if(FabricLoader.getInstance().isModLoaded("pointblank")) PointBlankIntegration.initialize();
 		if(FabricLoader.getInstance().isModLoaded("tacz")) TACZIntegration.initialize();
-		if(FabricLoader.getInstance().isModLoaded("anim_guns")) SAGIntegration.initialize();
+		if(FabricLoader.getInstance().isModLoaded("animated_guns")) SAGIntegration.initialize();
 	}
 }

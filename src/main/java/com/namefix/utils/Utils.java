@@ -4,8 +4,6 @@ import com.namefix.DeadeyeMod;
 import com.namefix.integrations.PointBlankIntegration;
 import com.namefix.integrations.SAGIntegration;
 import com.namefix.integrations.TACZIntegration;
-import com.tacz.guns.api.item.gun.AbstractGunItem;
-import com.vicmatskiv.pointblank.item.GunItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -56,15 +54,7 @@ public class Utils {
     }
 
     public static DeadeyeMod.TargetingInteractionType getTargetingInteractionType(ItemStack item) {
-        // temporary fix for now
-        try {
-            Class<?> sagGunItemClass = Class.forName("net.elidhan.anim_guns.item.GunItem");
-            if (sagGunItemClass.isInstance(item.getItem())) {
-                return DeadeyeMod.TargetingInteractionType.SAG_GUN;
-            }
-        }
-        catch(ClassNotFoundException ignored) {}
-
+        if(isClassLoaded("net.elidhan.anim_guns.item.GunItem") && SAGIntegration.isItemGun(item)) return DeadeyeMod.TargetingInteractionType.SAG_GUN;
         if(item.getItem() instanceof RangedWeaponItem) return DeadeyeMod.TargetingInteractionType.BOW;
 
         if(
@@ -77,8 +67,9 @@ public class Utils {
                 item.getItem().equals(Items.EXPERIENCE_BOTTLE)
         ) return DeadeyeMod.TargetingInteractionType.THROWABLE;
 
-        if(PointBlankIntegration.isLoaded && item.getItem() instanceof GunItem) return DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN;
-        if(TACZIntegration.isLoaded && item.getItem() instanceof AbstractGunItem) return DeadeyeMod.TargetingInteractionType.TACZ_GUN;
+        if(PointBlankIntegration.isItemGun(item)) return DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN;
+        if(TACZIntegration.isItemGun(item)) return DeadeyeMod.TargetingInteractionType.TACZ_GUN;
+        
         return DeadeyeMod.TargetingInteractionType.DEFAULT;
     }
 
@@ -113,5 +104,14 @@ public class Utils {
 
     public static boolean screenSpaceCoordinateIsVisible(Vec3d pos) {
         return pos != null && pos.z > -1 && pos.z < 1;
+    }
+
+    public static boolean isClassLoaded(String className) {
+        try {
+            Class<?> sagGunItemClass = Class.forName(className);
+            return true;
+        }
+        catch(ClassNotFoundException ignored) {}
+        return false;
     }
 }

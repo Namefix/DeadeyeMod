@@ -3,6 +3,7 @@ package com.namefix.integrations;
 import com.tacz.guns.api.TimelessAPI;
 import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.api.item.gun.FireMode;
 import com.tacz.guns.entity.sync.ModSyncedEntityData;
 import com.tacz.guns.resource.index.CommonGunIndex;
@@ -20,6 +21,11 @@ public class TACZIntegration {
 
     public static void initialize() {
         isLoaded = true;
+    }
+
+    public static boolean isItemGun(ItemStack stack) {
+        if(!isLoaded) return false;
+        return stack.getItem() instanceof AbstractGunItem;
     }
 
     public static void shootGun() {
