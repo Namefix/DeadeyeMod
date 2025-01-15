@@ -18,6 +18,11 @@ public class PointBlankIntegration {
         isLoaded = true;
     }
 
+    public static boolean isItemGun(ItemStack stack) {
+        if(!isLoaded) return false;
+        return stack.getItem() instanceof GunItem;
+    }
+
     public static void shootGun(GunItem gun, PlayerEntity player, Entity target) {
         gun.tryFire(player, player.getMainHandStack(), target);
     }

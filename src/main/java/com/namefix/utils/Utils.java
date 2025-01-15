@@ -55,7 +55,7 @@ public class Utils {
     public static DeadeyeMod.TargetingInteractionType getTargetingInteractionType(ItemStack item) {
         if(item.getItem() instanceof RangedWeaponItem) return DeadeyeMod.TargetingInteractionType.BOW;
         if(item.getItem() instanceof ProjectileItem) return DeadeyeMod.TargetingInteractionType.THROWABLE;
-        if(PointBlankIntegration.isLoaded && item.getItem() instanceof GunItem) return DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN;
+        if(PointBlankIntegration.isItemGun(item)) return DeadeyeMod.TargetingInteractionType.POINT_BLANK_GUN;
         return DeadeyeMod.TargetingInteractionType.DEFAULT;
     }
 
