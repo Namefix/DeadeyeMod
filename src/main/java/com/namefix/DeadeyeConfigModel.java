@@ -30,6 +30,9 @@ public class DeadeyeConfigModel {
         @Sync(Option.SyncMode.OVERRIDE_CLIENT)
         public float maxTargetDistance = 1000.0f;
 
+        @RangeConstraint(min = 0.0f, max = 10.0f)
+        public float deadeyeDamageMultiplier = 1.0f;
+
         @RangeConstraint(min = 0.5f, max = 5.0f)
         @Sync(Option.SyncMode.OVERRIDE_CLIENT)
         public float markFocusSpeed = 0.5f;

@@ -22,18 +22,18 @@
 
   "text.config.deadeye-mod.option.server.maxTargetDistance": "Maksimum Hedef Uzaklığı",
 
-  "text.config.deadeye-mod.option.server.markFocusSpeed": "İşaret Dönme Hızı",
-  "text.config.deadeye-mod.option.server.markFocusSpeed.tooltip": "Deadeye'da kamera dönme hızı",
+  "text.config.deadeye-mod.option.server.markFocusSpeed": "Kamera Dönme Hızı",
+  "text.config.deadeye-mod.option.server.markFocusSpeed.tooltip": "Hedefleri vurma aşamasında kamera dönme hızı",
 
   "text.config.deadeye-mod.option.server.maxMarks": "Maksimum İşaret",
-  "text.config.deadeye-mod.option.server.maxMarks.tooltip": "Ateş edilmeden önce koyulabilecek maksimum işaret",
+  "text.config.deadeye-mod.option.server.maxMarks.tooltip": "Ateş edilmeden önce koyulabilecek maksimum işaret (sadece yaylar için)",
 
-  "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier": "İşaret Mermi Hız Çarpanı",
-  "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier.tooltip": "Deadeye'da yayların atış hızı",
+  "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier": "Yay Ok Hız Çarpanı",
+  "text.config.deadeye-mod.option.server.markProjectileSpeedMultiplier.tooltip": "Deadeye'da yayların atış hızı (hasarı etkiler)",
 
-  "text.config.deadeye-mod.option.server.deadeyeIdleConsumeAmount": "Deadeye Kullanım Miktarı (Tick Başına)",
+  "text.config.deadeye-mod.option.server.deadeyeIdleConsumeAmount": "Metre Kullanım Miktarı (Tick Başına)",
 
-  "text.config.deadeye-mod.option.server.deadeyeKillRefillAmount": "Öldürme Başına Deadeye Dolumu",
+  "text.config.deadeye-mod.option.server.deadeyeKillRefillAmount": "Öldürme Başına Metre Dolumu",
   "text.config.deadeye-mod.option.server.deadeyeKillRefillAmount.tooltip": "Öldürme başına kazanılan Deadeye metresi",
 
   "text.config.deadeye-mod.category.client": "İstemci",
@@ -42,7 +42,7 @@
   "text.config.deadeye-mod.option.client.disableLightleakEffect": "Deadeye Işık Süzmesini Kapat",
   "text.config.deadeye-mod.option.client.disableLightleakEffect.tooltip": "Deadeye giriş efektini kapat",
 
-  "text.config.deadeye-mod.option.client.meterPosition": "Metre Arayüz Pozisyonu",
+  "text.config.deadeye-mod.option.client.meterPosition": "Deadeye Arayüz Pozisyonu",
   "text.config.deadeye-mod.option.client.meterPosition.value.top_left": "Sol Üst",
   "text.config.deadeye-mod.option.client.meterPosition.value.top_right": "Sağ Üst",
   "text.config.deadeye-mod.option.client.meterPosition.value.bottom_left": "Sol Alt",
@@ -51,19 +51,21 @@
   "text.config.deadeye-mod.option.client.meterPosition.value.none": "Kapalı",
 
   "text.config.deadeye-mod.option.client.deadeyeVignetteStrength": "Deadeye Vinyet Yoğunluğu",
-  "text.config.deadeye-mod.option.client.deadeyeVignetteStrength.tooltip": "Ekranın köşesindeki vinyet efektinin yoğunluğu",
+  "text.config.deadeye-mod.option.client.deadeyeVignetteStrength.tooltip": "Vinyet efektinin yoğunluğu",
 
-  "text.config.deadeye-mod.option.client.deadeyeVolume": "Deadeye Ses Efekt Seviyesi",
+  "text.config.deadeye-mod.option.client.deadeyeVolume": "Deadeye Ses Seviyesi",
 
-  "text.config.deadeye-mod.option.client.deadeyeMarkSize": "Deadeye İşaret Boyutu",
+  "text.config.deadeye-mod.option.client.deadeyeMarkSize": "İşaret Boyutu",
+  "text.config.deadeye-mod.option.client.deadeyeMarkSize.tooltip": "Koyulan X işaretlerinin büyüklüğünü belirler",
 
   "sound.deadeye-mod.enter": "Deadeye'a girildi",
   "sound.deadeye-mod.exit": "Deadeye'dan çıkıldı",
   "sound.deadeye-mod.background": "Odaklanıyor",
   "sound.deadeye-mod.paint": "Hedef boyandı",
-  "sound.deadeye-mod.tonic_drink": "Tonik kullanıldı",
+  "sound.deadeye-mod.tonic_drink": "Tonik içildi",
 
   "gamerule.disableDeadeye": "Deadeye'ı devre dışı bırak",
+  "gamerule.disableDeadeyeLeveling": "Deadeye seviyesini devre dışı bırak",
 
   "command.setmeter.success": "%s oyuncusunun Deadeye metresi %s olarak ayarlandı.",
   "command.setmeter.default": "%s oyuncusunun Deadeye metresi dolduruldu.",
