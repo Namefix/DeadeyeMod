@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntityDrawGun.class)
-public class LivingEntityDrawGunMixin {
+public class TACZLivingEntityDrawGunMixin {
     @Inject(method = "getDrawCoolDown", at = @At("HEAD"), cancellable = true, remap = false)
     private void deadeye_modifyDrawCooldown(CallbackInfoReturnable<Long> cir) {
         if(DeadeyeClient.isEnabled) cir.setReturnValue(0L);

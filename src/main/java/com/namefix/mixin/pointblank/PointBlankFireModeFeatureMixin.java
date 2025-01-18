@@ -1,6 +1,8 @@
 package com.namefix.mixin.pointblank;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.datafixers.util.Pair;
+import com.namefix.DeadeyeMod;
 import com.namefix.deadeye.DeadeyeClient;
 import com.namefix.deadeye.DeadeyeServer;
 import com.vicmatskiv.pointblank.client.GunClientState;
@@ -45,5 +47,13 @@ public class PointBlankFireModeFeatureMixin {
                 cir.setReturnValue(Pair.of(0, .0));
             }
         }
+    }
+
+    @ModifyReturnValue(method = "getDamage", at = @At("RETURN"))
+    private static float deadeyemod_getDamage(float original) {
+        if(!DeadeyeServer.deadeyeUsers.isEmpty()) {
+            return original * DeadeyeMod.CONFIG.server.deadeyeDamageMultiplier();
+        }
+        return original;
     }
 }

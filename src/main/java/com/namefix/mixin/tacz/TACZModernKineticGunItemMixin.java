@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ModernKineticGunItem.class)
-public class ModernKineticGunItemMixin {
+public class TACZModernKineticGunItemMixin {
     @ModifyVariable(method = "doSpawnBulletEntity", at = @At("HEAD"), ordinal = 3, argsOnly = true)
     private float deadeye_modifyAccuracy(float inaccuracy) {
         if(!DeadeyeServer.deadeyeUsers.isEmpty()) {

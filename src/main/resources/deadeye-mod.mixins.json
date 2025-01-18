@@ -9,10 +9,12 @@
     "CrossbowItemMixin",
     "pointblank.PointBlankFireModeFeatureMixin",
     "pointblank.PointBlankGunItemMixin",
+    "sag.SAGBulletProjectileEntityMixin",
     "sag.SAGGunItemMixin",
-    "tacz.InaccuracyTypeMixin",
-    "tacz.LivingEntityDrawGunMixin",
-    "tacz.ModernKineticGunItemMixin"
+    "tacz.TACZEntityKineticBulletMixin",
+    "tacz.TACZInaccuracyTypeMixin",
+    "tacz.TACZLivingEntityDrawGunMixin",
+    "tacz.TACZModernKineticGunItemMixin"
   ],
   "client": [
     "GameRendererMixin",
