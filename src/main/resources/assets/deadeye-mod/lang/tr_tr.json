@@ -22,6 +22,9 @@
 
   "text.config.deadeye-mod.option.server.maxTargetDistance": "Maksimum Hedef Uzaklığı",
 
+  "text.config.deadeye-mod.option.server.deadeyeDamageMultiplier": "Deadeye Hasar Çarpanı",
+  "text.config.deadeye-mod.option.server.deadeyeDamageMultiplier.tooltip": "Deadeye kullanırken verilen hasarı belirler (sadece silahlar için)",
+
   "text.config.deadeye-mod.option.server.markFocusSpeed": "Kamera Dönme Hızı",
   "text.config.deadeye-mod.option.server.markFocusSpeed.tooltip": "Hedefleri vurma aşamasında kamera dönme hızı",
 
