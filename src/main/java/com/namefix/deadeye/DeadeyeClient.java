@@ -327,6 +327,7 @@ public class DeadeyeClient {
     // Toggling deadeye
     public static void setDeadeye(DeadeyeMod.DeadeyeStatus status) {
         MinecraftClient client = MinecraftClient.getInstance();
+        GSTpsModule tps = GSClientController.getInstance().getTpsModule();
         assert client.player != null;
 
         if(status == DeadeyeMod.DeadeyeStatus.ENABLED) isEnabled = true;
@@ -334,10 +335,17 @@ public class DeadeyeClient {
 
         if(isEnabled) {
             calculateDeadeyeEnding();
+
+            tps.cShiftPitch.set(false);
+            tps.cNormalMovement.set(false);
+
             DeadeyeEffects.updateEffects(status);
         }
         else {
             DeadeyeEffects.updateEffects(status);
+
+            tps.cShiftPitch.set(true);
+            tps.cNormalMovement.set(true);
 
             shootingPhase = PlayerServerData.ShootingPhase.NONE;
             marks.clear();
