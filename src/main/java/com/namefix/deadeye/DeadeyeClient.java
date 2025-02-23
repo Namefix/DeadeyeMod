@@ -401,6 +401,10 @@ public class DeadeyeClient {
         playerData.deadeyeLevel = level;
     }
 
+    public static void deadeyeSkillUpdate(int skill) {
+        playerData.deadeyeSkill = MathHelper.clamp(skill, 0, 3);
+    }
+
     public static void disconnect(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient client) {
         if(isEnabled) setDeadeye(DeadeyeMod.DeadeyeStatus.DISABLED);
     }

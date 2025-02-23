@@ -258,6 +258,15 @@ public class DeadeyeServer {
         ServerPlayNetworking.send(player, DeadeyeNetworking.DEADEYE_LEVEL, packet);
     }
 
+    public static void setDeadeyeSkill(ServerPlayerEntity player, int skill) {
+        PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
+        playerState.deadeyeSkill = skill;
+
+        PacketByteBuf packet = PacketByteBufs.create();
+        packet.writeInt(skill);
+        ServerPlayNetworking.send(player, DeadeyeNetworking.DEADEYE_SKILL, packet);
+    }
+
     public static void addDeadeyeXP(ServerPlayerEntity player, float xp) {
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(player);
         if(playerState.deadeyeLevel >= 10) return;

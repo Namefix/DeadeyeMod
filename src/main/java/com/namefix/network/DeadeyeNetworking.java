@@ -14,6 +14,7 @@ public class DeadeyeNetworking {
     public static final Identifier DEADEYE_METER = Identifier.of(DeadeyeMod.MOD_ID, "deadeye_meter");
     public static final Identifier DEADEYE_CORE = Identifier.of(DeadeyeMod.MOD_ID, "deadeye_core");
     public static final Identifier DEADEYE_LEVEL = Identifier.of(DeadeyeMod.MOD_ID, "deadeye_level");
+    public static final Identifier DEADEYE_SKILL = Identifier.of(DeadeyeMod.MOD_ID, "deadeye_skill");
     public static final Identifier INITIAL_SYNC = Identifier.of(DeadeyeMod.MOD_ID, "initial_sync");
 
     public static final Identifier DEADEYE_REQUEST = Identifier.of(DeadeyeMod.MOD_ID, "deadeye_request");
@@ -68,6 +69,11 @@ public class DeadeyeNetworking {
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_LEVEL, (client, handler, buf, responseSender) -> {
             int level = buf.readInt();
             client.execute(() -> DeadeyeClient.deadeyeLevelUpdate(level));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SKILL, (client, handler, buf, response) -> {
+            int skill = buf.readInt();
+            client.execute(() -> DeadeyeClient.deadeyeSkillUpdate(skill));
         });
 
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.INITIAL_SYNC, (client, handler, buf, responseSender) -> {
