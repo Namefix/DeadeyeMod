@@ -70,11 +70,12 @@
   "gamerule.disableDeadeye": "Deadeye'ı devre dışı bırak",
   "gamerule.disableDeadeyeLeveling": "Deadeye seviyesini devre dışı bırak",
 
-  "command.setmeter.success": "%s oyuncusunun Deadeye metresi %s olarak ayarlandı.",
-  "command.setmeter.default": "%s oyuncusunun Deadeye metresi dolduruldu.",
-  "command.setcore.success": "%s oyuncusunun Deadeye çekirdeği %s olarak ayarlandı",
-  "command.setcore.default": "%s oyuncusunun Deadeye çekirdeği dolduruldu.",
-  "command.setlevel.success": "%s oyuncusunun Deadeye seviyesi %s olarak ayarlandı.",
+  "text.command.deadeye-mod.setmeter.success": "%s oyuncusunun Deadeye metresi %s olarak ayarlandı.",
+  "text.command.deadeye-mod.setmeter.default": "%s oyuncusunun Deadeye metresi dolduruldu.",
+  "text.command.deadeye-mod.setcore.success": "%s oyuncusunun Deadeye çekirdeği %s olarak ayarlandı",
+  "text.command.deadeye-mod.setcore.default": "%s oyuncusunun Deadeye çekirdeği dolduruldu.",
+  "text.command.deadeye-mod.setlevel.success": "%s oyuncusunun Deadeye seviyesi %s olarak ayarlandı.",
+  "text.command.deadeye-mod.setskill.success": "%s oyuncusunun Deadeye yetenek seviyesi %s olarak ayarlandı.",
 
   "item.deadeye-mod.tobacco_seeds": "Tütün Tohumu",
   "item.deadeye-mod.tobacco": "Tütün",

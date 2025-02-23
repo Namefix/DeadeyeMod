@@ -26,6 +26,7 @@ public class StateSaverAndLoader extends PersistentState {
             playerNbt.putFloat("deadeyeMeter", playerData.deadeyeMeter);
             playerNbt.putInt("deadeyeLevel", playerData.deadeyeLevel);
             playerNbt.putFloat("deadeyeXp", playerData.deadeyeXp);
+            playerNbt.putInt("deadeyeSkill", playerData.deadeyeSkill);
 
             playersNbt.put(uuid.toString(), playerNbt);
         });
@@ -43,6 +44,7 @@ public class StateSaverAndLoader extends PersistentState {
             playerData.deadeyeMeter = playersNbt.getCompound(key).getFloat("deadeyeMeter");
             playerData.deadeyeLevel = playersNbt.getCompound(key).getInt("deadeyeLevel");
             playerData.deadeyeXp = playersNbt.getCompound(key).getFloat("deadeyeXp");
+            playerData.deadeyeSkill = playersNbt.getCompound(key).getInt("deadeyeSkill");
 
             UUID uuid = UUID.fromString(key);
             state.players.put(uuid, playerData);

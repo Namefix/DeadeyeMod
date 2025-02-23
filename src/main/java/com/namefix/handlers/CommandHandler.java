@@ -38,6 +38,11 @@ public class CommandHandler {
         DeadeyeServer.setDeadeyeLevel(player, level);
     }
 
+    private static void setSkill(ServerPlayerEntity player, int skill) {
+        if(skill < 0) skill = 0;
+        DeadeyeServer.setDeadeyeSkill(player, skill);
+    }
+
     public static void initialize() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("deadeye")
@@ -55,7 +60,7 @@ public class CommandHandler {
                                                 ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
                                                 int amount = IntegerArgumentType.getInteger(context, "amount");
                                                 setMeter(player, amount);
-                                                context.getSource().sendFeedback(() -> Text.translatable("command.setmeter.success", player.getName().getString(), amount), true);
+                                                context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setmeter.success", player.getName().getString(), amount), true);
 
                                                 return 1;
                                             })
@@ -65,7 +70,7 @@ public class CommandHandler {
 
                                         ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
                                         setMeter(player, -1);
-                                        context.getSource().sendFeedback(() -> Text.translatable("command.setmeter.default", player.getName().getString()), true);
+                                        context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setmeter.default", player.getName().getString()), true);
 
                                         return 1;
                                     })
@@ -80,7 +85,7 @@ public class CommandHandler {
                                                 ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
                                                 int amount = IntegerArgumentType.getInteger(context, "amount");
                                                 setCore(player, amount);
-                                                context.getSource().sendFeedback(() -> Text.translatable("command.setcore.success", player.getName().getString(), amount), true);
+                                                context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setcore.success", player.getName().getString(), amount), true);
 
                                                 return 1;
                                             })
@@ -90,7 +95,7 @@ public class CommandHandler {
 
                                         ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
                                         setCore(player, -1);
-                                        context.getSource().sendFeedback(() -> Text.translatable("command.setcore.default", player.getName().getString()), true);
+                                        context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setcore.default", player.getName().getString()), true);
 
                                         return 1;
                                     })
@@ -105,7 +110,7 @@ public class CommandHandler {
                                                 ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
                                                 int level = IntegerArgumentType.getInteger(context, "level");
                                                 setLevel(player, level);
-                                                context.getSource().sendFeedback(() -> Text.translatable("command.setlevel.success", player.getName().getString(), level), true);
+                                                context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setlevel.success", player.getName().getString(), level), true);
 
                                                 return 1;
                                             })
@@ -115,13 +120,37 @@ public class CommandHandler {
 
                                         ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
                                         setLevel(player, -1);
-                                        context.getSource().sendFeedback(() -> Text.translatable("command.setlevel.success", player.getName().getString(), 5), true);
+                                        context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setlevel.success", player.getName().getString(), 5), true);
 
                                         return 1;
                                     })
                             )
                     )
+                    .then(literal("setskill").requires(source -> source.hasPermissionLevel(2))
+                            .then(argument("player", EntityArgumentType.player())
+                                    .then(argument("skill", IntegerArgumentType.integer())
+                                            .executes((CommandContext<ServerCommandSource> context) -> {
+                                                if (context.getSource().getPlayer() == null) return 0;
 
+                                                ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
+                                                int skill = IntegerArgumentType.getInteger(context, "skill");
+                                                setLevel(player, skill);
+                                                context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setskill.success", player.getName().getString(), skill), true);
+
+                                                return 1;
+                                            })
+                                    )
+                                    .executes((CommandContext<ServerCommandSource> context) -> {
+                                        if (context.getSource().getPlayer() == null) return 0;
+
+                                        ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
+                                        setLevel(player, 3);
+                                        context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setskill.success", player.getName().getString(), 3), true);
+
+                                        return 1;
+                                    })
+                            )
+                    )
             );
 
         });

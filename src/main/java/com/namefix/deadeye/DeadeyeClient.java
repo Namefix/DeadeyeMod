@@ -344,6 +344,10 @@ public class DeadeyeClient {
         playerData.deadeyeLevel = MathHelper.clamp(payload.level(),0,10);
     }
 
+    public static void deadeyeSkillUpdate(DeadeyeSkillPayload payload, ClientPlayNetworking.Context context) {
+        playerData.deadeyeSkill = MathHelper.clamp(payload.skill(), 0, 3);
+    }
+
     public static void receiveInitialSync(InitialSyncPayload payload, ClientPlayNetworking.Context context) {
         playerData.deadeyeMeter = payload.deadeyeMeter();
         playerData.deadeyeCore = payload.deadeyeCore();

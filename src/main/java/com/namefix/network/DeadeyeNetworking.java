@@ -16,6 +16,7 @@ public class DeadeyeNetworking {
     public static final CustomPayload.Id<DeadeyeMeterPayload> DEADEYE_METER = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_meter"));
     public static final CustomPayload.Id<DeadeyeCorePayload> DEADEYE_CORE = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_core"));
     public static final CustomPayload.Id<DeadeyeLevelPayload> DEADEYE_LEVEL = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_level"));
+    public static final CustomPayload.Id<DeadeyeSkillPayload> DEADEYE_SKILL = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_skill"));
     public static final CustomPayload.Id<InitialSyncPayload> INITIAL_SYNC = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "initial_sync"));
 
     public static final CustomPayload.Id<DeadeyeRequestPayload> DEADEYE_REQUEST = new CustomPayload.Id<>(Identifier.of(DeadeyeMod.MOD_ID, "deadeye_request"));
@@ -29,6 +30,7 @@ public class DeadeyeNetworking {
         PayloadTypeRegistry.playS2C().register(DEADEYE_METER, DeadeyeMeterPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DEADEYE_CORE, DeadeyeCorePayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DEADEYE_LEVEL, DeadeyeLevelPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(DEADEYE_SKILL, DeadeyeSkillPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(INITIAL_SYNC, InitialSyncPayload.CODEC);
 
         PayloadTypeRegistry.playS2C().register(DEADEYE_UPDATE, DeadeyeUpdatePayload.CODEC);
@@ -55,6 +57,7 @@ public class DeadeyeNetworking {
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_METER, DeadeyeClient::deadeyeMeterUpdate);
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_CORE, DeadeyeClient::deadeyeCoreUpdate);
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_LEVEL, DeadeyeClient::deadeyeLevelUpdate);
+        ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_SKILL, DeadeyeClient::deadeyeSkillUpdate);
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.INITIAL_SYNC, DeadeyeClient::receiveInitialSync);
 
         ClientPlayNetworking.registerGlobalReceiver(DeadeyeNetworking.DEADEYE_UPDATE, DeadeyeClient::receiveDeadeyeUpdate);

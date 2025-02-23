@@ -70,11 +70,12 @@
   "gamerule.disableDeadeye": "Disable deadeye",
   "gamerule.disableDeadeyeLeveling": "Disable deadeye leveling",
 
-  "command.setmeter.success": "Set %s's Deadeye meter to %s.",
-  "command.setmeter.default": "Refilled %s's Deadeye meter.",
-  "command.setcore.success": "Set %s's Deadeye meter to %s.",
-  "command.setcore.default": "Refilled %s's Deadeye core.",
-  "command.setlevel.success": "Set %s's Deadeye level to %s.",
+  "text.command.deadeye-mod.setmeter.success": "Set %s's Deadeye meter to %s.",
+  "text.command.deadeye-mod.setmeter.default": "Refilled %s's Deadeye meter.",
+  "text.command.deadeye-mod.setcore.success": "Set %s's Deadeye meter to %s.",
+  "text.command.deadeye-mod.setcore.default": "Refilled %s's Deadeye core.",
+  "text.command.deadeye-mod.setlevel.success": "Set %s's Deadeye level to %s.",
+  "text.command.deadeye-mod.setskill.success": "Set %s's Deadeye Skill Level to %s.",
 
   "item.deadeye-mod.tobacco_seeds": "Tobacco Seeds",
   "item.deadeye-mod.tobacco": "Tobacco",
