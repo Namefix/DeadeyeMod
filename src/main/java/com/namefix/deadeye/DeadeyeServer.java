@@ -49,7 +49,7 @@ public class DeadeyeServer {
         PlayerSaveData playerState = StateSaverAndLoader.getPlayerState(context.player());
 
         if(payload.status()) {  // Player wants to enable deadeye
-            if(context.player().getWorld().getGameRules().getBoolean(GameruleHandler.DISABLE_DEADEYE)) return;
+            if(context.player().getWorld().getGameRules().getBoolean(GameruleHandler.DISABLE_DEADEYE) || playerState.deadeyeSkill <= 0) return;
             if(playerState.deadeyeMeter <= 0f && playerState.deadeyeCore <= 0f) {
                 ServerPlayNetworking.send(context.player(), new DeadeyeUpdatePayload(DeadeyeMod.DeadeyeStatus.EMPTY.ordinal()));
                 return;

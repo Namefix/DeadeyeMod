@@ -134,7 +134,7 @@ public class CommandHandler {
 
                                                 ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
                                                 int skill = IntegerArgumentType.getInteger(context, "skill");
-                                                setLevel(player, skill);
+                                                setSkill(player, skill);
                                                 context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setskill.success", player.getName().getString(), skill), true);
 
                                                 return 1;
@@ -144,7 +144,7 @@ public class CommandHandler {
                                         if (context.getSource().getPlayer() == null) return 0;
 
                                         ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
-                                        setLevel(player, 3);
+                                        setSkill(player, 3);
                                         context.getSource().sendFeedback(() -> Text.translatable("text.command.deadeye-mod.setskill.success", player.getName().getString(), 3), true);
 
                                         return 1;
