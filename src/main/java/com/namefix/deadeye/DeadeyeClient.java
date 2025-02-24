@@ -55,6 +55,7 @@ public class DeadeyeClient {
     static ArrayList<DeadeyeTarget> marks = new ArrayList<>();
 
     public static boolean shootingMarks = false;
+    static long markWait = 0;
     static long lerpWait = 0;
     static long shootWait = 0;
     static long startLerpingTime = 0;
@@ -92,7 +93,11 @@ public class DeadeyeClient {
             requestDeadeye();
         }
 
-        while (KeybindHandler.keyDeadeyeMark.wasPressed()) mark(client);
+        if(playerData.deadeyeSkill == 1) {
+            mark(client);
+        } else {
+            while (KeybindHandler.keyDeadeyeMark.wasPressed()) mark(client);
+        }
 
         while (KeybindHandler.keyDeadeyeShootTargets.wasPressed() && !marks.isEmpty()) {
             assert client.player != null;
@@ -101,8 +106,9 @@ public class DeadeyeClient {
 
         while (KeybindHandler.keyDeadeyeQuickdraw.wasPressed() && !isEnabled) performQuickdraw();
 
-        if(client.options.attackKey.isPressed() && !marks.isEmpty()) {
-            startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
+        if(client.options.attackKey.isPressed()) {
+            if(isEnabled && (playerData.deadeyeSkill == 1 || playerData.deadeyeSkill == 2)) requestDeadeye();
+            if(!marks.isEmpty()) startShootingTargets(client.player.getInventory().getMainHandStack().getItem());
         }
     }
 
@@ -247,6 +253,9 @@ public class DeadeyeClient {
     // Marking targets
     public static void mark(MinecraftClient client) {
         if(DeadeyeClient.isEnabled && !shootingMarks) {
+            int waitAmount = playerData.deadeyeSkill == 1 ? 250 : 100;
+            if(System.currentTimeMillis() - markWait < waitAmount) return;
+            markWait = System.currentTimeMillis();
             assert client.player != null;
             ItemStack item = client.player.getMainHandStack();
             if(item == null) return;
