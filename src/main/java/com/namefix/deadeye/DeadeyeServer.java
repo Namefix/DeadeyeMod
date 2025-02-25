@@ -86,7 +86,7 @@ public class DeadeyeServer {
         } else {
             deadeyeUsers.remove(player.getUuid());
             if (DeadeyeMod.CONFIG.server.deadeyeSlowdown() && deadeyeUsers.isEmpty())
-                tps.setTps(5.0f);
+                tps.setTps(20.0f);
 
             PacketByteBuf packet = PacketByteBufs.create();
             packet.writeInt(status.ordinal());
@@ -368,10 +368,7 @@ public class DeadeyeServer {
 
         for (UUID user : toRemove) {
             deadeyeUsers.remove(user);
-        }
-
-        if (DeadeyeMod.CONFIG.server.deadeyeSlowdown() && deadeyeUsers.isEmpty()) {
-            tps.setTps(20.0f);
+            if(deadeyeUsers.isEmpty() && DeadeyeMod.CONFIG.server.deadeyeSlowdown()) tps.setTps(20.0f);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.namefix;
 
 import com.namefix.deadeye.DeadeyeEffects;
+import com.namefix.deadeye.DeadeyeShader;
 import io.wispforest.owo.config.Option;
 import io.wispforest.owo.config.annotation.*;
 
@@ -57,6 +58,7 @@ public class DeadeyeConfigModel {
         // Client
         public boolean disableDeadeyeEffects = false;
         public boolean disableLightleakEffect = false;
+        public DeadeyeShader.DeadeyeShaderType deadeyeStyle = DeadeyeShader.DeadeyeShaderType.RDR2;
         public DeadeyeEffects.MeterPosition meterPosition = DeadeyeEffects.MeterPosition.NEAR_HOTBAR;
         @RangeConstraint(min = 0f, max = 10.0f)
         public float deadeyeVignetteStrength = 3.0f;

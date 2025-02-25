@@ -1,0 +1,15 @@
+{
+  "targets": [ "swap" ],
+  "passes": [
+      {
+      	"name": "deadeye-mod:deadeye_redemption",
+      	"intarget": "minecraft:main",
+        "outtarget": "swap"
+      },
+      {
+        "name": "blit",
+        "intarget": "swap",
+        "outtarget": "minecraft:main"
+      }
+  ]
+}

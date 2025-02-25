@@ -45,6 +45,10 @@
   "text.config.deadeye-mod.option.client.disableLightleakEffect": "Disable Light Leak Effects",
   "text.config.deadeye-mod.option.client.disableLightleakEffect.tooltip": "Disable entering effect of Deadeye",
 
+  "text.config.deadeye-mod.option.client.deadeyeStyle": "Deadeye Style",
+  "text.config.deadeye-mod.option.client.deadeyeStyle.value.rdr2": "Red Dead Redemption 2",
+  "text.config.deadeye-mod.option.client.deadeyeStyle.value.rdr1": "Red Dead Redemption",
+
   "text.config.deadeye-mod.option.client.meterPosition": "Deadeye HUD Position",
   "text.config.deadeye-mod.option.client.meterPosition.value.top_left": "Top Left",
   "text.config.deadeye-mod.option.client.meterPosition.value.top_right": "Top Right",

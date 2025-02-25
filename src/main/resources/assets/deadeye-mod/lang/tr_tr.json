@@ -45,6 +45,10 @@
   "text.config.deadeye-mod.option.client.disableLightleakEffect": "Deadeye Işık Süzmesini Kapat",
   "text.config.deadeye-mod.option.client.disableLightleakEffect.tooltip": "Deadeye giriş efektini kapat",
 
+  "text.config.deadeye-mod.option.client.deadeyeStyle": "Deadeye Stili",
+  "text.config.deadeye-mod.option.client.deadeyeStyle.value.rdr2": "Red Dead Redemption 2",
+  "text.config.deadeye-mod.option.client.deadeyeStyle.value.rdr1": "Red Dead Redemption",
+
   "text.config.deadeye-mod.option.client.meterPosition": "Deadeye Arayüz Pozisyonu",
   "text.config.deadeye-mod.option.client.meterPosition.value.top_left": "Sol Üst",
   "text.config.deadeye-mod.option.client.meterPosition.value.top_right": "Sağ Üst",
