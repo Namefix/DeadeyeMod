@@ -299,10 +299,7 @@ public class DeadeyeServer {
 
         for (UUID user : toRemove) {
             deadeyeUsers.remove(user);
-        }
-
-        if (DeadeyeMod.CONFIG.server.deadeyeSlowdown() && deadeyeUsers.isEmpty()) {
-            minecraftServer.getTickManager().setTickRate(20.0f);
+            if(deadeyeUsers.isEmpty() && DeadeyeMod.CONFIG.server.deadeyeSlowdown()) minecraftServer.getTickManager().setTickRate(20.0f);
         }
     }
 }

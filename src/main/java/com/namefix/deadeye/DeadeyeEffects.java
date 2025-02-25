@@ -115,8 +115,14 @@ public class DeadeyeEffects {
     }
 
     public static void updateVariables(WorldRenderContext context) {
-        if(DeadeyeClient.isEnabled) deadeyeFade = MathHelper.clamp(deadeyeFade + (context.tickCounter().getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
-        else deadeyeFade = MathHelper.clamp(deadeyeFade - (context.tickCounter().getLastFrameDuration() / 20.0f)*16, 0.0f, 1.0f);
+        DeadeyeShader.DeadeyeShaderType shaderType = DeadeyeMod.CONFIG.client.deadeyeStyle();
+        int increment = shaderType.equals(DeadeyeShader.DeadeyeShaderType.RDR2) ? 16 : 8;
+
+        if(DeadeyeClient.isEnabled) deadeyeFade = MathHelper.clamp(deadeyeFade + (context.tickCounter().getLastFrameDuration() / 20.0f)*increment, 0.0f, 1.0f);
+        else {
+            if(!shaderType.equals(DeadeyeShader.DeadeyeShaderType.RDR1)) deadeyeFade = MathHelper.clamp(deadeyeFade - (context.tickCounter().getLastFrameDuration() / 20.0f)*increment, 0.0f, 1.0f);
+            else deadeyeFade = 0.0f;
+        }
 
         tonicDuration = MathHelper.clamp(tonicDuration-(context.tickCounter().getLastFrameDuration() / 20.0f), 0.0f, 1.0f);
     }
@@ -125,6 +131,7 @@ public class DeadeyeEffects {
     public static void updateEffects(DeadeyeMod.DeadeyeStatus status) {
         MinecraftClient client = MinecraftClient.getInstance();
         DeadeyeSoundProfile profile = DeadeyeProfiles.getSelectedSoundProfile();
+        DeadeyeShader.DeadeyeShaderType shaderType = DeadeyeMod.CONFIG.client.deadeyeStyle();
 
         if(status == DeadeyeMod.DeadeyeStatus.ENABLED) {
             client.player.playSound(profile.enterSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
@@ -141,7 +148,7 @@ public class DeadeyeEffects {
             DeadeyeShader.loadDeadeyeProcessor(DeadeyeShader.ShaderType.DEADEYE);
         } else if(status == DeadeyeMod.DeadeyeStatus.DISABLED || status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) {
             client.player.playSound(profile.exitSound, DeadeyeMod.CONFIG.client.deadeyeVolume()/100, 1.0f);
-            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY) client.player.playSound(profile.exitEmptySound, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
+            if(status == DeadeyeMod.DeadeyeStatus.DISABLED_EMPTY && shaderType.equals(DeadeyeShader.DeadeyeShaderType.RDR2)) client.player.playSound(profile.exitEmptySound, (DeadeyeMod.CONFIG.client.deadeyeVolume()/100)/20, 1.0f);
 
             soundBackground.setDone();
             soundBackground2.setDone();
@@ -154,11 +161,11 @@ public class DeadeyeEffects {
     }
 
     public static void renderGraphics(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        if(!DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext, renderTickCounter);
+        if(DeadeyeMod.CONFIG.client.deadeyeStyle().equals(DeadeyeShader.DeadeyeShaderType.RDR2) && !DeadeyeMod.CONFIG.client.disableDeadeyeEffects() && !DeadeyeMod.CONFIG.client.disableLightleakEffect()) renderLightleak(drawContext, renderTickCounter);
 
         if(DeadeyeClient.isEnabled) renderMarks(drawContext, renderTickCounter);
 
-        if(!MinecraftClient.getInstance().options.hudHidden && DeadeyeMod.CONFIG.client.meterPosition() != MeterPosition.NONE) {
+        if(!MinecraftClient.getInstance().options.hudHidden && DeadeyeMod.CONFIG.client.meterPosition() != MeterPosition.NONE && DeadeyeClient.playerData.deadeyeSkill > 0) {
             Vector2i meterCoords = getMeterCoordinates(drawContext, DeadeyeMod.CONFIG.client.meterPosition());
             meterX = meterCoords.x;
             meterY = meterCoords.y;

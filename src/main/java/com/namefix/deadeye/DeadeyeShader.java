@@ -14,7 +14,13 @@ public class DeadeyeShader {
         TONIC
     }
 
+    public enum DeadeyeShaderType {
+        RDR2,
+        RDR1,
+    }
+
     private static final Identifier DEADEYE_PROCESSOR_ID = Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye.json");
+    private static final Identifier DEADEYE_REDEMPTION_PROCESSOR_ID = Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/deadeye_redemption.json");
     private static PostEffectProcessor DEADEYE_PROCESSOR;
 
     private static final Identifier TONIC_PROCESSOR_ID = Identifier.of(DeadeyeMod.MOD_ID, "shaders/post/tonic.json");
@@ -22,7 +28,8 @@ public class DeadeyeShader {
 
     public static void loadDeadeyeProcessor(ShaderType type) {
         if(type == ShaderType.DEADEYE) {
-            DEADEYE_PROCESSOR = loadProcessor(DEADEYE_PROCESSOR_ID);
+            if(DeadeyeMod.CONFIG.client.deadeyeStyle().equals(DeadeyeShaderType.RDR2)) DEADEYE_PROCESSOR = loadProcessor(DEADEYE_PROCESSOR_ID);
+            else DEADEYE_PROCESSOR = loadProcessor(DEADEYE_REDEMPTION_PROCESSOR_ID);
         } else {
             TONIC_PROCESSOR = loadProcessor(TONIC_PROCESSOR_ID);
         }
