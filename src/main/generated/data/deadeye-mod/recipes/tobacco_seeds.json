@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "deadeye-mod:tobacco"
+    }
+  ],
+  "result": {
+    "item": "deadeye-mod:tobacco_seeds"
+  }
+}

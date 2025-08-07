@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:potion"
+    },
+    {
+      "item": "deadeye-mod:tobacco"
+    },
+    {
+      "item": "deadeye-mod:tobacco"
+    },
+    {
+      "item": "deadeye-mod:tobacco"
+    }
+  ],
+  "result": {
+    "item": "deadeye-mod:special_tobacco_water"
+  }
+}

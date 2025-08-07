@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:snake_oil_from_smelting_tobacco_water"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tobacco_water": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "deadeye-mod:tobacco_water"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_tobacco_water",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:snake_oil_from_smelting_tobacco_water"
+    ]
+  },
+  "sends_telemetry_event": false
+}
