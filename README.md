@@ -1,3 +1,5 @@
+<h1> Deadeye Mod HAS BEEN REPLACED BY Dead Eye https://github.com/Namefix/deadeye/ </h2>
+
 <h1 align="center"> Deadeye Mod <br>
   <img src="/src/main/resources/assets/deadeye-mod/icon.png" /><br>
   <a href="https://fabricmc.net"><img src="https://github.com/Suiranoil/badges/raw/refs/heads/main/assets/minecraft/modloader/fabric/mini/badge.svg" /></a><br>
